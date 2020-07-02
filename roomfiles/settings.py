@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Dependencies
     'crispy_forms',
+    'gdstorage',
 ]
 
 MIDDLEWARE = [
@@ -135,8 +136,20 @@ LOGIN_REDIRECT_URL = 'home'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Max file upload size
+MAX_FILE_SIZE = 5 * (1024**2)
+
+# Allowed File Types
+ALLOWED_FILE_TYPES = [
+    'docx', 'pdf', 'pptx'
+]
+
 
 ##### Dependencies Settings #####
 
 # Crispy Forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# GDrive Settings
+GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = None
+GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'rooms'

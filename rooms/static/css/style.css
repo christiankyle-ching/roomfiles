@@ -1,3 +1,8 @@
 .window-height {
     height: calc(100vh - 56px) !important;
 }
+
+/* BootsrapMD form invalid-feedback fix */
+.form-group .invalid-feedback {
+    display: block !important;
+}

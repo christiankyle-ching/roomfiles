@@ -11,6 +11,7 @@
             <div>
                 <h4 class="float-left">{{ room.name }}</h4>
 
+                <!-- Room Menu Options -->
                 <div class="dropdown float-right">
                     <button class="btn btn-dark" type="button" id="optionsMenuButton" data-toggle="dropdown">
                       <svg width="1.5em" height="1.5em">
@@ -19,6 +20,9 @@
                     </button>
           
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsMenuButton">
+                        
+                        <a href="{% url 'file-upload' %}" class="dropdown-item">Upload a File</a>
+
                         {% if room.created_by == user %}
                         <a href="{% url 'room-edit' room.pk room.slug %}" class="dropdown-item">Edit</a>
                         {% endif %}
@@ -36,14 +40,14 @@
                     </h6>
                 </div>
                 <div class="col-auto">
-                    <button id="roomCodeToggle" class="btn btn-sm btn-dark float-right">
-                        <svg width="16" height="16">
-                            <use width="16" height="16" xlink:href="{% static 'icons/show.svg' %}#fill" >
-                        </svg>
-                    </button>
                     <button id="roomCodeCopy" class="btn btn-sm btn-dark float-right" data-toggle="snackbar" data-style="toast" data-content="Copied the room code.">
                         <svg width="16" height="16">
                             <use width="16" height="16" xlink:href="{% static 'icons/copy.svg' %}#fill" >
+                        </svg>
+                    </button>
+                    <button id="roomCodeToggle" class="btn btn-sm btn-dark float-right">
+                        <svg width="16" height="16">
+                            <use width="16" height="16" xlink:href="{% static 'icons/show.svg' %}#fill" >
                         </svg>
                     </button>
                 </div>
@@ -87,30 +91,28 @@
                                 </div>
                                 <div class="col-auto text-right">
 
+                                    <!-- File Options : Buttons -->
                                     <div class="d-none d-sm-block">
                                         {% if file.uploaded_by == user %}
-                                        <!-- Delete Button -->
                                         <a href="{% url 'file-delete' file.pk %}" class="btn btn-danger">
                                             <svg width="16" height="16">
                                                 <use xlink:href="{% static 'icons/delete.svg' %}#fill" >
                                             </svg>
                                         </a>
-                                        <!-- Edit Button -->
                                         <a href="{% url 'file-edit' file.pk %}" class="btn btn-dark">
                                             <svg width="16" height="16">
                                                 <use xlink:href="{% static 'icons/edit.svg' %}#fill" >
                                             </svg>
                                         </a>
                                         {% endif %}
-    
-                                        <!-- Download Button -->
-                                        <a href="#" class="btn btn-primary">
+                                        <a href="{% url 'file' file.pk %}" class="btn btn-primary">
                                             <svg width="16" height="16">
                                                 <use xlink:href="{% static 'icons/download.svg' %}#fill" >
                                             </svg>
                                         </a>
                                     </div>
 
+                                    <!-- File Options : Menu -->
                                     <div class="d-sm-none">
                                         <div class="dropdown">
                                             <button class="btn btn-dark" type="button" id="fileOptionsMenuButton" data-toggle="dropdown">
@@ -120,7 +122,7 @@
                                               </button>
 
                                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="fileOptionsMenuButton">
-                                                <a href="#" class="dropdown-item text-primary">Download</a>
+                                                <a href="{% url 'file' file.pk %}" class="dropdown-item text-primary">Download</a>
                                                 {% if file.uploaded_by == user %}
                                                 <a href="{% url 'file-edit' file.pk %}" class="dropdown-item">Edit</a>
                                                 <a href="{% url 'file-delete' file.pk %}" class="dropdown-item text-danger">Delete</a>
@@ -183,8 +185,10 @@
             </div>
 
         </div>
+        <!-- End Card Body -->
 
     </div>
+    <!-- End Card -->
 
 </div>
 {% endblock %}

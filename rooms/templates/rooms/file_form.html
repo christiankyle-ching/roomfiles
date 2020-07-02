@@ -7,10 +7,9 @@
     <div class="card mt-3">
         <div class="card-body">
 
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                
                 <legend>
                     {% if file %}
                         Update File "{{ file.name }}"</legend>

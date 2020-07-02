@@ -9,14 +9,24 @@
 
             <form method="POST">
                 {% csrf_token %}
-                <legend>Room</legend>
+                <legend>
+                    {% if room %}
+                        Update Room "{{ room.name }}"</legend>
+                    {% else %}
+                        Create Room
+                    {% endif %}
+                </legend>
                 <fieldset class="form-group">
                     {{ form | crispy }}
                 </fieldset>
 
                 <div class="form-group text-right">
                     <button class="btn btn-primary" type="submit">
-                        Save
+                        {% if room %}
+                            Save
+                        {% else %}
+                            Create
+                        {% endif %}
                     </button>
                 </div>
             </form>

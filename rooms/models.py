@@ -5,6 +5,12 @@ from django.db import models
 from django.contrib.auth.models import User
 
 import uuid
+from .validators import limit_file_size, allowed_file_type
+
+from gdstorage.storage import GoogleDriveStorage
+
+# Init Google Drive Storage
+gd_storage = GoogleDriveStorage()
 
 class Describable(models.Model):
     '''
@@ -40,7 +46,11 @@ class File(Describable):
 
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
     upload_datetime = models.DateTimeField(auto_now_add=True, editable=False)
-    # raw_file = models.FileField(upload_to='files', storage=gd_storage)
+    raw_file = models.FileField(
+        upload_to='files', storage=gd_storage,
+        validators=[limit_file_size, allowed_file_type],
+        verbose_name='File',
+        )
 
     def get_absolute_url(self):
         return reverse('file', kwargs={ 'pk' : self.pk })

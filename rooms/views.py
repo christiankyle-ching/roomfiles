@@ -102,7 +102,7 @@ def join_room(request):
         if form.is_valid():
             # check if room exists
             _code = form.cleaned_data.get('code')
-            _room = Room.objects.filter(pk=_code).first()
+            _room = Room.objects.get(pk=_code)
 
             if _room == None:
                 # if not, raise error
@@ -126,18 +126,18 @@ class FileDetailView(LoginRequiredMixin, DetailView):
 
 class FileCreateView(LoginRequiredMixin, CreateView):
     model = File
-    fields = ('name', 'description',)
+    fields = ('name', 'description', 'raw_file')
     
     def form_valid(self, form):
         form = set_file_details(self, form)
-
+        
         # display success message
         messages.add_message(self.request, messages.INFO, 'Successfully uploaded "{}".'.format(form.instance.name))
         return super().form_valid(form)
 
 class FileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = File
-    fields = ('name', 'description',)
+    fields = ('name', 'description', 'raw_file')
 
     def test_func(self):
         return is_file_owner(self)
