@@ -1,0 +1,25 @@
+{% extends 'rooms/base.html' %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="card">
+
+
+            <div class="card-body">
+
+                <div class="card-header">
+                    <h5>You have been logged out.</h5>
+                </div>
+    
+                <div class="container text-muted pt-3">
+                    <a href="{% url 'login' %}" class="card-link small">Log in Again</a>
+                    <span> | </span>
+                    <a href="{% url 'home' %}" class="card-link small">Back to Home</a>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+{% endblock content %}

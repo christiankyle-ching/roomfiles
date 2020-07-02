@@ -1,0 +1,28 @@
+{% extends 'rooms/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+
+    <div class="card mt-3">
+        <div class="card-body">
+
+            <form method="POST">
+                {% csrf_token %}
+                <legend>Room</legend>
+                <fieldset class="form-group">
+                    {{ form | crispy }}
+                </fieldset>
+
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" type="submit">
+                        Save
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
