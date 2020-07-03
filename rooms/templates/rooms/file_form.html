@@ -7,7 +7,7 @@
     <div class="card mt-3">
         <div class="card-body">
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" id="fileForm">
                 {% csrf_token %}
 
                 <legend>
@@ -23,7 +23,7 @@
                 </fieldset>
 
                 <div class="form-group text-right">
-                    <button class="btn btn-primary" type="submit">
+                    <button class="btn btn-primary" type="submit" onclick="return checkFile('id_raw_file', 'file')">
                         {% if file %}
                             Save
                         {% else %}

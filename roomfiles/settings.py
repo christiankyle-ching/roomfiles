@@ -141,7 +141,7 @@ MAX_FILE_SIZE = 5 * (1024**2)
 
 # Allowed File Types
 ALLOWED_FILE_TYPES = [
-    'docx', 'pdf', 'pptx'
+    'doc', 'docx', 'pdf', 'ppt', 'pptx'
 ]
 
 
