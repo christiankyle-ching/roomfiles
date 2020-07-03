@@ -5,20 +5,21 @@ if (document.querySelector('#roomDetailID') != null) {
 
     let roomCode = el_roomCode.innerText
     
+    el_roomCode.innerText = '*****'
     el_roomCodeToggle.addEventListener('click', () => {
-        _hide = el_roomCode.getAttribute('data-hide') == 'true'
-    
+        _icon = el_roomCodeToggle.querySelector('span')
+        _hide = _icon.innerText == 'visibility'
+
         if (_hide) {
+            // if hidden, then show
             el_roomCode.innerText = roomCode
-            el_roomCodeToggle.querySelector('use').setAttribute('xlink:href', "/static/icons/hide.svg#fill")
-            el_roomCode.setAttribute('data-hide', 'false')
+            _icon.innerText = 'visibility_off'
         } else {
+            // if shown, then hide
             el_roomCode.innerText = '*****'
-            el_roomCodeToggle.querySelector('use').setAttribute('xlink:href', "/static/icons/show.svg#fill")
-            el_roomCode.setAttribute('data-hide', 'true')
+            _icon.innerText = 'visibility'
         }
     })
-    el_roomCodeToggle.click()
 
     // Init input element for code copy
     let _init = document.createElement('input');
