@@ -1,0 +1,52 @@
+{% extends 'rooms/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+<div class="container">
+
+    <!-- Profile Information -->
+    <div class="card mt-3">
+        <div class="card-body">
+
+            <div class="card-header">
+
+                <!-- User Information -->
+                <div class="text-center text-md-left">
+                    <!-- TODO: Image -->
+
+                    {% if user.profile.first_name or user.profile.last_name %}
+                    <h5>{{ user.profile.last_name }}{% if user.profile.first_name %}, {{ user.profile.first_name }}{% endif %}</h5>
+                    {% else %}
+                        <h5 class="text-danger">Unnamed</h5>
+                    {% endif %}
+                    <h6>{{ user.username }}</h6>
+                    <small>
+                        {% if user.email %} {{ user.email }} {% else %} No email {% endif %}
+                    </small>
+                </div>
+            </div>
+
+            <div class="container pt-3">
+                <form method="POST">
+                    {% csrf_token %}
+                    <legend>Your Profile</legend>
+                    <fieldset class="form-group">
+                        {{ u_form | crispy }}
+                        {{ p_form | crispy }}
+                    </fieldset>
+
+                    <div class="form-group text-right">
+                        <button class="btn btn-primary" type="submit">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
