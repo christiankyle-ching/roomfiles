@@ -1,0 +1,40 @@
+{% extends 'rooms/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+
+    <div class="card mt-3">
+        <div class="card-body">
+
+            <form method="POST" id="announcementForm">
+                {% csrf_token %}
+
+                <legend>
+                    {% if announcement %}
+                        Edit Announcement "{{ announcement.name }}"</legend>
+                    {% else %}
+                        Post New Announcement
+                    {% endif %}
+                </legend>
+
+                <fieldset class="form-group">
+                    {{ form | crispy }}
+                </fieldset>
+
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" type="submit">
+                        {% if announcement %}
+                            Save
+                        {% else %}
+                            Post
+                        {% endif %}
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

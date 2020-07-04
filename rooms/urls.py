@@ -3,7 +3,8 @@ from django.urls import path, include
 from . import views
 from .views import (
     RoomDetailView, RoomCreateView, RoomUpdateView,
-    FileDetailView, FileCreateView, FileUpdateView, FileDeleteView
+    FileDetailView, FileCreateView, FileUpdateView, FileDeleteView,
+    AnnouncementCreateView, AnnouncementUpdateView, AnnouncementDeleteView,
     )
 
 urlpatterns = [
@@ -26,7 +27,12 @@ urlpatterns = [
         path('', FileDetailView.as_view(), name='file'),
         path('edit/', FileUpdateView.as_view(), name='file-edit'),
         path('delete/', FileDeleteView.as_view(), name='file-delete'),
-    ]))
-    
+    ])),
+
+    path('ann/post/', AnnouncementCreateView.as_view(), name='ann-create'),
+    path('ann/<int:pk>/', include([
+        path('edit/', AnnouncementUpdateView.as_view(), name='ann-edit'),
+        path('post/', AnnouncementDeleteView.as_view(), name='ann-delete'),
+    ])),
 
 ]

@@ -12,28 +12,31 @@ from gdstorage.storage import GoogleDriveStorage
 # Init Google Drive Storage
 gd_storage = GoogleDriveStorage()
 
+# Abstract
 class Describable(models.Model):
-    '''
+    """
     Abstract model for describable models.
     Fields:
         name - CharField
         description - TextField
-    '''
+    """
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, max_length=1000)
 
     class Meta:
         abstract = True
 
+# Model
 class Room(Describable):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     slug = models.SlugField(default='', editable=False, max_length=100)
 
-    def get_absolute_url(self):
-        return reverse('room', kwargs={ 'pk' : self.pk, 'slug' : self.slug })
-
+    def get_absolute_url(self, tab=""):
+        _url_hash = f'#{tab}' if tab != "" else ""
+        return reverse('room', kwargs={ 'pk' : self.pk, 'slug' : self.slug }) + _url_hash
+        
     def save(self, *args, **kwargs):
         # generate slug from name
         name = self.name
@@ -41,11 +44,40 @@ class Room(Describable):
 
         super().save(*args, **kwargs)
 
-class File(Describable):
+    def __str__(self):
+        return f'Room {self.name}'
+
+
+
+# Abstract
+class Room_Object(models.Model):
+    """
+    Abstract model for models exclusive to particular rooms.
+    Fields:
+        room - ForeignKey(Room)
+    """
     room = models.ForeignKey(Room, on_delete=models.CASCADE,) #editable=False)
 
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE,) #editable=False)
-    upload_datetime = models.DateTimeField(auto_now_add=True, editable=False)
+    class Meta:
+        abstract = True
+
+# Abstract
+class User_Postable(models.Model):
+    """
+    Abstract model for models postable by a user.
+    Fields:
+        posted_by - ForeignKey(User)
+        posted_datetime - DateTimeField(auto_now_add = True)
+    """
+    posted_by = models.ForeignKey(User, on_delete=models.CASCADE,) #editable=False)
+    posted_datetime = models.DateTimeField(auto_now_add=True, editable=False)
+
+    class Meta:
+        abstract = True
+
+# Models
+class File(Describable, User_Postable, Room_Object):
+    # DEV: disable file upload for development performance
     # raw_file = models.FileField(
     #     upload_to='files', storage=gd_storage,
     #     validators=[limit_file_size, allowed_file_type],
@@ -54,3 +86,15 @@ class File(Describable):
 
     def get_absolute_url(self):
         return reverse('file', kwargs={ 'pk' : self.pk })
+
+    def __str__(self):
+        return f'File {self.name}'
+
+class Announcement(Room_Object, User_Postable):
+    content = models.TextField(blank=True, max_length=1000)
+
+    def __str__(self):
+        return f'{self.posted_by}: "{self.content[:30]}..."'
+
+    def get_absolute_url(self):
+        return self.room.get_absolute_url(tab='ann')

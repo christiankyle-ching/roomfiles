@@ -20,6 +20,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsMenuButton">
                         
                         <a href="{% url 'file-upload' %}" class="dropdown-item">Upload a File</a>
+                        <a href="{% url 'ann-create' %}" class="dropdown-item">Post an Announcement</a>
 
                         {% if room.created_by == user %}
                         <a href="{% url 'room-edit' room.pk room.slug %}" class="dropdown-item">Edit</a>
@@ -59,7 +60,7 @@
                     <a href="#files" class="nav-link active" id="files-tab" data-toggle="tab">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#people" class="nav-link" id="files-tab" data-toggle="tab">People</a>
+                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab">Announcements</a>
                 </li>
             </ul>
 
@@ -69,18 +70,18 @@
                 <div class="tab-pane fade show active" id="files" role="tabpanel">
                     <div class="container pt-3">
                         {% if files %}
-                            <p class="text-muted">{{ files | length }} files</p>
+                            <p class="text-muted">{{ total_files_count }} files</p>
 
                             <div class="infinite-container">
                                 {% for file in files %}
-                                <div id="{{ file.pk }}" class="row infinite-item">
+                                <div class="row infinite-item">
                                     <div class="col">
                                         <h6> <a href="{% url 'file' file.pk %}">{{ file.name }}</a></h6>
                                     
                                         <p>
-                                            By: {{ file.uploaded_by.profile.display_username }}
-                                            {% if file.uploaded_by.last_name %}
-                                                ({{file.uploaded_by.last_name}})
+                                            By: {{ file.posted_by.profile.display_username }}
+                                            {% if file.posted_by.last_name %}
+                                                ({{file.posted_by.last_name}})
                                             {% endif %}
                                         </p>
                                     </div>
@@ -88,7 +89,7 @@
 
                                         <!-- File Options : Buttons -->
                                         <div class="d-none d-sm-block">
-                                            {% if file.uploaded_by == user %}
+                                            {% if file.posted_by == user %}
                                             <a href="{% url 'file-delete' file.pk %}" class="btn btn-danger">
                                                 <span class="material-icons">delete_forever</span>
                                             </a>
@@ -110,7 +111,7 @@
 
                                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="fileOptionsMenuButton">
                                                     <a href="{% url 'file' file.pk %}" class="dropdown-item text-primary">Download</a>
-                                                    {% if file.uploaded_by == user %}
+                                                    {% if file.posted_by == user %}
                                                     <a href="{% url 'file-edit' file.pk %}" class="dropdown-item">Edit</a>
                                                     <a href="{% url 'file-delete' file.pk %}" class="dropdown-item text-danger">Delete</a>
                                                     {% endif %}
@@ -127,48 +128,51 @@
                             </div>
 
                             {% if files.has_next %}
-                                <a href="?page={{ files.next_page_number }}" class="infinite-more-link"></a>
+                                <a href="?file_page={{ files.next_page_number }}" class="infinite-more-link"></a>
                             {% endif  %}
 
 
                         {% else %}
                         <div class="text-center">
-                            <span>No files in this room yet. <a href="{% url 'file-upload' %}">Upload one.</a></span>
+                            No files in this room yet. <a href="{% url 'file-upload' %}">Upload one.</a>
                         </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <!-- People Tab -->
-                <div class="tab-pane fade" id="people" role="tabpanel">
+                <!-- Announcements Tab -->
+                <div class="tab-pane fade" id="ann" role="tabpanel">
                     <div class="container pt-3">
-                        {% if people %}
-                            <p class="text-muted">{{ people | length }} people</p>
-                
-                            {% for person in people %}
-                            <div>
-                                {% if user.profile == person %}
-                                <h6 class="text-primary">{{ person.user.profile.display_username }} (You)</h6>
-                                {% else%}
-                                <h6>{{ person.user.profile.display_username }}</h6>
-                                {% endif %}
+                        {% if announcements %}
 
-                                
-                                <p class="text-muted">
-                                    {% if person.first_name == "" and person.last_name == "" %}
-                                        Unnamed
-                                    {% else %}
-                                        {{ person.last_name }}, {{ person.first_name }}
-                                    {% endif %}
-                                </p>
+                            <!-- <p class="text-muted"></p> -->
 
+                            {% for ann in announcements %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    
+                                    <strong>
+                                        {{ ann.posted_by.profile.display_username }}
+                                    </strong>
+    
+                                    <p>
+                                        {{ ann.content }}
+                                    </p>
+
+                                    <small>{{ ann.posted_datetime }}</small>
+                                </div>
                             </div>
                             {% endfor %}
-                
+
+                            {% if total_announcements_count > 2 %}
+                                <a href="#" class="btn btn-block text-lowercase text-capitalize">View more</a>
+                            {% endif %}
+                            
+
                         {% else %}
-                            <div class="text-center">
-                                <span>No people in this room yet. Invite your mates!
-                            </div>
+                        <div class="text-center">
+                            No announcements made.
+                        </div>
                         {% endif %}
                     </div>
                 </div>

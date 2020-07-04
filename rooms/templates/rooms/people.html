@@ -1,0 +1,28 @@
+{% if people %}
+                            <p class="text-muted">{{ people | length }} people</p>
+                
+                            {% for person in people %}
+                            <div>
+                                {% if user.profile == person %}
+                                <h6 class="text-primary">{{ person.user.profile.display_username }} (You)</h6>
+                                {% else%}
+                                <h6>{{ person.user.profile.display_username }}</h6>
+                                {% endif %}
+
+                                
+                                <p class="text-muted">
+                                    {% if person.first_name == "" and person.last_name == "" %}
+                                        Unnamed
+                                    {% else %}
+                                        {{ person.last_name }}, {{ person.first_name }}
+                                    {% endif %}
+                                </p>
+
+                            </div>
+                            {% endfor %}
+                
+                        {% else %}
+                            <div class="text-center">
+                                <span>No people in this room yet. Invite your mates!
+                            </div>
+                        {% endif %}

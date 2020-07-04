@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField(blank=True)),
                 ('room', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='rooms.Room')),
-                ('uploaded_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.Profile')),
+                ('posted_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.Profile')),
             ],
         ),
     ]

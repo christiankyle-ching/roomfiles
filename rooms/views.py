@@ -7,9 +7,9 @@ from .forms import RoomJoinForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from .utils import is_file_owner, set_file_details, is_room_owner, set_room_details
+from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details
 
-from .models import Room, File
+from .models import Room, File, Announcement
 from users.models import Profile
 
 import random, string
@@ -38,7 +38,7 @@ class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         form.instance.created_by = self.request.user
 
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully created "{form.instance.name}".')
+        messages.add_message(self.request, messages.INFO, f'Successfully created "{form.instance.name}".')
         return super().form_valid(form)
 
     def test_func(self):
@@ -55,7 +55,7 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         form = set_room_details(self, form)
 
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully updated "{form.instance.name}".')
+        messages.add_message(self.request, messages.INFO, f'Successfully updated "{form.instance.name}".')
         return super().form_valid(form)
 
 class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -66,18 +66,21 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context = super().get_context_data(**kwargs)
         
         # Get query for files
-        files_qs = File.objects.filter(room=self.get_object()).order_by('-upload_datetime')
-        # Paginate fetched files
-        files_paginator = Paginator(files_qs, 2)
-        # Get page number from url's query parameters, default to 1 if none
-        page_number = self.request.GET.get('page', 1)
-        # Get query for page number specified
-        file_page_obj = files_paginator.get_page(page_number)
-        # Add to context returned: Files on the room
-        context['files'] = file_page_obj
+        files_qs = File.objects.filter(room=self.get_object()).order_by('-posted_datetime') # DEV: .defer('raw_file')
+        context['total_files_count'] = files_qs.count()
         
-        # # Add to context returned: Profiles (People) on the room
-        context['people'] = Profile.objects.filter(room=self.get_object()).order_by('last_name')
+        # Paginate
+        files_paginator = Paginator(files_qs, 1)
+        files_page_number = self.request.GET.get('file_page', 1)
+        files_page_obj = files_paginator.get_page(files_page_number)
+        context['files'] = files_page_obj
+
+        # Get query for announcements
+        announcements_qs = Announcement.objects.filter(room=self.get_object()).order_by('-posted_datetime')
+        announcements_qs_latest = announcements_qs[:10] # limit query to latest 10
+        context['announcements'] = announcements_qs_latest
+        context['total_announcements_count'] = announcements_qs.count()
+        
 
         return context
 
@@ -135,13 +138,13 @@ class FileDetailView(LoginRequiredMixin, DetailView):
 
 class FileCreateView(LoginRequiredMixin, CreateView):
     model = File
-    fields = ('name', 'description', 'raw_file')
+    fields = ('name', 'description',) #'raw_file') # DEV
     
     def form_valid(self, form):
-        form = set_file_details(self, form)
+        form = user_postable_set_details(self, form)
         
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully uploaded "{form.instance.name}".')
+        messages.add_message(self.request, messages.INFO, f'Successfully uploaded "{form.instance.name}".')
         return super().form_valid(form)
 
 class FileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -149,25 +152,67 @@ class FileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ('name', 'description', 'raw_file')
 
     def test_func(self):
-        return is_file_owner(self)
+        return user_postable_is_owner(self)
     
     def form_valid(self, form):
-        form = set_file_details(self, form)
+        form = user_postable_set_details(self, form)
 
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully updated "{form.instance.name}".')
+        messages.add_message(self.request, messages.INFO, f'Successfully updated "{form.instance.name}".')
         return super().form_valid(form)
 
 class FileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = File
     
     def test_func(self):
-        return is_file_owner(self)
+        return user_postable_is_owner(self)
 
     def delete(self, *args, **kwargs):
         _obj = self.get_object()
-        messages.add_message(self.request, messages.INFO, 'Successfully deleted "{_obj.name}".')
+        messages.add_message(self.request, messages.INFO, f'Successfully deleted "{_obj.name}".')
         return super().delete(self, *args, **kwargs)
 
     def get_success_url(self):
         return self.request.user.profile.room.get_absolute_url()
+
+
+# Announcement Views
+class AnnouncementCreateView(LoginRequiredMixin, CreateView):
+    model = Announcement
+    fields = ('content',)
+
+    def form_valid(self, form):
+        form = user_postable_set_details(self, form)
+        
+        # display success message
+        messages.add_message(self.request, messages.INFO, 'Posted new announcement.')
+        return super().form_valid(form)
+
+class AnnouncementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Announcement
+    fields = ('content',)
+
+    def test_func(self):
+        return user_postable_is_owner(self)
+    
+    def form_valid(self, form):
+        form = user_postable_set_details(self, form)
+
+        # display success message
+        messages.add_message(self.request, messages.INFO, 'Successfully edited announcement.')
+        return super().form_valid(form)
+
+class AnnouncementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Announcement
+    
+    def test_func(self):
+        return user_postable_is_owner(self)
+
+    def delete(self, *args, **kwargs):
+        _obj = self.get_object()
+        messages.add_message(self.request, messages.INFO, 'Successfully deleted announcement.')
+        return super().delete(self, *args, **kwargs)
+
+    def get_success_url(self):
+        return self.request.user.profile.room.get_absolute_url()
+
