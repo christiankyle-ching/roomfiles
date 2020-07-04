@@ -10,3 +10,7 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, editable=False)
+
+    @property
+    def display_username(self):
+        return f'@{self.user.username}'

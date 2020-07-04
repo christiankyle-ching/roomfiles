@@ -21,7 +21,7 @@
                     {% else %}
                         <h5 class="text-danger">Unnamed</h5>
                     {% endif %}
-                    <h6>{{ user.username }}</h6>
+                    <h6>{{ user.profile.display_username }}</h6>
                     <small>
                         {% if user.email %} {{ user.email }} {% else %} No email {% endif %}
                     </small>

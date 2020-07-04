@@ -35,22 +35,22 @@ class Room(Describable):
         return reverse('room', kwargs={ 'pk' : self.pk, 'slug' : self.slug })
 
     def save(self, *args, **kwargs):
-        # generate slug
+        # generate slug from name
         name = self.name
         self.slug = slugify(name, allow_unicode=True)
 
         super().save(*args, **kwargs)
 
 class File(Describable):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, editable=False)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE,) #editable=False)
 
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE,) #editable=False)
     upload_datetime = models.DateTimeField(auto_now_add=True, editable=False)
-    raw_file = models.FileField(
-        upload_to='files', storage=gd_storage,
-        validators=[limit_file_size, allowed_file_type],
-        verbose_name='File',
-        )
+    # raw_file = models.FileField(
+    #     upload_to='files', storage=gd_storage,
+    #     validators=[limit_file_size, allowed_file_type],
+    #     verbose_name='File',
+    #     )
 
     def get_absolute_url(self):
         return reverse('file', kwargs={ 'pk' : self.pk })

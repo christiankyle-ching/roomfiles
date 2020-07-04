@@ -38,7 +38,7 @@ class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         form.instance.created_by = self.request.user
 
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully created "{}".'.format(form.instance.name))
+        messages.add_message(self.request, messages.INFO, 'Successfully created "{form.instance.name}".')
         return super().form_valid(form)
 
     def test_func(self):
@@ -55,7 +55,7 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         form = set_room_details(self, form)
 
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully updated "{}".'.format(form.instance.name))
+        messages.add_message(self.request, messages.INFO, 'Successfully updated "{form.instance.name}".')
         return super().form_valid(form)
 
 class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -65,22 +65,18 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         # call super().get_context_data to get context
         context = super().get_context_data(**kwargs)
         
-        # inject Files in context, filter based on object of DetailView
-        # context['files'] = File.objects.filter(room=self.get_object()).order_by('-upload_datetime')
-
+        # Get query for files
         files_qs = File.objects.filter(room=self.get_object()).order_by('-upload_datetime')
+        # Paginate fetched files
         files_paginator = Paginator(files_qs, 2)
-
-        # get page_number from request, 1 (default) if none
+        # Get page number from url's query parameters, default to 1 if none
         page_number = self.request.GET.get('page', 1)
-
-        # get object retrieved from paginator with specified page
+        # Get query for page number specified
         file_page_obj = files_paginator.get_page(page_number)
-
-        # inject
+        # Add to context returned: Files on the room
         context['files'] = file_page_obj
         
-        # inject Profiles (People) on the room
+        # # Add to context returned: Profiles (People) on the room
         context['people'] = Profile.objects.filter(room=self.get_object()).order_by('last_name')
 
         return context
@@ -145,7 +141,7 @@ class FileCreateView(LoginRequiredMixin, CreateView):
         form = set_file_details(self, form)
         
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully uploaded "{}".'.format(form.instance.name))
+        messages.add_message(self.request, messages.INFO, 'Successfully uploaded "{form.instance.name}".')
         return super().form_valid(form)
 
 class FileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -159,7 +155,7 @@ class FileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         form = set_file_details(self, form)
 
         # display success message
-        messages.add_message(self.request, messages.INFO, 'Successfully updated "{}".'.format(form.instance.name))
+        messages.add_message(self.request, messages.INFO, 'Successfully updated "{form.instance.name}".')
         return super().form_valid(form)
 
 class FileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -170,7 +166,7 @@ class FileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def delete(self, *args, **kwargs):
         _obj = self.get_object()
-        messages.add_message(self.request, messages.INFO, 'Successfully deleted "{}".'.format(_obj.name))
+        messages.add_message(self.request, messages.INFO, 'Successfully deleted "{_obj.name}".')
         return super().delete(self, *args, **kwargs)
 
     def get_success_url(self):
