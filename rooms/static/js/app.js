@@ -13,8 +13,8 @@ if (_room_detail != null) {
         
         el_roomCode.innerText = '*****'
         el_roomCodeToggle.addEventListener('click', () => {
-            _icon = el_roomCodeToggle.querySelector('span')
-            _hide = _icon.innerText == 'visibility'
+            let _icon = el_roomCodeToggle.querySelector('span')
+            let _hide = _icon.innerText == 'visibility'
     
             if (_hide) {
                 // if hidden, then show

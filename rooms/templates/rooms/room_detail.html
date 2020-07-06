@@ -39,11 +39,11 @@
                     </h6>
                 </div>
                 <div class="col-auto">
-                    <button id="roomCodeCopy" class="btn btn-sm btn-dark float-right" data-toggle="snackbar" data-style="toast" data-content="Copied the room code.">
-                        <span class="material-icons">content_copy</span>
-                    </button>
-                    <button id="roomCodeToggle" class="btn btn-sm btn-dark float-right">
+                    <button id="roomCodeToggle" class="btn btn-sm btn-dark">
                         <span class="material-icons">visibility</span>
+                    </button>
+                    <button id="roomCodeCopy" type="button" class="btn btn-secondary" data-toggle="snackbar" data-style="toast" data-content="Copied the room code">
+                        <span class="material-icons">content_copy</span>
                     </button>
                 </div>
                 
@@ -74,7 +74,7 @@
                         <!-- Search Bar -->
                         <form class="form-group" method="GET">
                             <div class="input-group">
-                                <input type="search" placeholder="Search..." class="form-control" name="search" value="{{ search }}">
+                                <input type="search" placeholder="Search for files..." class="form-control" name="search" value="{{ search }}">
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-dark btn-sm">
                                         <i class="material-icons">search</i>
@@ -177,7 +177,7 @@
 
                         <form class="form-group" method="GET">
                             <a href="{% url 'room-anns' room.pk room.slug %}" class="input-group text-decoration-none">
-                                <input type="search" placeholder="Search..." class="form-control">
+                                <input type="search" placeholder="Search for announcement..." class="form-control">
                                 <div class="input-group-append">
                                     <button class="btn btn-dark btn-sm">
                                         <i class="material-icons">search</i>
@@ -200,7 +200,27 @@
                                         {{ ann.content|linebreaks }}
                                     </p>
 
-                                    <small>{{ ann.posted_datetime }}</small>
+                                    <!-- Likes -->
+                                    <div class="row no-gutters w-100 pt-3">
+                                        <div class="col d-flex">
+                                            <small class="my-auto">{{ ann.posted_datetime }}</small>
+                                        </div>
+
+                                        <div class="col-auto">
+                                            {% if ann in liked_announcements %}
+                                            <a href="{% url 'ann-unlike' ann.pk %}" class="btn btn-sm btn-dark">
+                                                <span class="material-icons text-primary">thumb_up</span>
+                                            </a>
+                                            {% else %}
+                                            <a href="{% url 'ann-like' ann.pk %}" class="btn btn-sm btn-dark">
+                                                <span class="material-icons">thumb_up</span>
+                                            </a>
+                                            {% endif %}
+                                            {{ ann.liked_by.count }}
+                                        </div>
+
+                                    </div>
+                                    
                                 </div>
                             </div>
                             {% endfor %}

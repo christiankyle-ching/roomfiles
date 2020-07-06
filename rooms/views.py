@@ -96,6 +96,10 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['announcements'] = announcements_qs_latest
         context['total_announcements_count'] = announcements_qs.count()
 
+        # Get User-liked announcements
+        liked_anns_qs = announcements_qs.filter(liked_by__in=[self.request.user])
+        context['liked_announcements'] = liked_anns_qs
+
         return context
 
     def test_func(self):
@@ -254,7 +258,6 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         # Sorting
         sort_with = self.request.GET.get('sort', 'date-desc')
-        print(sort_with)
         ann_qs = ann_qs.order_by('-posted_datetime') if sort_with == 'date-desc' else ann_qs.order_by('posted_datetime')
 
         context['search'] = search_keyword
@@ -266,9 +269,24 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         ann_page_obj = ann_paginator.get_page(page_number)
         context['announcements'] = ann_page_obj
 
-        
+        # Get User-liked announcements
+        liked_anns_qs = ann_qs.filter(liked_by__in=[self.request.user])
+        context['liked_announcements'] = liked_anns_qs
 
         return context
-
-
     
+def like_announcement(request, pk):
+    ann = get_object_or_404(Announcement, pk=pk)
+    ann.liked_by.add(request.user)
+    ann.save()
+
+    # redirect to caller of url(like)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+def unlike_announcement(request, pk):
+    ann = get_object_or_404(Announcement, pk=pk)
+    ann.liked_by.remove(request.user)
+    ann.save()
+
+    # redirect to caller of url(like)
+    return redirect(request.META.get('HTTP_REFERER'))

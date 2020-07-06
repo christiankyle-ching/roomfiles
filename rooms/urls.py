@@ -4,7 +4,7 @@ from . import views
 from .views import (
     RoomDetailView, RoomCreateView, RoomUpdateView,
     FileDetailView, FileCreateView, FileUpdateView, FileDeleteView,
-    AnnouncementCreateView, AnnouncementUpdateView, AnnouncementDeleteView, AnnouncementListView
+    AnnouncementCreateView, AnnouncementUpdateView, AnnouncementDeleteView, AnnouncementListView,
     )
 
 urlpatterns = [
@@ -34,6 +34,9 @@ urlpatterns = [
     path('ann/<int:pk>/', include([
         path('edit/', AnnouncementUpdateView.as_view(), name='ann-edit'),
         path('post/', AnnouncementDeleteView.as_view(), name='ann-delete'),
+        path('like/', views.like_announcement, name='ann-like'),
+        path('unlike/', views.unlike_announcement, name='ann-unlike'),
     ])),
 
 ]
+

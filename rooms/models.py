@@ -75,16 +75,18 @@ class User_Postable(models.Model):
     class Meta:
         abstract = True
 
+
 class User_Likable(models.Model):
     """
     Abstract model for models likable by a user.
     Fields:
         liked_by - Many-to-Many Field to Users
     """
-    liked_by = models.ManyToManyField(User, on_delete=models.CASCADE,) #editable=False)
+    liked_by = models.ManyToManyField(User, related_name="liked_by") #editable=False)
     
     class Meta:
         abstract = True
+
 
 # Models
 class File(Describable, User_Postable, Room_Object):
