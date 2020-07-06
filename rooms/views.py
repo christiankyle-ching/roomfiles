@@ -18,7 +18,7 @@ from .models import Room, File, Announcement
 from users.models import Profile
 
 import random, string
-
+from roomfiles.settings import FILE_PER_PAGE, ANNOUNCEMENTS_PER_PAGE
 
 def home(request):
     if request.user.is_authenticated:
@@ -82,17 +82,17 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         
         files_qs = files_qs.order_by('-posted_datetime') # DEVONLY: .defer('raw_file')
         context['total_files_count'] = files_qs.count()
-        context['done_search'] = search_keyword != ''
+        context['search'] = search_keyword
         
         # Paginate
-        files_paginator = Paginator(files_qs, 10)
+        files_paginator = Paginator(files_qs, FILE_PER_PAGE)
         files_page_number = self.request.GET.get('file_page', 1)
         files_page_obj = files_paginator.get_page(files_page_number)
         context['files'] = files_page_obj
 
         # Get query for announcements
         announcements_qs = Announcement.objects.filter(room=self.get_object()).order_by('-posted_datetime')
-        announcements_qs_latest = announcements_qs[:10] # limit query to latest 10
+        announcements_qs_latest = announcements_qs[:ANNOUNCEMENTS_PER_PAGE] # limit query to latest 10
         context['announcements'] = announcements_qs_latest
         context['total_announcements_count'] = announcements_qs.count()
 
@@ -243,12 +243,30 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
+        # Filter with search
+        search_keyword = self.request.GET.get('search', '')
         ann_qs = self.get_queryset()
+        if search_keyword != '':
+            ann_qs = ann_qs.filter(
+                Q(posted_by__username__icontains=search_keyword) |
+                Q(content__icontains=search_keyword)
+            )
+
+        # Sorting
+        sort_with = self.request.GET.get('sort', 'date-desc')
+        print(sort_with)
+        ann_qs = ann_qs.order_by('-posted_datetime') if sort_with == 'date-desc' else ann_qs.order_by('posted_datetime')
+
+        context['search'] = search_keyword
+        context['sort_with'] = sort_with
         
-        ann_paginator = Paginator(ann_qs, 10)
+        # Paginate
+        ann_paginator = Paginator(ann_qs, ANNOUNCEMENTS_PER_PAGE)
         page_number = self.request.GET.get('page', 1)
         ann_page_obj = ann_paginator.get_page(page_number)
         context['announcements'] = ann_page_obj
+
+        
 
         return context
 

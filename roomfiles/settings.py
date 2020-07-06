@@ -127,6 +127,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+##### Rooms App Settings #####
+FILE_PER_PAGE = 10
+ANNOUNCEMENTS_PER_PAGE = 10
 
 ##### Django-Specific Settings #####
 

@@ -6,3 +6,7 @@
 .form-group .invalid-feedback {
     display: block !important;
 }
+
+.text-decoration-none:hover {
+    text-decoration: none !important;
+}

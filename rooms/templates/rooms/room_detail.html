@@ -74,12 +74,12 @@
                         <!-- Search Bar -->
                         <form class="form-group" method="GET">
                             <div class="input-group">
-                                <input type="search" placeholder="Search..." class="form-control" name="search">
+                                <input type="search" placeholder="Search..." class="form-control" name="search" value="{{ search }}">
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-dark btn-sm">
                                         <i class="material-icons">search</i>
                                     </button>
-                                    {% if done_search %}
+                                    {% if search != "" %}
                                         <a href="#" class="btn btn-dark link-no-search btn-sm">
                                             <i class="material-icons">cancel</i>
                                         </a>
@@ -147,6 +147,17 @@
                                 {% endfor %}
                             </div>
 
+                            <!-- Loading Modal -->
+                            <div id="loadingModal" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body text-center">
+                                            Loading...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             {% if files.has_next %}
                                 <a href="?file_page={{ files.next_page_number }}" class="infinite-more-link"></a>
                             {% endif %}
@@ -163,9 +174,19 @@
                 <!-- Announcements Tab -->
                 <div class="tab-pane fade" id="ann" role="tabpanel">
                     <div class="container pt-3">
-                        {% if announcements %}
 
-                            <!-- <p class="text-muted"></p> -->
+                        <form class="form-group" method="GET">
+                            <a href="{% url 'room-anns' room.pk room.slug %}" class="input-group text-decoration-none">
+                                <input type="search" placeholder="Search..." class="form-control">
+                                <div class="input-group-append">
+                                    <button class="btn btn-dark btn-sm">
+                                        <i class="material-icons">search</i>
+                                    </button>
+                                </div>
+                            </a>
+                        </form>
+                        
+                        {% if announcements %}
 
                             {% for ann in announcements %}
                             <div class="card mb-3">

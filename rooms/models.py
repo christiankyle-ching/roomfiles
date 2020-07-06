@@ -75,6 +75,17 @@ class User_Postable(models.Model):
     class Meta:
         abstract = True
 
+class User_Likable(models.Model):
+    """
+    Abstract model for models likable by a user.
+    Fields:
+        liked_by - Many-to-Many Field to Users
+    """
+    liked_by = models.ManyToManyField(User, on_delete=models.CASCADE,) #editable=False)
+    
+    class Meta:
+        abstract = True
+
 # Models
 class File(Describable, User_Postable, Room_Object):
     # DEVONLY: disable file upload for development performance
@@ -90,7 +101,7 @@ class File(Describable, User_Postable, Room_Object):
     def __str__(self):
         return f'File {self.name}'
 
-class Announcement(Room_Object, User_Postable):
+class Announcement(Room_Object, User_Postable, User_Likable):
     content = models.TextField(blank=True, max_length=1000)
 
     def __str__(self):
