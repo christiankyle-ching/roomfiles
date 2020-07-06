@@ -1,0 +1,65 @@
+{% extends 'rooms/base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+    {% if announcements %}
+
+    
+
+        
+    
+        <!-- Infinite Container -->
+        <div class="infinite-container">
+            {% for ann in announcements %}
+            <!-- Announcement Item -->
+            <div class="card mt-3 infinite-item">
+                <div class="card-body">
+                    
+                    <strong>
+                        {{ ann.posted_by.profile.display_username }}
+                    </strong>
+                    <small class="float-right">{{ ann.posted_datetime }}</small>
+
+                    <p class="mt-3">
+                        {{ ann.content|linebreaks }}
+                    </p>
+
+                    
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+
+        <div id="loadingModal" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if announcements.has_next %}
+            <a href="?page={{ announcements.next_page_number }}" class="infinite-more-link"></a>
+        {% else %}
+            <div class="infinite-item text-center my-5">No more announcements to show</div>
+        {% endif %}
+            
+    {% else %}
+    <div class="text-center">
+        No announcements made.
+    </div>
+    {% endif %}
+    
+
+</div>
+
+
+
+
+{% endblock content %}

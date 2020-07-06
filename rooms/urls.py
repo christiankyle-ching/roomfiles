@@ -4,7 +4,7 @@ from . import views
 from .views import (
     RoomDetailView, RoomCreateView, RoomUpdateView,
     FileDetailView, FileCreateView, FileUpdateView, FileDeleteView,
-    AnnouncementCreateView, AnnouncementUpdateView, AnnouncementDeleteView,
+    AnnouncementCreateView, AnnouncementUpdateView, AnnouncementDeleteView, AnnouncementListView
     )
 
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
     path('room/<uuid:pk>-<str:slug>/', include([
         path('', RoomDetailView.as_view(), name='room'),
         path('edit/', RoomUpdateView.as_view(), name='room-edit'),
+        path('anns/', AnnouncementListView.as_view(), name='room-anns'),
     ])),
     path('room/leave/', views.leave_room, name='room-leave'),
 

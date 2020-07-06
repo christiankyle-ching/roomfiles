@@ -1,14 +1,19 @@
+# Django Core imports
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
 
-from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
+# Generic/Specific forms import
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
 from .forms import RoomJoinForm
 
+# Form-related imports
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
 from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details
 
+# Model imports
 from .models import Room, File, Announcement
 from users.models import Profile
 
@@ -66,11 +71,21 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context = super().get_context_data(**kwargs)
         
         # Get query for files
-        files_qs = File.objects.filter(room=self.get_object()).order_by('-posted_datetime') # DEV: .defer('raw_file')
+        search_keyword = self.request.GET.get('search', '')
+        files_qs = File.objects.filter(room=self.get_object())
+        if search_keyword != '':
+            files_qs = files_qs.filter(
+                Q(posted_by__username__icontains=search_keyword) |
+                Q(name__icontains=search_keyword) |
+                Q(description__icontains=search_keyword)
+            )
+        
+        files_qs = files_qs.order_by('-posted_datetime') # DEVONLY: .defer('raw_file')
         context['total_files_count'] = files_qs.count()
+        context['done_search'] = search_keyword != ''
         
         # Paginate
-        files_paginator = Paginator(files_qs, 1)
+        files_paginator = Paginator(files_qs, 10)
         files_page_number = self.request.GET.get('file_page', 1)
         files_page_obj = files_paginator.get_page(files_page_number)
         context['files'] = files_page_obj
@@ -80,7 +95,6 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         announcements_qs_latest = announcements_qs[:10] # limit query to latest 10
         context['announcements'] = announcements_qs_latest
         context['total_announcements_count'] = announcements_qs.count()
-        
 
         return context
 
@@ -138,7 +152,7 @@ class FileDetailView(LoginRequiredMixin, DetailView):
 
 class FileCreateView(LoginRequiredMixin, CreateView):
     model = File
-    fields = ('name', 'description',) #'raw_file') # DEV
+    fields = ('name', 'description',) #'raw_file') # DEVONLY
     
     def form_valid(self, form):
         form = user_postable_set_details(self, form)
@@ -216,3 +230,27 @@ class AnnouncementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
     def get_success_url(self):
         return self.request.user.profile.room.get_absolute_url()
 
+class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    template_name = 'rooms/announcement_list.html'
+
+    def test_func(self):
+        _room = get_object_or_404(Room, pk=self.kwargs['pk'])
+        return self.request.user.profile.room == _room
+
+    def get_queryset(self):
+        return Announcement.objects.filter(room=self.request.user.profile.room).order_by('-posted_datetime')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        ann_qs = self.get_queryset()
+        
+        ann_paginator = Paginator(ann_qs, 10)
+        page_number = self.request.GET.get('page', 1)
+        ann_page_obj = ann_paginator.get_page(page_number)
+        context['announcements'] = ann_page_obj
+
+        return context
+
+
+    

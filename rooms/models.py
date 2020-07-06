@@ -77,7 +77,7 @@ class User_Postable(models.Model):
 
 # Models
 class File(Describable, User_Postable, Room_Object):
-    # DEV: disable file upload for development performance
+    # DEVONLY: disable file upload for development performance
     # raw_file = models.FileField(
     #     upload_to='files', storage=gd_storage,
     #     validators=[limit_file_size, allowed_file_type],

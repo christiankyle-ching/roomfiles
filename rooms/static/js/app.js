@@ -1,5 +1,8 @@
+"use strict"
+
 // Room Detail Script
-if (document.querySelector('#roomDetailID') != null) {
+var _room_detail = document.querySelector('#roomDetailID')
+if (_room_detail != null) {
 
     function init_roomcode() {
         let el_roomCode = document.getElementById('roomCode')
@@ -49,8 +52,8 @@ if (document.querySelector('#roomDetailID') != null) {
     function show_hash_tab() {
         // Select tab if hash is available
         if (window.location.hash != "") {
-            console.log(`#roomTabs a[href="${window.location.hash}"]`)
             $(`#roomTabs a[href="${window.location.hash}"]`).tab('show')
+            window.location.hash = ''
         }
     }
 
@@ -66,17 +69,72 @@ const allowed_file_types = [
 ]
 
 // File Form Script
-if (document.querySelector('#fileForm') != null) {
+var _file_form = document.querySelector('#fileForm')
+if (_file_form != null) {
     // limit file picker types (can be overridden)
     document.querySelector('#id_raw_file').setAttribute('accept', allowed_file_types.toString())
 }
 
 // Announcement Form Script
-if (document.querySelector('#announcementForm') != null) {
-    _content = document.querySelector('#id_content')    
+var _ann_form = document.querySelector('#announcementForm')
+if (_ann_form != null) {
+    let _content = document.querySelector('#id_content')    
     if (_content != null) _content.setAttribute('placeholder', "What's on your mind?")
 }
 
+// Infinite Container Loading Script
+let _infinite_items = document.querySelector('.infinite-container')
+if (_infinite_items != null) {
+    let loadingModal = $('#loadingModal')
+    let loading = false
+    let loaded = false
+
+    let longLoadingTime = 1000
+    let modalTimeout = 5000
+    let timerStarted = false
+    let startTime
+
+    // Every 10ms
+    setInterval(() => {
+        // Update loading
+        loading = _infinite_items.classList.contains('infinite-loading')
+
+        if (loading) {
+            // get start loading time if timer not yet started
+            if (!timerStarted) {
+                startTime = (new Date()).getMilliseconds();
+                timerStarted = true;
+            }
+            let currTime = (new Date()).getMilliseconds()
+            let timeDiff = currTime - startTime
+
+            // If loading takes too long, then show loadingModal
+            if (timeDiff > longLoadingTime) {
+                // if not yet loaded, show. Else, don't do anything
+                if (!loaded) loadingModal.modal('show')
+            }
+            
+        }
+    }, 10);
+
+    // On modal show
+    loadingModal.on('show.bs.modal', function () {
+        // prevent trigger modal.show
+        loaded = true
+
+        // delay hide
+        setTimeout(() => {
+            loadingModal.modal('hide')
+        }, modalTimeout);
+    })
+
+    // On modal hide
+    loadingModal.on('hidden.bs.modal', function () {
+        loaded = false
+    })
+}
+
+// Functions
 
 /**
  * 
@@ -127,7 +185,7 @@ function checkFile(el_id, type) {
 
     function clearErrors() {
         _errors = _parent.querySelectorAll('.invalid-feedback')
-        for (e of _errors) e.remove()
+        for (let e of _errors) e.remove()
     }
 
     function showError(error_message) {
@@ -141,4 +199,14 @@ function checkFile(el_id, type) {
         _parent.appendChild(_error)
     }
 }
+
+var _links_no_search = document.querySelectorAll('.link-no-search')
+if (_links_no_search != null) {
+    for (let l of _links_no_search) {
+        let _link = new URL(window.location)
+        _link.search = ''
+        l.href = _link.toString()
+    }
+}
+
 
