@@ -25,3 +25,5 @@ def set_room_details(self, form):
 
     return form
 
+def user_ann_likable(user_obj, announcement_obj):
+    return user_obj.profile.room == announcement_obj.room

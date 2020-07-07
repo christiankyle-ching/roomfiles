@@ -51,19 +51,15 @@
                         {{ ann.content|linebreaks }}
                     </p>
 
-                    <!-- Likes -->
+                    
                     <div>
                         <div class="float-right">
-                            {% if ann in liked_announcements %}
-                            <a href="{% url 'ann-unlike' ann.pk %}" class="btn btn-sm btn-dark">
-                                <span class="material-icons text-primary">thumb_up</span>
+                            <!-- Like Button -->
+                            <a href="{% url 'ann-like-api' ann.pk %}" class="btn btn-sm btn-dark btn-like"
+                                data-href="{% url 'ann-like-api' ann.pk %}" data-likes="{{ ann.liked_by.count }}">
+                                <span class="material-icons {% if ann in liked_announcements %}text-primary{% endif %}">thumb_up</span>
+                                <span class="like-count p-2">{{ ann.liked_by.count }}</span>
                             </a>
-                            {% else %}
-                            <a href="{% url 'ann-like' ann.pk %}" class="btn btn-sm btn-dark">
-                                <span class="material-icons">thumb_up</span>
-                            </a>
-                            {% endif %}
-                            {{ ann.liked_by.count }}
                         </div>
                         
                     </div>

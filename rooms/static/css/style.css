@@ -10,3 +10,13 @@
 .text-decoration-none:hover {
     text-decoration: none !important;
 }
+
+#noscript-modal {
+    background: white;
+    display: block !important;
+}
+
+.btn-like {
+    display: flex !important;
+    align-items: center;
+}

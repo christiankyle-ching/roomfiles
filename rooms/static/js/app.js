@@ -62,6 +62,44 @@ if (_room_detail != null) {
 
 }
 
+// Like Button Fetch
+let _like_buttons = document.querySelectorAll('.btn-like')
+for (let button of _like_buttons) {
+    button.addEventListener('click', function(e) {
+        e.preventDefault()
+
+        let _like_url = button.getAttribute('data-href')
+        request_like(button, _like_url)
+    })
+}
+
+async function request_like(element, url) {
+    element.classList.add('disabled')
+
+    let response = await fetch(url)
+    let data = await response.json()
+
+    update_like_button(element, data.liked, data.new_like_count)
+}
+
+function update_like_button(el, liked, count) {
+    if (el != undefined) {
+        el.querySelector('.like-count').innerText = count
+        el.setAttribute('data-likes', count)
+
+        let _icon = el.querySelector('.material-icons')
+        if (liked) _icon.classList.add('text-primary')
+        else  _icon.classList.remove('text-primary')
+
+        setTimeout(() => {
+            el.classList.remove('disabled');
+        }, 200);
+        
+    }
+}
+
+// File Validation
+
 const max_file_size_mb = 5
 const max_file_size = max_file_size_mb * (1024 * 1024)
 const allowed_file_types = [

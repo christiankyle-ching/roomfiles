@@ -3,6 +3,8 @@ from django.shortcuts import render, reverse, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied
 
 # Generic/Specific forms import
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
@@ -11,7 +13,7 @@ from .forms import RoomJoinForm
 # Form-related imports
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details
+from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details, user_ann_likable
 
 # Model imports
 from .models import Room, File, Announcement
@@ -132,11 +134,7 @@ def join_room(request):
         if form.is_valid():
             # check if room exists
             _code = form.cleaned_data.get('code')
-            _room = Room.objects.get(pk=_code)
-
-            if _room == None:
-                # if not, raise error
-                raise ValidationError('Room does not exist.')
+            _room = get_object_or_404(Room, pk=_code)
             
             # if exists, save
             request.user.profile.room = _room
@@ -275,18 +273,29 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         return context
     
-def like_announcement(request, pk):
+
+def toggle_announcement_api(request, pk):
     ann = get_object_or_404(Announcement, pk=pk)
-    ann.liked_by.add(request.user)
+    user = request.user
+    liked = False
+
+    if not user_ann_likable(user, ann):
+        raise PermissionDenied()
+
+    if user in ann.liked_by.all():
+        ann.liked_by.remove(user)
+        liked = False
+    else:
+        ann.liked_by.add(user)
+        liked = True
+    
     ann.save()
 
-    # redirect to caller of url(like)
-    return redirect(request.META.get('HTTP_REFERER'))
+    response_data = {
+        'liked': liked,
+        'new_like_count': ann.liked_by.count()
+    }
 
-def unlike_announcement(request, pk):
-    ann = get_object_or_404(Announcement, pk=pk)
-    ann.liked_by.remove(request.user)
-    ann.save()
-
-    # redirect to caller of url(like)
-    return redirect(request.META.get('HTTP_REFERER'))
+    response = JsonResponse(response_data)
+    return response
+    
