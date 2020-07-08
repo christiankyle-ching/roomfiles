@@ -38,35 +38,9 @@
         <!-- Infinite Container -->
         <div class="infinite-container pt-3">
             {% for ann in announcements %}
-            <!-- Announcement Item -->
-            <div class="card mt-3 infinite-item">
-                <div class="card-body">
-                    
-                    <strong>
-                        {{ ann.posted_by.profile.display_username }}
-                    </strong>
-                    <small class="float-right">{{ ann.posted_datetime }}</small>
+            
+            {% include 'rooms/item_templates/announcement_item.html' %}
 
-                    <p class="mt-3">
-                        {{ ann.content|linebreaks }}
-                    </p>
-
-                    
-                    <div>
-                        <div class="float-right">
-                            <!-- Like Button -->
-                            <a href="{% url 'ann-like-api' ann.pk %}" class="btn btn-sm btn-dark btn-like"
-                                data-href="{% url 'ann-like-api' ann.pk %}" data-likes="{{ ann.liked_by.count }}">
-                                <span class="material-icons {% if ann in liked_announcements %}text-primary{% endif %}">thumb_up</span>
-                                <span class="like-count p-2">{{ ann.liked_by.count }}</span>
-                            </a>
-                        </div>
-                        
-                    </div>
-
-                    
-                </div>
-            </div>
             {% endfor %}
 
         </div>

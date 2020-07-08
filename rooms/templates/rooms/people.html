@@ -1,28 +1,45 @@
-{% if people %}
-                            <p class="text-muted">{{ people | length }} people</p>
-                
-                            {% for person in people %}
-                            <div>
-                                {% if user.profile == person %}
-                                <h6 class="text-primary">{{ person.user.profile.display_username }} (You)</h6>
-                                {% else%}
-                                <h6>{{ person.user.profile.display_username }}</h6>
-                                {% endif %}
+{% extends 'rooms/base.html' %}
 
-                                
-                                <p class="text-muted">
-                                    {% if person.first_name == "" and person.last_name == "" %}
-                                        Unnamed
-                                    {% else %}
-                                        {{ person.last_name }}, {{ person.first_name }}
-                                    {% endif %}
-                                </p>
+{% block content %}
+<div class="container">
 
-                            </div>
-                            {% endfor %}
+    {% if people %}
+        <p class="text-muted pt-4 m-0 text-center">{{ people | length }} people in <strong>{{ room.name }}</strong></p>
+
+        <ul class="list-group">
+            {% for person in people %}
+            <li class="list-group-item">
                 
-                        {% else %}
-                            <div class="text-center">
-                                <span>No people in this room yet. Invite your mates!
-                            </div>
-                        {% endif %}
+                <img src="{{ person.user.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
+                
+                <div>
+                    
+                    <h6 class="{% if user.profile == person %}text-primary{% endif %}">
+                        {{ person.user.profile.display_username }}
+                        
+                        {% if room.created_by == person.user %} (Creator) {% endif %}
+                    </h6>
+                    
+                    
+                    {% if person.first_name == "" and person.last_name == "" %}
+                        <span class="text-muted">Unnamed</span>
+                    {% else %}
+                        <span>{{ person.full_name }}</span>
+                    {% endif %}
+                    
+                </div>
+                
+
+            </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <div class="text-center">
+            <span>No people in this room yet. Invite your mates!
+        </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

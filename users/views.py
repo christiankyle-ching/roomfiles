@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .models import Avatar
+from django.http import JsonResponse
 
-# Create your views here.
+
+
 def register(request):
     form = UserRegisterForm()
 
@@ -30,14 +33,28 @@ def profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
-
-        if u_form.is_valid() and p_form.is_valid():
+        avatar_id = request.POST.get('avatar')
+        
+        if u_form.is_valid() and p_form.is_valid() and int(avatar_id) > 0:
             u_form.save()
+            
+            request.user.profile.avatar = get_object_or_404(Avatar, pk=avatar_id)
             p_form.save()
 
-            messages.success(request, 'Successfully updated profile information.')
+            messages.success(request, 'Successfully updated your profile.')
 
             return redirect('profile')
 
     context = { 'u_form': u_form, 'p_form': p_form }
     return render(request, 'users/profile.html', context)
+
+def avatar_preview(request, pk):
+    avatar = get_object_or_404(Avatar, pk=pk)
+    user = request.user
+
+    response = {
+        'image_url' : avatar.image.url
+    }
+
+    return JsonResponse(response)
+    

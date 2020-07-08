@@ -13,7 +13,7 @@ from .forms import RoomJoinForm
 # Form-related imports
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details, user_ann_likable
+from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details, has_same_room
 
 # Model imports
 from .models import Room, File, Announcement
@@ -21,6 +21,7 @@ from users.models import Profile
 
 import random, string
 from roomfiles.settings import FILE_PER_PAGE, ANNOUNCEMENTS_PER_PAGE
+
 
 def home(request):
     if request.user.is_authenticated:
@@ -33,6 +34,7 @@ def home(request):
 
 def room_landing(request):
     return render(request, 'rooms/room-landing.html')
+
 
 
 # Room Views
@@ -107,6 +109,12 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def test_func(self):
         return self.request.user.profile.room == self.get_object()
 
+def room_people_listview(request, pk, slug):
+    _room = get_object_or_404(Room, pk=pk)
+    _people = Profile.objects.filter(room=_room).order_by('user__username')
+    
+    return render(request, 'people.html', { 'people': _people, 'room' : _room })
+
 @login_required
 def leave_room(request):
     if not request.user.profile.room:
@@ -146,6 +154,7 @@ def join_room(request):
             return redirect(_room)
 
     return render(request, 'rooms/room_join.html', { 'form' : form })
+
 
 
 # File Views
@@ -192,6 +201,7 @@ class FileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user.profile.room.get_absolute_url()
 
 
+
 # Announcement Views
 class AnnouncementCreateView(LoginRequiredMixin, CreateView):
     model = Announcement
@@ -225,7 +235,6 @@ class AnnouncementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
         return user_postable_is_owner(self)
 
     def delete(self, *args, **kwargs):
-        _obj = self.get_object()
         messages.add_message(self.request, messages.INFO, 'Successfully deleted announcement.')
         return super().delete(self, *args, **kwargs)
 
@@ -274,28 +283,28 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
     
 
-def toggle_announcement_api(request, pk):
-    ann = get_object_or_404(Announcement, pk=pk)
+def api_toggle_like(request, pk):
+    likable_obj = get_object_or_404(Announcement, pk=pk)
     user = request.user
     liked = False
 
-    if not user_ann_likable(user, ann):
+    if not has_same_room(user, likable_obj):
         raise PermissionDenied()
 
-    if user in ann.liked_by.all():
-        ann.liked_by.remove(user)
+    if user in likable_obj.liked_by.all():
+        likable_obj.liked_by.remove(user)
         liked = False
     else:
-        ann.liked_by.add(user)
+        likable_obj.liked_by.add(user)
         liked = True
     
-    ann.save()
+    likable_obj.save()
 
-    response_data = {
+    response = {
         'liked': liked,
-        'new_like_count': ann.liked_by.count()
+        'new_like_count': likable_obj.liked_by.count()
     }
 
-    response = JsonResponse(response_data)
-    return response
+    return JsonResponse(response)
     
+

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # Dependencies
     'crispy_forms',
     'gdstorage',
+    'PIL',
 ]
 
 MIDDLEWARE = [
@@ -133,8 +134,11 @@ ANNOUNCEMENTS_PER_PAGE = 10
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 
-STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Max file upload size
 MAX_FILE_SIZE = 5 * (1024**2)

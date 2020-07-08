@@ -12,29 +12,68 @@
 
             <div class="card-header">
 
-                <!-- User Information -->
-                <div class="text-center text-md-left">
-                    <!-- TODO: Image -->
+                <div class="row">
+                    <div class="col-12 col-sm-auto">
+                        {% if p_form.instance.avatar %}
+                            <div class="px-3">
+                                <img src="{{ p_form.instance.avatar.image.url }}" class="avatar-preview">
+                            </div>
+                        {% endif %}
+                    </div>
 
-                    {% if user.profile.first_name or user.profile.last_name %}
-                    <h5>{{ user.profile.last_name }}{% if user.profile.first_name %}, {{ user.profile.first_name }}{% endif %}</h5>
-                    {% else %}
-                        <h5 class="text-danger">Unnamed</h5>
-                    {% endif %}
-                    <h6>{{ user.profile.display_username }}</h6>
-                    <small>
-                        {% if user.email %} {{ user.email }} {% else %} No email {% endif %}
-                    </small>
+                    <div class="col-12 col-sm d-flex align-items-center justify-content-center justify-content-sm-start">
+                        <!-- User Information -->
+                        <div class="text-center text-sm-left py-3">
+                            {% if user.profile.first_name or user.profile.last_name %}
+                            <h5>{{ user.profile.last_name }}{% if user.profile.first_name %}, {{ user.profile.first_name }}{% endif %}</h5>
+                            {% else %}
+                                <h5 class="text-danger">Unnamed</h5>
+                            {% endif %}
+                            <h6>{{ user.profile.display_username }}</h6>
+                            <small>
+                                {% if user.email %} {{ user.email }} {% else %} No email {% endif %}
+                            </small>
+                        </div>
+                    </div>
                 </div>
+
+                
+
+
+                
             </div>
 
-            <div class="container pt-3">
-                <form method="POST">
+            
+
+        </div>
+
+        <div class="card-body">
+            <div class="container">
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <legend>Your Profile</legend>
                     <fieldset class="form-group">
                         {{ u_form | crispy }}
                         {{ p_form | crispy }}
+
+                        <!-- Custom Avatar Preview -->
+                        <div class="form-group bmd-form-group">
+                            <label for="id_avatar" class="bmd-label-static">Avatar</label>
+
+                            {% if not p_form.instance.avatar %}No Avatar selected{% endif %}
+                            <img {% if p_form.instance.avatar %} src="{{ p_form.instance.avatar.image.url }}" {% endif %} class="avatar-preview">
+
+
+                            <select name="avatar" id="id_avatar" class="custom-select mt-3" onchange="fetch_avatar(this)">
+                                {% for a in p_form.avatars %}
+                                <option value="{{ a.id }}" data-href="{{a.image.url}}" 
+                                    {% if p_form.instance.avatar.id == a.id %}selected{% endif %}>
+                                        {{ a }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
                     </fieldset>
 
                     <div class="form-group text-right">
@@ -44,7 +83,6 @@
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 

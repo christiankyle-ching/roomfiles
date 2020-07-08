@@ -19,6 +19,7 @@ urlpatterns = [
         path('', RoomDetailView.as_view(), name='room'),
         path('edit/', RoomUpdateView.as_view(), name='room-edit'),
         path('anns/', AnnouncementListView.as_view(), name='room-anns'),
+        path('people/', views.room_people_listview, name='room-people'),
     ])),
     path('room/leave/', views.leave_room, name='room-leave'),
 
@@ -30,11 +31,12 @@ urlpatterns = [
         path('delete/', FileDeleteView.as_view(), name='file-delete'),
     ])),
 
+    # Announcement Urls
     path('ann/post/', AnnouncementCreateView.as_view(), name='ann-create'),
     path('ann/<int:pk>/', include([
         path('edit/', AnnouncementUpdateView.as_view(), name='ann-edit'),
-        path('post/', AnnouncementDeleteView.as_view(), name='ann-delete'),
-        path('like-api/', views.toggle_announcement_api, name='ann-like-api'),
+        path('delete/', AnnouncementDeleteView.as_view(), name='ann-delete'),
+        path('like/', views.api_toggle_like, name='ann-like'),
     ])),
 
 ]

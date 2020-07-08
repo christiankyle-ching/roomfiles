@@ -26,6 +26,8 @@ class Describable(models.Model):
     class Meta:
         abstract = True
 
+
+
 # Model
 class Room(Describable):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
@@ -75,7 +77,6 @@ class User_Postable(models.Model):
     class Meta:
         abstract = True
 
-
 class User_Likable(models.Model):
     """
     Abstract model for models likable by a user.
@@ -86,6 +87,7 @@ class User_Likable(models.Model):
     
     class Meta:
         abstract = True
+
 
 
 # Models

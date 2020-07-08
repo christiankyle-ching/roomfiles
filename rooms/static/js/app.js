@@ -1,8 +1,10 @@
 "use strict"
 
+
+
 // Room Detail Script
 var _room_detail = document.querySelector('#roomDetailID')
-if (_room_detail != null) {
+if (_room_detail) {
 
     function init_roomcode() {
         let el_roomCode = document.getElementById('roomCode')
@@ -62,11 +64,13 @@ if (_room_detail != null) {
 
 }
 
+
+
 // Like Button Fetch
 let _like_buttons = document.querySelectorAll('.btn-like')
 for (let button of _like_buttons) {
-    button.addEventListener('click', function(e) {
-        e.preventDefault()
+    button.addEventListener('click', function(event) {
+        event.preventDefault()
 
         let _like_url = button.getAttribute('data-href')
         request_like(button, _like_url)
@@ -98,6 +102,8 @@ function update_like_button(el, liked, count) {
     }
 }
 
+
+
 // File Validation
 
 const max_file_size_mb = 5
@@ -108,21 +114,23 @@ const allowed_file_types = [
 
 // File Form Script
 var _file_form = document.querySelector('#fileForm')
-if (_file_form != null) {
+if (_file_form) {
     // limit file picker types (can be overridden)
     document.querySelector('#id_raw_file').setAttribute('accept', allowed_file_types.toString())
 }
 
+
+
 // Announcement Form Script
 var _ann_form = document.querySelector('#announcementForm')
-if (_ann_form != null) {
+if (_ann_form) {
     let _content = document.querySelector('#id_content')    
     if (_content != null) _content.setAttribute('placeholder', "What's on your mind?")
 }
 
 // Infinite Container Loading Script
 let _infinite_items = document.querySelector('.infinite-container')
-if (_infinite_items != null) {
+if (_infinite_items) {
     let loadingModal = $('#loadingModal')
     let loading = false
     let loaded = false
@@ -171,6 +179,20 @@ if (_infinite_items != null) {
         loaded = false
     })
 }
+
+
+
+// Avatar Preview
+function fetch_avatar(select_element) {
+    let _input_group = select_element.parentNode
+    let _preview = _input_group.querySelector('.avatar-preview')
+
+    let _seleted_option = select_element.selectedOptions[0]
+
+    _preview.setAttribute('src', _seleted_option.getAttribute('data-href'))
+}
+
+
 
 // Functions
 

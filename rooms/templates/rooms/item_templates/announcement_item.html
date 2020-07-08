@@ -1,0 +1,51 @@
+<!-- Announcement Item -->
+<div class="card mt-3 infinite-item">
+    <div class="card-body">
+        <div>
+            <img src="{{ ann.posted_by.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
+            
+            <div class="content-with-avatar">
+                <!-- Post Menu Options -->
+                {% if ann.posted_by == user %}
+                <div class="dropdown float-right">
+                    <button class="btn btn-dark btn-sm" type="button" id="optionsMenuButton" data-toggle="dropdown">
+                        <span class="material-icons">more_vert</span>
+                    </button>
+            
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsMenuButton">
+                        <a href="{% url 'ann-edit' ann.pk %}" class="dropdown-item">Edit</a>
+                        <a href="{% url 'ann-delete' ann.pk %}" class="dropdown-item text-danger">Delete</a>
+                    </div>        
+                </div>
+                {% endif %}
+
+                <strong class="pt-1 d-block">
+                    {{ ann.posted_by.profile.display_username }}
+                </strong>
+        
+                <div class="mt-3">
+                    {{ ann.content|linebreaks }}
+                </div>
+            </div>
+
+        </div>
+        
+        
+        <div class="row">
+            <div class="col-auto d-flex">
+                <small class="my-auto">{{ ann.posted_datetime }}</small>
+            </div>
+
+            <div class="col d-flex">
+                <!-- Like Button -->
+                <a href="{% url 'ann-like' ann.pk %}" class="btn btn-sm btn-dark btn-like mt-auto ml-auto"
+                    data-href="{% url 'ann-like' ann.pk %}" data-likes="{{ ann.liked_by.count }}">
+                    <span class="material-icons {% if ann in liked_announcements %}text-primary{% endif %}">thumb_up</span>
+                    <span class="like-count p-2">{{ ann.liked_by.count }}</span>
+                </a>
+            </div>
+            
+        </div>
+
+    </div>
+</div>

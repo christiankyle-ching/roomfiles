@@ -1,0 +1,28 @@
+{% extends 'rooms/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+
+    <div class="card mt-3">
+        <div class="card-body">
+
+            <form method="POST">
+                {% csrf_token %}
+    
+                <div class="card-header">
+                    <h5>Are you sure you want to delete this post?</h5>
+                </div>
+    
+                <div class="card-body text-right">
+                    <a href="{% url 'room' announcement.room.pk announcement.room.slug %}" class="btn btn-outline-secondary mr-3">Cancel</a>
+                    <button type="submit" class="btn btn-danger">Yes, Delete</a>
+                </div>
+    
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

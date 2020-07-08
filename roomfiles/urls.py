@@ -35,4 +35,8 @@ urlpatterns = [
     path('profile/', user_views.profile, name='profile'),
 
     path('register/', user_views.register, name='register'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+    # Avatar Fetch Url
+    path('avatar/<int:pk>/', user_views.avatar_preview, name='avatar-preview')
+
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
