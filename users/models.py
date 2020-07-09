@@ -15,7 +15,7 @@ class Avatar(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
 
-    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True, default=1)
+    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True, default=Avatar.objects.first())
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, editable=False)
