@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 
 # Generic/Specific forms import
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
+from django.views.generic.base import RedirectView
 from .forms import RoomJoinForm
 
 # Form-related imports
@@ -281,30 +282,12 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['liked_announcements'] = liked_anns_qs
 
         return context
-    
 
 def api_toggle_like(request, pk):
-    likable_obj = get_object_or_404(Announcement, pk=pk)
+    ann = get_object_or_404(Announcement, pk=pk)
     user = request.user
-    liked = False
-
-    if not has_same_room(user, likable_obj):
-        raise PermissionDenied()
-
-    if user in likable_obj.liked_by.all():
-        likable_obj.liked_by.remove(user)
-        liked = False
-    else:
-        likable_obj.liked_by.add(user)
-        liked = True
     
-    likable_obj.save()
-
-    response = {
-        'liked': liked,
-        'new_like_count': likable_obj.liked_by.count()
-    }
+    response = ann.toggle_like(user)
 
     return JsonResponse(response)
-    
 

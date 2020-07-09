@@ -37,3 +37,27 @@
 .content-with-avatar {
     padding-left: 60px;
 }
+
+.avatar-select-container {
+    display: flex !important;
+    flex-flow: row wrap;
+    justify-content: space-around;
+}
+
+.avatar-item {
+    padding: 5px !important;
+    margin: 5px !important;
+    border: 2px gray solid;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.avatar-item-selected {
+    border-color: darkcyan !important;
+    background-color: rgba(0, 138, 138, 0.3);
+}
+
+.avatar-selected-preview {
+    max-width: 40px;
+    max-height: 40px;
+}

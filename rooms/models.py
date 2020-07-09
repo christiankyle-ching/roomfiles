@@ -1,5 +1,6 @@
 from django.shortcuts import reverse
 from django.utils.text import slugify
+from django.core.exceptions import PermissionDenied
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -113,3 +114,24 @@ class Announcement(Room_Object, User_Postable, User_Likable):
 
     def get_absolute_url(self):
         return self.room.get_absolute_url(tab='ann')
+
+    def toggle_like(self, user):
+        if not self.room == user.profile.room:
+            raise PermissionDenied()
+
+        if user in self.liked_by.all():
+            self.liked_by.remove(user)
+            liked = False
+        else:
+            self.liked_by.add(user)
+            liked = True
+        
+        self.save()
+
+        response = {
+            'liked': liked,
+            'new_like_count': self.liked_by.count(),
+            'redirect_href': self.get_absolute_url()
+        }
+
+        return response

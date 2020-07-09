@@ -83,10 +83,12 @@ async function request_like(element, url) {
     let response = await fetch(url)
     let data = await response.json()
 
-    update_like_button(element, data.liked, data.new_like_count)
+    update_like_button(element, data.liked, data.new_like_count, data.redirect_href)
 }
 
-function update_like_button(el, liked, count) {
+function update_like_button(el, liked, count, redirectHref) {
+    window.location.href = redirectHref
+    
     if (el != undefined) {
         el.querySelector('.like-count').innerText = count
         el.setAttribute('data-likes', count)
@@ -98,11 +100,9 @@ function update_like_button(el, liked, count) {
         setTimeout(() => {
             el.classList.remove('disabled');
         }, 200);
-        
     }
+
 }
-
-
 
 // File Validation
 
@@ -181,15 +181,41 @@ if (_infinite_items) {
 }
 
 
+let _input_avatar = document.querySelector('#id_avatar')
+let _modal_avatar_select = document.querySelector('#avatar-select-modal')
+let _selected_avatar_preview = document.querySelector('.avatar-selected-preview')
+if (_input_avatar && _modal_avatar_select) {
 
-// Avatar Preview
-function fetch_avatar(select_element) {
-    let _input_group = select_element.parentNode
-    let _preview = _input_group.querySelector('.avatar-preview')
+    let _avatar_items = document.querySelectorAll('.avatar-item')
+    let _avatar_select_button = document.querySelector('.btn-avatar-select')
 
-    let _seleted_option = select_element.selectedOptions[0]
+    for (let item of _avatar_items) {
+        item.addEventListener('click', function(event) {
+            event.preventDefault()
 
-    _preview.setAttribute('src', _seleted_option.getAttribute('data-href'))
+            highlight_item(item)
+        })
+    }
+
+    function highlight_item(element) {
+        for (let item of _avatar_items) {
+            item.classList.remove('avatar-item-selected')
+        }
+        element.classList.add('avatar-item-selected')
+    }
+
+    _avatar_select_button.addEventListener('click', function(event) {
+        let _selected_avatar = document.querySelector('.avatar-item-selected')
+        let _selected_avatar_image = _selected_avatar.querySelector('img')
+
+        // Set form input-avatar value to selected-item id
+        _input_avatar.value = _selected_avatar.value
+
+        // Set modal preview image
+        _selected_avatar_preview.setAttribute('src', _selected_avatar_image.src)
+        _selected_avatar_preview.setAttribute('alt', _selected_avatar_image.alt)
+    })
+
 }
 
 

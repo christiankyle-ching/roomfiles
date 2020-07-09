@@ -58,20 +58,16 @@
 
                         <!-- Custom Avatar Preview -->
                         <div class="form-group bmd-form-group">
+                            <input type="hidden" name="avatar" id="id_avatar" value="{{p_form.instance.avatar.id}}">
+
                             <label for="id_avatar" class="bmd-label-static">Avatar</label>
-
+                            
+                            <!-- Avatar Custom Select Input -->
+                            <div class="pt-3">
+                                {% include 'users/avatar-input/avatar_modal_select.html' %}
+                            </div>
                             {% if not p_form.instance.avatar %}No Avatar selected{% endif %}
-                            <img {% if p_form.instance.avatar %} src="{{ p_form.instance.avatar.image.url }}" {% endif %} class="avatar-preview">
 
-
-                            <select name="avatar" id="id_avatar" class="custom-select mt-3" onchange="fetch_avatar(this)">
-                                {% for a in p_form.avatars %}
-                                <option value="{{ a.id }}" data-href="{{a.image.url}}" 
-                                    {% if p_form.instance.avatar.id == a.id %}selected{% endif %}>
-                                        {{ a }}
-                                </option>
-                                {% endfor %}
-                            </select>
                         </div>
 
                     </fieldset>
