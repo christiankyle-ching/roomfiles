@@ -62,7 +62,13 @@
                     <a href="#files" class="nav-link active" id="files-tab" data-toggle="tab">Files</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab">Announcements</a>
+                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab" data-seen-href="{% url 'api-ann-seen' %}">
+                        <span>Announcements</span>
+                        {% if user.profile.notification_count_ann > 0 %}
+                        <span class="badge badge-pill badge-info badge-ann">{{ user.profile.notification_count_ann }}</span>
+                        {% endif %}
+                    </a>
+                    
                 </li>
             </ul>
 

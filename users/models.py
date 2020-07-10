@@ -1,5 +1,6 @@
 from django.db import models
 from django.http import JsonResponse
+from django.contrib.contenttypes.models import ContentType
 
 from django.contrib.auth.models import User
 from rooms.models import Room, Notification
@@ -41,5 +42,18 @@ class Profile(models.Model):
     def notification_count(self):
         user = self.user
         notification_count = Notification.objects.filter(target=user, is_read=False).count()
+        return notification_count
+
+    @property
+    def notification_count_ann(self):
+        user = self.user
+        ann_content_type = ContentType.objects.get_by_natural_key('rooms', 'announcement')
+
+        notification_count = Notification.objects.filter(
+            target=user, 
+            is_read=False, 
+            action_obj_contenttype=ann_content_type
+        ).count()
+
         return notification_count
      

@@ -53,8 +53,9 @@ if (_room_detail) {
 
     function show_hash_tab() {
         // Select tab if hash is available
-        if (window.location.hash != "") {
-            $(`#roomTabs a[href="${window.location.hash}"]`).tab('show')
+        let urlHash = window.location.hash
+        if (urlHash != "") {
+            $(`#roomTabs a[href="${urlHash}"]`).tab('show')
             window.location.hash = ''
         }
     }
@@ -62,6 +63,46 @@ if (_room_detail) {
     init_roomcode()
     show_hash_tab()
 
+}
+
+
+let _tab_button =  document.getElementById('ann-tab')
+if (_tab_button) {
+    // If announcements tab is clicked, clear notifications
+    let url = _tab_button.getAttribute('data-seen-href')
+
+    _tab_button.addEventListener('click', function(event) {
+        call_api(url).then(result => {
+            if (result.done) {
+                console.log(result);
+                
+                let badge_ann = document.querySelector('.badge-ann')
+                update_notif_badges(badge_ann, result.unseen_ann)
+
+                let badge_total_notif = document.querySelector('.badge-notification')
+                if (badge_total_notif) update_notif_badges(badge_total_notif, result.unseen_total);
+            }
+        })
+        
+        
+    })
+
+    function update_notif_badges(element, new_count) {
+        if (element) {
+            if (new_count <= 0) element.classList.add('d-none');
+            element.innerText = new_count
+        }
+    }
+}
+
+async function call_api(url) {
+    if (url != '') {
+        let response = await fetch(url)
+        let data = await response.json()
+        
+        return data
+    }
+    return null
 }
 
 
@@ -104,8 +145,10 @@ function update_like_button(el, liked, count, redirectHref) {
 
 }
 
-// File Validation
 
+
+
+// File Validation
 const max_file_size_mb = 5
 const max_file_size = max_file_size_mb * (1024 * 1024)
 const allowed_file_types = [

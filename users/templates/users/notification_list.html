@@ -33,7 +33,9 @@
 {% if notifications.has_next %}
     <a href="?page={{ notifications.next_page_number }}" class="infinite-more-link"></a>
 {% else %}
-    NOMORE
+    <div class="text-center infinite-item">
+        No more notifications
+    </div>
 {% endif %}
 
 {% endblock content %}

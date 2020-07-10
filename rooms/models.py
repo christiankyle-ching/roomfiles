@@ -2,6 +2,7 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
+from django.http import JsonResponse
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -151,7 +152,7 @@ class Announcement(Room_Object, User_Postable, User_Likable):
         return self.content[:30]
 
 
-# System-wide Notification
+# Application-wide Notification
 class Notification(models.Model):
     actor = models.ForeignKey(User, related_name='actor', on_delete=models.CASCADE)
     verb = models.CharField(max_length=50)
@@ -174,4 +175,5 @@ class Notification(models.Model):
 
         return JsonResponse({ 'is_read' : True })
 
+    
 
