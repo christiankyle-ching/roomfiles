@@ -158,6 +158,7 @@ def join_room(request):
 
 
 
+
 # File Views
 class FileDetailView(LoginRequiredMixin, DetailView):
     model = File

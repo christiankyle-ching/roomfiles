@@ -1,0 +1,39 @@
+{% extends 'rooms/BASE.html' %}
+
+{% block content %}
+<div class="container infinite-container pt-3">
+
+    {% for notif in notifications %}
+    <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3">
+        <div class="card-body">
+
+            <img src="{{ notif.actor.profile.avatar.image.url }}" alt="" class="avatar-thumbnail float-left">
+
+            <div class="content-with-avatar">
+                <strong>{{ notif.actor.profile.display_username }}</strong>
+                
+                {{ notif.verb }}
+
+                {% if notif.action_obj_contenttype.name|slice:':1' in 'aeiou' %} an {% else %} a {% endif %}
+
+                {{ notif.action_obj_contenttype.name }}
+
+                "{{ notif.action_obj.notification_text }}""
+
+                <span class="small d-block text-muted pt-2">
+                    {{ notif.executed_datetime|timesince }}
+                </span>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+
+</div>
+
+{% if notifications.has_next %}
+    <a href="?page={{ notifications.next_page_number }}" class="infinite-more-link"></a>
+{% else %}
+    NOMORE
+{% endif %}
+
+{% endblock content %}
