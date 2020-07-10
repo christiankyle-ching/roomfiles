@@ -89,3 +89,7 @@
 .badge-tab {
     margin-bottom: -1em;
 }
+
+.card-unread {
+    background-color: rgba(0, 139, 139, 0.15);
+}

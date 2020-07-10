@@ -18,7 +18,7 @@
             <div class="position-relative mr-3">
 
                 <button class="btn bmd-btn-icon dropdown-toggle d-flex justify-content-center" type="button" id="ex1" data-toggle="dropdown">
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user.profile.avatar %}
                     <img src="{{ user.profile.avatar.image.url }}" alt="{{ user.profile.avatar.name }}" class="avatar-thumbnail">
                     {% else %}
                     <img src="{% static 'images/default-user.png' %}" alt="default-profile-icon" class="avatar-thumbnail">
@@ -27,9 +27,7 @@
 
                 <!-- Notification Count -->
                 {% if user.is_authenticated %}
-                    {% if user.profile.notification_count > 0 %}
-                    <span class="badge badge-pill badge-info badge-notification">{{ user.profile.notification_count }}</span>
-                    {% endif %}
+                    <span class="badge badge-pill badge-info badge-notification {% if user.profile.notification_count <= 0 %}d-none{% endif %}">{{ user.profile.notification_count }}</span>
                 {% endif %}
 
                 <!-- Dropdown Menu -->

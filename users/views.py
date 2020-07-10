@@ -81,24 +81,16 @@ class NotificationListView(LoginRequiredMixin, ListView):
 
 
 # API Calls
-def avatar_preview(request, pk):
-    avatar = get_object_or_404(Avatar, pk=pk)
+@login_required
+def api_seen_object(request, model):
     user = request.user
-
-    response = {
-        'image_url' : avatar.image.url
-    }
-
-    return JsonResponse(response)
-
-def seen_announcements(request):
-    user = request.user
-    ann_content_type = ContentType.objects.get_by_natural_key('rooms', 'announcement')
+    content_type = ContentType.objects.get_by_natural_key('rooms', model)
 
     user_notifs = Notification.objects.filter(target=user, is_read=False)
-    announcement_notifs =  user_notifs.filter(action_obj_contenttype=ann_content_type)
+    content_notifs =  user_notifs.filter(action_obj_contenttype=content_type)
 
-    for notif in announcement_notifs:
+    for notif in content_notifs:
         notif.read()
     
-    return JsonResponse({ 'done' : True , 'unseen_ann' : 0, 'unseen_total' : user_notifs.count() })
+    return JsonResponse({ 'done' : True , 'unseen_object' : 0, 'unseen_total' : user_notifs.count() })
+

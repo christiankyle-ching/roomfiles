@@ -17,10 +17,13 @@ class Avatar(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
 
-    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True, default=Avatar.objects.first().id)
+    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, editable=False)
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
 
     @property
     def display_username(self):
@@ -30,9 +33,7 @@ class Profile(models.Model):
     def full_name(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
-    def __str__(self):
-        return f'{self.user.username} Profile'
-
+    @property
     def get_notifications(self):
         user = self.user
         user_notifications = Notification.objects.filter(target=user)
@@ -56,4 +57,24 @@ class Profile(models.Model):
         ).count()
 
         return notification_count
-     
+
+    @property
+    def notification_count_file(self):
+        user = self.user
+        file_content_type = ContentType.objects.get_by_natural_key('rooms', 'file')
+
+        notification_count = Notification.objects.filter(
+            target=user, 
+            is_read=False, 
+            action_obj_contenttype=file_content_type
+        ).count()
+
+        return notification_count
+    
+    def notifications_read_all(self):
+        user = self.user
+        user_notifications = Notification.objects.filter(target=user)
+
+        for notif in user_notifications:
+            notif.read()
+        

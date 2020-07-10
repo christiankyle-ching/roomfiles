@@ -13,7 +13,7 @@ from .forms import RoomJoinForm
 
 # Form-related imports
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details, has_same_room
 
 # Model imports
@@ -284,6 +284,7 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         return context
 
+@login_required
 def api_toggle_like(request, pk):
     ann = get_object_or_404(Announcement, pk=pk)
     user = request.user
@@ -291,4 +292,7 @@ def api_toggle_like(request, pk):
     response = ann.toggle_like(user)
 
     return JsonResponse(response)
+
+    def test_func(self):
+        return has_same_room(self.user, self.ann)
 

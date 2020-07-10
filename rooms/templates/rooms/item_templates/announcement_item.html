@@ -1,9 +1,14 @@
+{% load static %}
+
 <!-- Announcement Item -->
 <div class="card mt-3 infinite-item">
     <div class="card-body">
         <div>
+            {% if ann.posted_by.profile.avatar %}
             <img src="{{ ann.posted_by.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
-            
+            {% else %}
+            <img src="{% static 'images/default-user.png' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
+            {% endif %}
             <div class="content-with-avatar">
                 <!-- Post Menu Options -->
                 {% if ann.posted_by == user %}

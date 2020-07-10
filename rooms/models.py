@@ -1,4 +1,4 @@
-from django.shortcuts import reverse
+from django.shortcuts import reverse, get_object_or_404
 from django.utils.text import slugify
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
@@ -109,8 +109,21 @@ class File(Describable, User_Postable, Room_Object):
     def __str__(self):
         return f'File {self.name}'
 
+    def notify_users(self):
+        users_in_room = User.objects.filter(profile__room=self.room)
+
+        for user in users_in_room:
+            if user != self.posted_by:
+                notification = Notification(actor=self.posted_by, verb='uploaded', action_obj=self, target=user)
+                notification.save()
+
+    @property
+    def notification_text(self):
+        return self.name
+
+
 class Announcement(Room_Object, User_Postable, User_Likable):
-    content = models.TextField(blank=True, max_length=1000)
+    content = models.TextField(blank=False, max_length=1000)
 
     def __str__(self):
         return f'{self.posted_by}: "{self.content[:30]}..."'
@@ -146,7 +159,12 @@ class Announcement(Room_Object, User_Postable, User_Likable):
             if user != self.posted_by:
                 notification = Notification(actor=self.posted_by, verb='posted', action_obj=self, target=user)
                 notification.save()
-    
+        
+    # def is_read_by_user(self):
+    #     notif = get_object_or_404(Notification, action_obj=self)
+    #     print(notif, notif.target)
+    #     return notif.is_read
+
     @property
     def notification_text(self):
         return self.content[:30]

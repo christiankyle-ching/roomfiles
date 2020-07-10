@@ -4,7 +4,7 @@
 <div class="container infinite-container pt-3">
 
     {% for notif in notifications %}
-    <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3">
+    <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3 {% if not notif.is_read %}card-unread{% endif %}">
         <div class="card-body">
 
             <img src="{{ notif.actor.profile.avatar.image.url }}" alt="" class="avatar-thumbnail float-left">

@@ -22,11 +22,9 @@ urlpatterns = [
     
     # Notifications
     path('notifications/', NotificationListView.as_view(), name='notifications'),
-    path('announcements-seen/', user_views.seen_announcements, name='api-ann-seen'),
+    path('seen/<str:model>/', user_views.api_seen_object, name='api-notif-seen'),
 
     path('register/', user_views.register, name='register'),
 
-    # Avatar Fetch Url
-    path('avatar/<int:pk>/', user_views.avatar_preview, name='avatar-preview')
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

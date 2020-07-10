@@ -66,32 +66,40 @@ if (_room_detail) {
 }
 
 
-let _tab_button =  document.getElementById('ann-tab')
-if (_tab_button) {
-    // If announcements tab is clicked, clear notifications
-    let url = _tab_button.getAttribute('data-seen-href')
+let _room_tabs =  document.querySelector('#roomTabs')
+if (_room_tabs) {
+    let tabs = _room_tabs.querySelectorAll('.nav-item')
 
-    _tab_button.addEventListener('click', function(event) {
-        call_api(url).then(result => {
-            if (result.done) {
-                console.log(result);
-                
-                let badge_ann = document.querySelector('.badge-ann')
-                update_notif_badges(badge_ann, result.unseen_ann)
+    for (let tab of tabs) {
+            // If tab is clicked, clear notifications
+            let url = tab.querySelector('a').getAttribute('data-seen-href')
 
+            tab.addEventListener('click', function(event) {
+                let badge = tab.querySelector('.badge')
                 let badge_total_notif = document.querySelector('.badge-notification')
-                if (badge_total_notif) update_notif_badges(badge_total_notif, result.unseen_total);
-            }
-        })
-        
-        
-    })
 
-    function update_notif_badges(element, new_count) {
-        if (element) {
-            if (new_count <= 0) element.classList.add('d-none');
-            element.innerText = new_count
-        }
+                if (!badge.classList.contains('d-none')) {
+                    call_api(url).then(result => {
+                        if (result.done) {
+                            update_notif_badges(badge, result.unseen_object)
+                            update_notif_badges(badge_total_notif, result.unseen_total);
+                        }
+                    })
+                }
+
+                
+            })
+    }
+
+    
+
+    
+}
+
+function update_notif_badges(element, new_count) {
+    if (element) {
+        if (new_count <= 0) element.classList.add('d-none');
+        element.innerText = new_count
     }
 }
 
