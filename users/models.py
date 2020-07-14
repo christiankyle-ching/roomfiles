@@ -5,6 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from rooms.models import Room, Notification
 
+ANN_CONTENT_TYPE = ContentType.objects.get_by_natural_key('rooms', 'announcement')
+FILE_CONTENT_TYPE = ContentType.objects.get_by_natural_key('rooms', 'file')
 
 
 class Avatar(models.Model):
@@ -32,49 +34,49 @@ class Profile(models.Model):
     @property
     def full_name(self):
         return f'{self.user.first_name} {self.user.last_name}'
+    
+
+    
+    @property
+    def get_unread_notifications(self):
+        return Notification.objects.filter(
+            target=self.user, 
+            is_read=False,
+        )
 
     @property
-    def get_notifications(self):
-        user = self.user
-        user_notifications = Notification.objects.filter(target=user)
-        return user_notifications
-        
+    def get_unread_files(self):
+        return self.get_unread_notifications().filter(
+            action_obj_contenttype=FILE_CONTENT_TYPE
+        )
+    
+    @property
+    def get_unread_announcements(self):
+        return self.get_unread_notifications().filter(
+            action_obj_contenttype=ANN_CONTENT_TYPE
+        )
+
+    
+
     @property
     def notification_count(self):
-        user = self.user
-        notification_count = Notification.objects.filter(target=user, is_read=False).count()
-        return notification_count
+        return self.get_unread_notifications().count()
 
     @property
     def notification_count_ann(self):
-        user = self.user
-        ann_content_type = ContentType.objects.get_by_natural_key('rooms', 'announcement')
-
-        notification_count = Notification.objects.filter(
-            target=user, 
-            is_read=False, 
-            action_obj_contenttype=ann_content_type
-        ).count()
-
-        return notification_count
+        return self.get_unread_announcements().count()
 
     @property
     def notification_count_file(self):
-        user = self.user
-        file_content_type = ContentType.objects.get_by_natural_key('rooms', 'file')
+        return self.get_unread_files().count()
 
-        notification_count = Notification.objects.filter(
-            target=user, 
-            is_read=False, 
-            action_obj_contenttype=file_content_type
-        ).count()
 
-        return notification_count
-    
+
+    # Methods
     def notifications_read_all(self):
         user = self.user
         user_notifications = Notification.objects.filter(target=user)
 
         for notif in user_notifications:
             notif.read()
-        
+    

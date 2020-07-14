@@ -1,9 +1,11 @@
 {% load static %}
 
 <!-- Announcement Item -->
-<div class="card mt-3 infinite-item">
+<div class="card mt-3 infinite-item"
+class="{% if ann in unread_anns %}card-unread{% endif %}">
     <div class="card-body">
         <div>
+            {{ ann.is_read_by_user }}
             {% if ann.posted_by.profile.avatar %}
             <img src="{{ ann.posted_by.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
             {% else %}

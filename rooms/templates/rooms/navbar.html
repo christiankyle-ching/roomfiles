@@ -35,7 +35,10 @@
 
                     {% if user.is_authenticated %}
 
-                        <a href="{% url 'notifications' %}" class="dropdown-item">Notifications</a>
+                        <a href="{% url 'notifications' %}" class="dropdown-item {% if user.profile.notification_count > 0 %}text-primary font-weight-bold{% endif %}">
+                            Notifications
+                        </a>
+                        
                         {% if user.profile.room %}
                         <a href="{% url 'room' user.profile.room.id user.profile.room.slug %}" class="dropdown-item">My Room</a>
                         {% else %}

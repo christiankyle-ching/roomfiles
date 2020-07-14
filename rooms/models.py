@@ -14,7 +14,7 @@ from .validators import limit_file_size, allowed_file_type
 
 # Init Google Drive Storage
 from gdstorage.storage import GoogleDriveStorage
-gd_storage = GoogleDriveStorage()
+# gd_storage = GoogleDriveStorage()
 
 
 
@@ -122,7 +122,7 @@ class File(Describable, User_Postable, Room_Object):
         return self.name
 
 
-class Announcement(Room_Object, User_Postable, User_Likable):
+class Announcement(Room_Object, User_Postable, User_Likable):    
     content = models.TextField(blank=False, max_length=1000)
 
     def __str__(self):
@@ -159,11 +159,8 @@ class Announcement(Room_Object, User_Postable, User_Likable):
             if user != self.posted_by:
                 notification = Notification(actor=self.posted_by, verb='posted', action_obj=self, target=user)
                 notification.save()
-        
-    # def is_read_by_user(self):
-    #     notif = get_object_or_404(Notification, action_obj=self)
-    #     print(notif, notif.target)
-    #     return notif.is_read
+    
+    
 
     @property
     def notification_text(self):
