@@ -68,11 +68,12 @@ if (_room_detail) {
 
 let _room_tabs =  document.querySelector('#roomTabs')
 if (_room_tabs) {
-    let tabs = _room_tabs.querySelectorAll('.nav-item')
+    let tabs = _room_tabs.querySelectorAll('.nav-item > a')
 
     for (let tab of tabs) {
             // If tab is clicked, clear notifications
-            let url = tab.querySelector('a').getAttribute('data-seen-href')
+            let url = tab.getAttribute('data-seen-href')
+            let _tab_id = tab.getAttribute('href')
 
             tab.addEventListener('click', function(event) {
                 let badge = tab.querySelector('.badge')
@@ -83,17 +84,19 @@ if (_room_tabs) {
                         if (result.done) {
                             update_notif_badges(badge, result.unseen_object)
                             update_notif_badges(badge_total_notif, result.unseen_total);
+
+                            let unread_cards = document.querySelectorAll(`${_tab_id} > div > .card-unread `)
+                            setTimeout(() => {
+                                remove_unread(unread_cards)    
+                            }, 5000);
+                            
                         }
                     })
                 }
 
-                
             })
     }
 
-    
-
-    
 }
 
 function update_notif_badges(element, new_count) {
@@ -111,6 +114,12 @@ async function call_api(url) {
         return data
     }
     return null
+}
+
+function remove_unread(elementList) {
+    for (let el of elementList) {
+        el.classList.remove('card-unread')
+    }
 }
 
 

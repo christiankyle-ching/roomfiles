@@ -93,3 +93,7 @@
 .card-unread {
     background-color: rgba(0, 139, 139, 0.15);
 }
+
+.card {
+    transition: background-color 2s ease-in-out;
+}

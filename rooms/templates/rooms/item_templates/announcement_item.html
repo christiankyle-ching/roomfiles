@@ -1,8 +1,9 @@
 {% load static %}
 
 <!-- Announcement Item -->
-<div class="card mt-3 infinite-item"
-class="{% if ann in unread_anns %}card-unread{% endif %}">
+
+<div class="card mt-3 infinite-item {% if ann.pk in user.profile.get_unread_announcements_id %}card-unread{% endif %}">
+    
     <div class="card-body">
         <div>
             {{ ann.is_read_by_user }}

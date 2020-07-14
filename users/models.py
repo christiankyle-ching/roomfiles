@@ -5,8 +5,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from rooms.models import Room, Notification
 
-ANN_CONTENT_TYPE = ContentType.objects.get_by_natural_key('rooms', 'announcement')
-FILE_CONTENT_TYPE = ContentType.objects.get_by_natural_key('rooms', 'file')
+def get_ann_contenttype():
+    return ContentType.objects.get_by_natural_key('rooms', 'announcement')
+
+def get_file_contenttype():
+    return ContentType.objects.get_by_natural_key('rooms', 'file')
 
 
 class Avatar(models.Model):
@@ -46,29 +49,37 @@ class Profile(models.Model):
 
     @property
     def get_unread_files(self):
-        return self.get_unread_notifications().filter(
-            action_obj_contenttype=FILE_CONTENT_TYPE
+        return self.get_unread_notifications.filter(
+            action_obj_contenttype=get_file_contenttype()
+        )
+
+    @property
+    def get_unread_announcements(self):
+        return self.get_unread_notifications.filter(
+            action_obj_contenttype=get_ann_contenttype()
         )
     
     @property
-    def get_unread_announcements(self):
-        return self.get_unread_notifications().filter(
-            action_obj_contenttype=ANN_CONTENT_TYPE
-        )
+    def get_unread_announcements_id(self):
+        qs = self.get_unread_notifications.filter(
+            action_obj_contenttype=get_ann_contenttype()
+        ).values('action_obj_id')
+        mapped = map( lambda pair : pair['action_obj_id'], qs )
+        return list(mapped)
 
     
 
     @property
     def notification_count(self):
-        return self.get_unread_notifications().count()
+        return self.get_unread_notifications.count()
 
     @property
     def notification_count_ann(self):
-        return self.get_unread_announcements().count()
+        return self.get_unread_announcements.count()
 
     @property
     def notification_count_file(self):
-        return self.get_unread_files().count()
+        return self.get_unread_files.count()
 
 
 
