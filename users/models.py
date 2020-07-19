@@ -54,6 +54,14 @@ class Profile(models.Model):
         )
 
     @property
+    def get_unread_files_id(self):
+        qs = self.get_unread_notifications.filter(
+            action_obj_contenttype=get_file_contenttype()
+        ).values('action_obj_id')
+        map_id = map( lambda pair : pair['action_obj_id'], qs )
+        return list(map_id)
+
+    @property
     def get_unread_announcements(self):
         return self.get_unread_notifications.filter(
             action_obj_contenttype=get_ann_contenttype()
@@ -64,8 +72,8 @@ class Profile(models.Model):
         qs = self.get_unread_notifications.filter(
             action_obj_contenttype=get_ann_contenttype()
         ).values('action_obj_id')
-        mapped = map( lambda pair : pair['action_obj_id'], qs )
-        return list(mapped)
+        map_id = map( lambda pair : pair['action_obj_id'], qs )
+        return list(map_id)
 
     
 

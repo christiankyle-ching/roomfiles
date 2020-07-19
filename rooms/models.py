@@ -14,7 +14,7 @@ from .validators import limit_file_size, allowed_file_type
 
 # Init Google Drive Storage
 from gdstorage.storage import GoogleDriveStorage
-# gd_storage = GoogleDriveStorage()
+gd_storage = GoogleDriveStorage()
 
 
 
@@ -96,12 +96,11 @@ class User_Likable(models.Model):
 
 # Models
 class File(Describable, User_Postable, Room_Object):
-    # DEVONLY: disable file upload for development performance
-    # raw_file = models.FileField(
-    #     upload_to='files', storage=gd_storage,
-    #     validators=[limit_file_size, allowed_file_type],
-    #     verbose_name='File',
-    #     )
+    raw_file = models.FileField(
+        upload_to='files', storage=gd_storage,
+        validators=[limit_file_size, allowed_file_type],
+        verbose_name='File',
+        )
 
     def get_absolute_url(self):
         return reverse('file', kwargs={ 'pk' : self.pk })

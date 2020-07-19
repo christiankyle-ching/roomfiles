@@ -85,7 +85,9 @@ if (_room_tabs) {
                             update_notif_badges(badge, result.unseen_object)
                             update_notif_badges(badge_total_notif, result.unseen_total);
 
-                            let unread_cards = document.querySelectorAll(`${_tab_id} > div > .card-unread `)
+                            let unread_cards = document.querySelectorAll(`${_tab_id} > div .card-unread `)
+                            console.log(_tab_id, unread_cards);
+                            
                             setTimeout(() => {
                                 remove_unread(unread_cards)    
                             }, 5000);

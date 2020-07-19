@@ -85,7 +85,7 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
                 Q(description__icontains=search_keyword)
             )
         
-        files_qs = files_qs.order_by('-posted_datetime') # DEVONLY: .defer('raw_file')
+        files_qs = files_qs.order_by('-posted_datetime').defer('raw_file')
         context['total_files_count'] = files_qs.count()
         context['search'] = search_keyword
         
@@ -165,7 +165,7 @@ class FileDetailView(LoginRequiredMixin, DetailView):
 
 class FileCreateView(LoginRequiredMixin, CreateView):
     model = File
-    fields = ('name', 'description',) #'raw_file') # DEVONLY
+    fields = ('name', 'description', 'raw_file')
     
     def form_valid(self, form):
         form = user_postable_set_details(self, form)
