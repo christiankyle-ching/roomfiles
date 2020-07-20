@@ -117,7 +117,7 @@ class File(Describable, User_Postable, Room_Object):
                 notification.save()
 
     @property
-    def notification_text(self):
+    def notification_name(self):
         return self.name
 
 
@@ -162,7 +162,7 @@ class Announcement(Room_Object, User_Postable, User_Likable):
     
 
     @property
-    def notification_text(self):
+    def notification_name(self):
         return self.content[:30]
 
 

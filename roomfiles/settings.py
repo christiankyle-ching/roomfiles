@@ -125,9 +125,30 @@ USE_L10N = True
 USE_TZ = True
 
 
+
 ##### Rooms App Settings #####
 FILE_PER_PAGE = 10
 ANNOUNCEMENTS_PER_PAGE = 10
+
+# Max file upload size
+MAX_FILE_SIZE = 5 * (1024**2)
+
+# Allowed File Types
+ALLOWED_FILE_TYPES = [
+    'doc', 'docx', 'pdf', 'ppt', 'pptx'
+]
+
+
+
+# Gmail Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('roomfiles_email_user')
+EMAIL_HOST_PASSWORD = os.environ.get('roomfiles_email_pass')
+
+
 
 ##### Django-Specific Settings #####
 
@@ -140,13 +161,6 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# Max file upload size
-MAX_FILE_SIZE = 5 * (1024**2)
-
-# Allowed File Types
-ALLOWED_FILE_TYPES = [
-    'doc', 'docx', 'pdf', 'ppt', 'pptx'
-]
 
 
 ##### Dependencies Settings #####

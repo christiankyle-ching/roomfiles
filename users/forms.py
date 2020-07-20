@@ -16,7 +16,14 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField(required=False, help_text='Optional. A valid email address will be used to reset password.')
+    email = forms.EmailField(
+        required=False,
+        help_text=
+        '''
+        <strong class="text-warning" >NOTE: </strong>
+        A valid email address will be used to reset password.
+        '''
+        )
 
     class Meta:
         model = User

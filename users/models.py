@@ -11,6 +11,8 @@ def get_ann_contenttype():
 def get_file_contenttype():
     return ContentType.objects.get_by_natural_key('rooms', 'file')
 
+def get_default_avatar():
+    return Avatar.objects.first().id
 
 class Avatar(models.Model):
     name = models.CharField(max_length=30)
@@ -22,7 +24,7 @@ class Avatar(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
 
-    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True)
+    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, default=get_default_avatar())
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, editable=False)
