@@ -31,7 +31,7 @@ def has_same_room(user_obj, likable_obj):
     return user_obj.profile.room == likable_obj.room
 
 def notify_users(self, verb=''):    
-    users_in_room = User.objects.filter(profile__room=self.room)
+    users_in_room = User.active.filter(profile__room=self.room)
 
     for user in users_in_room:
         if user != self.posted_by:

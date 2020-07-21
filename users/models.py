@@ -2,8 +2,8 @@ from django.db import models
 from django.http import JsonResponse
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.auth.models import AbstractUser
-
+from django.contrib.auth.models import AbstractUser, UserManager
+from django.conf import settings
 
 
 def get_ann_contenttype():
@@ -12,8 +12,16 @@ def get_ann_contenttype():
 def get_file_contenttype():
     return ContentType.objects.get_by_natural_key('rooms', 'file')
 
+
+
+class ActiveUserManager(UserManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_active=True)
+
 class User(AbstractUser):
     email = models.EmailField(unique=True, null=False, blank=False)
+    objects = UserManager()
+    active = ActiveUserManager()
 
 class Avatar(models.Model):
     name = models.CharField(max_length=30)
@@ -22,13 +30,19 @@ class Avatar(models.Model):
     def __str__(self):
         return f'{self.name} Avatar'
 
+class ActiveProfileManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(user__is_active=True)
+
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
 
     avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     room = models.ForeignKey('rooms.Room', on_delete=models.CASCADE, null=True, editable=False)
+
+    objects = ActiveProfileManager()
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -106,9 +120,9 @@ class Profile(models.Model):
 
 # Application-wide Notification
 class Notification(models.Model):
-    actor = models.ForeignKey(User, related_name='actor', on_delete=models.CASCADE)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='actor', on_delete=models.CASCADE)
     verb = models.CharField(max_length=50)
-    target = models.ForeignKey(User,  related_name='target', on_delete=models.CASCADE)
+    target = models.ForeignKey(settings.AUTH_USER_MODEL,  related_name='target', on_delete=models.CASCADE)
     executed_datetime = models.DateTimeField(auto_now_add=True, editable=False)
     
     # Generic Foreign Key - so foreign model can be different models (eg. Announcement, File)

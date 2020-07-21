@@ -110,8 +110,15 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     def test_func(self):
         return self.request.user.profile.room == self.get_object()
 
+
+
+@login_required
 def room_people_listview(request, pk, slug):
     _room = get_object_or_404(Room, pk=pk)
+
+    if request.user.profile.room != _room:
+        raise PermissionDenied('You cannot access this link.')
+
     _people = Profile.objects.filter(room=_room).order_by('user__username')
     
     return render(request, 'people.html', { 'people': _people, 'room' : _room })
@@ -288,6 +295,9 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 def api_toggle_like(request, pk):
     ann = get_object_or_404(Announcement, pk=pk)
     user = request.user
+
+    if user.profile.room != ann.room:
+        raise PermissionDenied('You cannot access this link.')
     
     response = ann.toggle_like(user)
 
