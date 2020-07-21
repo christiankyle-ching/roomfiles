@@ -159,8 +159,8 @@
 
                             
 
-                            {% if total_announcements_count > 2 %}
-                                <a href="{% url 'room-anns' room.pk room.slug %}" class="btn btn-block text-lowercase text-capitalize">View more</a>
+                            {% if total_announcements_count > 10 %}
+                                <a href="{% url 'room-anns' room.pk room.slug %}" class="btn btn-block text-lowercase text-capitalize mt-3">View more</a>
                             {% endif %}
                             
 

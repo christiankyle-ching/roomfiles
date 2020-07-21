@@ -21,7 +21,7 @@ from .models import Room, File, Announcement
 from users.models import Profile
 
 import random, string
-from roomfiles.settings import FILE_PER_PAGE, ANNOUNCEMENTS_PER_PAGE
+from django.conf import settings
 
 
 def home(request):
@@ -90,14 +90,14 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['search'] = search_keyword
         
         # Paginate
-        files_paginator = Paginator(files_qs, FILE_PER_PAGE)
+        files_paginator = Paginator(files_qs, settings.FILE_PER_PAGE)
         files_page_number = self.request.GET.get('file_page', 1)
         files_page_obj = files_paginator.get_page(files_page_number)
         context['files'] = files_page_obj
 
         # Get query for announcements
         announcements_qs = Announcement.objects.filter(room=self.get_object()).order_by('-posted_datetime')
-        announcements_qs_latest = announcements_qs[:ANNOUNCEMENTS_PER_PAGE] # limit query to latest 10
+        announcements_qs_latest = announcements_qs[:settings.ANNOUNCEMENTS_PER_PAGE] # limit query to latest 10
         context['announcements'] = announcements_qs_latest
         context['total_announcements_count'] = announcements_qs.count()
 
@@ -273,7 +273,7 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['sort_with'] = sort_with
         
         # Paginate
-        ann_paginator = Paginator(ann_qs, ANNOUNCEMENTS_PER_PAGE)
+        ann_paginator = Paginator(ann_qs, settings.ANNOUNCEMENTS_PER_PAGE)
         page_number = self.request.GET.get('page', 1)
         ann_page_obj = ann_paginator.get_page(page_number)
         context['announcements'] = ann_page_obj

@@ -77,7 +77,7 @@ class NotificationListView(LoginRequiredMixin, ListView):
         return context
 
 @login_required
-def close_account(request):
+def close_account_confirm(request):
     if request.POST:
         if 'close-account' in request.POST:
             return close_account_done(request)
@@ -87,7 +87,7 @@ def close_account(request):
 def close_account_done(request):
     request.user.is_active = False
     request.user.save()
-    return redirect('close_account_done.html')
+    return render(request, 'users/close_account_done.html')
     
 
 

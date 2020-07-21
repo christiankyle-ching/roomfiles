@@ -280,6 +280,15 @@ if (_input_avatar && _modal_avatar_select) {
 
 }
 
+var _links_no_search = document.querySelectorAll('.link-no-search')
+if (_links_no_search != null) {
+    for (let l of _links_no_search) {
+        let _link = new URL(window.location)
+        _link.search = ''
+        l.href = _link.toString()
+    }
+}
+
 
 
 // Functions
@@ -348,13 +357,6 @@ function checkFile(el_id, type) {
     }
 }
 
-var _links_no_search = document.querySelectorAll('.link-no-search')
-if (_links_no_search != null) {
-    for (let l of _links_no_search) {
-        let _link = new URL(window.location)
-        _link.search = ''
-        l.href = _link.toString()
-    }
-}
+
 
 

@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
 import os, re
-from roomfiles.settings import BASE_DIR, MEDIA_ROOT
+from django.conf import settings
 
 from users.models import Avatar
 
 class Command(BaseCommand):
-    help = 'Imports all images located in BASE_DIR/assets/avatars as Avatar objects'
+    help = 'Imports all images located in settings.BASE_DIR/assets/avatars as Avatar objects'
 
-    _assets_dir = os.path.join(BASE_DIR, 'assets', 'avatars')
+    _assets_dir = os.path.join(settings.BASE_DIR, 'assets', 'avatars')
 
     def handle(self, *args, **kwargs):
         print('CLEARING DATABASE...')
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 _tmp_obj.image.save(_file, File(open(_file_dir, 'rb')))
 
     def clear_dir(self):
-        _media_avatars_dir = os.path.join(MEDIA_ROOT, 'avatars')
+        _media_avatars_dir = os.path.join(settings.MEDIA_ROOT, 'avatars')
 
         for _file in os.listdir(_media_avatars_dir):
             _file_dir = os.path.join(_media_avatars_dir, _file)
