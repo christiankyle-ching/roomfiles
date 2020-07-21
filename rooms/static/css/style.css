@@ -2,6 +2,8 @@
 /* BootsrapMD form invalid-feedback fix */
 .form-group .invalid-feedback {
     display: block !important;
+    margin: 0;
+    margin-top: 1em !important;
 }
 
 /* Bug Fix : Not aligning to right */
@@ -63,7 +65,6 @@
     max-height: 40px;
 }
 /* #endregion */
-
 
 
 .window-height {

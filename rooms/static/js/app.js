@@ -3,20 +3,20 @@
 
 
 // Room Detail Script
-var _room_detail = document.querySelector('#roomDetailID')
+const _room_detail = document.querySelector('#roomDetailID')
 if (_room_detail) {
 
     function init_roomcode() {
-        let el_roomCode = document.getElementById('roomCode')
-        let el_roomCodeToggle = document.getElementById('roomCodeToggle')
-        let el_roomCodeCopy = document.getElementById('roomCodeCopy')
+        const el_roomCode = document.getElementById('roomCode')
+        const el_roomCodeToggle = document.getElementById('roomCodeToggle')
+        const el_roomCodeCopy = document.getElementById('roomCodeCopy')
     
-        let roomCode = el_roomCode.innerText
+        const roomCode = el_roomCode.innerText
         
         el_roomCode.innerText = '*****'
         el_roomCodeToggle.addEventListener('click', () => {
-            let _icon = el_roomCodeToggle.querySelector('span')
-            let _hide = _icon.innerText == 'visibility'
+            const _icon = el_roomCodeToggle.querySelector('span')
+            const _hide = _icon.innerText == 'visibility'
     
             if (_hide) {
                 // if hidden, then show
@@ -31,7 +31,7 @@ if (_room_detail) {
         })
     
         // Init input element for code copy
-        let _init = document.createElement('input');
+        const _init = document.createElement('input');
         _init.type = 'text'; _init.id = 'roomCodeCopyText';
         _init.style = 'position: absolute; top: -1000px; left: -1000px;'
         _init.value = roomCode; 
@@ -39,7 +39,7 @@ if (_room_detail) {
         el_roomCodeCopy.addEventListener('click', () => {
             // append _init to body,
             document.body.appendChild(_init)
-            let _placeholder = document.getElementById('roomCodeCopyText')
+            const _placeholder = document.getElementById('roomCodeCopyText')
     
             // copy the value (code)
             _placeholder.select();
@@ -53,7 +53,7 @@ if (_room_detail) {
 
     function show_hash_tab() {
         // Select tab if hash is available
-        let urlHash = window.location.hash
+        const urlHash = window.location.hash
         if (urlHash != "") {
             $(`#roomTabs a[href="${urlHash}"]`).tab('show')
             window.location.hash = ''
@@ -66,18 +66,18 @@ if (_room_detail) {
 }
 
 
-let _room_tabs =  document.querySelector('#roomTabs')
+const _room_tabs =  document.querySelector('#roomTabs')
 if (_room_tabs) {
-    let tabs = _room_tabs.querySelectorAll('.nav-item > a')
+    const tabs = _room_tabs.querySelectorAll('.nav-item > a')
 
     for (let tab of tabs) {
             // If tab is clicked, clear notifications
-            let url = tab.getAttribute('data-seen-href')
-            let _tab_id = tab.getAttribute('href')
+            const url = tab.getAttribute('data-seen-href')
+            const _tab_id = tab.getAttribute('href')
 
             tab.addEventListener('click', function(event) {
-                let badge = tab.querySelector('.badge')
-                let badge_total_notif = document.querySelector('.badge-notification')
+                const badge = tab.querySelector('.badge')
+                const badge_total_notif = document.querySelector('.badge-notification')
 
                 if (!badge.classList.contains('d-none')) {
                     call_api(url).then(result => {
@@ -85,7 +85,7 @@ if (_room_tabs) {
                             update_notif_badges(badge, result.unseen_object)
                             update_notif_badges(badge_total_notif, result.unseen_total);
 
-                            let unread_cards = document.querySelectorAll(`${_tab_id} > div .card-unread `)
+                            const unread_cards = document.querySelectorAll(`${_tab_id} > div .card-unread `)
                             console.log(_tab_id, unread_cards);
                             
                             setTimeout(() => {
@@ -110,8 +110,8 @@ function update_notif_badges(element, new_count) {
 
 async function call_api(url) {
     if (url != '') {
-        let response = await fetch(url)
-        let data = await response.json()
+        const response = await fetch(url)
+        const data = await response.json()
         
         return data
     }
@@ -127,12 +127,12 @@ function remove_unread(elementList) {
 
 
 // Like Button Fetch
-let _like_buttons = document.querySelectorAll('.btn-like')
+const _like_buttons = document.querySelectorAll('.btn-like')
 for (let button of _like_buttons) {
     button.addEventListener('click', function(event) {
         event.preventDefault()
 
-        let _like_url = button.getAttribute('data-href')
+        const _like_url = button.getAttribute('data-href')
         request_like(button, _like_url)
     })
 }
@@ -140,8 +140,8 @@ for (let button of _like_buttons) {
 async function request_like(element, url) {
     element.classList.add('disabled')
 
-    let response = await fetch(url)
-    let data = await response.json()
+    const response = await fetch(url)
+    const data = await response.json()
 
     update_like_button(element, data.liked, data.new_like_count, data.redirect_href)
 }
@@ -153,7 +153,7 @@ function update_like_button(el, liked, count, redirectHref) {
         el.querySelector('.like-count').innerText = count
         el.setAttribute('data-likes', count)
 
-        let _icon = el.querySelector('.material-icons')
+        const _icon = el.querySelector('.material-icons')
         if (liked) _icon.classList.add('text-primary')
         else  _icon.classList.remove('text-primary')
 
@@ -175,7 +175,7 @@ const allowed_file_types = [
 ]
 
 // File Form Script
-var _file_form = document.querySelector('#fileForm')
+const _file_form = document.querySelector('#fileForm')
 if (_file_form) {
     // limit file picker types (can be overridden)
     document.querySelector('#id_raw_file').setAttribute('accept', allowed_file_types.toString())
@@ -184,21 +184,21 @@ if (_file_form) {
 
 
 // Announcement Form Script
-var _ann_form = document.querySelector('#announcementForm')
+const _ann_form = document.querySelector('#announcementForm')
 if (_ann_form) {
-    let _content = document.querySelector('#id_content')    
+    const _content = document.querySelector('#id_content')    
     if (_content != null) _content.setAttribute('placeholder', "What's on your mind?")
 }
 
 // Infinite Container Loading Script
-let _infinite_items = document.querySelector('.infinite-container')
+const _infinite_items = document.querySelector('.infinite-container')
 if (_infinite_items) {
-    let loadingModal = $('#loadingModal')
+    const loadingModal = $('#loadingModal')
     let loading = false
     let loaded = false
 
-    let longLoadingTime = 1000
-    let modalTimeout = 5000
+    const longLoadingTime = 1000
+    const modalTimeout = 5000
     let timerStarted = false
     let startTime
 
@@ -213,8 +213,8 @@ if (_infinite_items) {
                 startTime = (new Date()).getMilliseconds();
                 timerStarted = true;
             }
-            let currTime = (new Date()).getMilliseconds()
-            let timeDiff = currTime - startTime
+            const currTime = (new Date()).getMilliseconds()
+            const timeDiff = currTime - startTime
 
             // If loading takes too long, then show loadingModal
             if (timeDiff > longLoadingTime) {
@@ -243,13 +243,13 @@ if (_infinite_items) {
 }
 
 
-let _input_avatar = document.querySelector('#id_avatar')
-let _modal_avatar_select = document.querySelector('#avatar-select-modal')
-let _selected_avatar_preview = document.querySelector('.avatar-selected-preview')
+const _input_avatar = document.querySelector('#id_avatar')
+const _modal_avatar_select = document.querySelector('#avatar-select-modal')
+const _selected_avatar_preview = document.querySelector('.avatar-selected-preview')
 if (_input_avatar && _modal_avatar_select) {
 
-    let _avatar_items = document.querySelectorAll('.avatar-item')
-    let _avatar_select_button = document.querySelector('.btn-avatar-select')
+    const _avatar_items = document.querySelectorAll('.avatar-item')
+    const _avatar_select_button = document.querySelector('.btn-avatar-select')
 
     for (let item of _avatar_items) {
         item.addEventListener('click', function(event) {
@@ -267,8 +267,8 @@ if (_input_avatar && _modal_avatar_select) {
     }
 
     _avatar_select_button.addEventListener('click', function(event) {
-        let _selected_avatar = document.querySelector('.avatar-item-selected')
-        let _selected_avatar_image = _selected_avatar.querySelector('img')
+        const _selected_avatar = document.querySelector('.avatar-item-selected')
+        const _selected_avatar_image = _selected_avatar.querySelector('img')
 
         // Set form input-avatar value to selected-item id
         _input_avatar.value = _selected_avatar.value
@@ -280,13 +280,38 @@ if (_input_avatar && _modal_avatar_select) {
 
 }
 
-var _links_no_search = document.querySelectorAll('.link-no-search')
-if (_links_no_search != null) {
-    for (let l of _links_no_search) {
+const _links_clear_search = document.querySelectorAll('.link-clear-search')
+if (_links_clear_search != null) {
+    for (let l of _links_clear_search) {
         let _link = new URL(window.location)
         _link.search = ''
         l.href = _link.toString()
     }
+}
+
+const _close_account = document.querySelector('#closeAccount')
+if (_close_account) {
+    setTimeout(() => {
+        _close_account.disabled = false
+    }, 5000);
+}
+
+const _countdown = document.querySelector('.countdown')
+if (_countdown) {
+    let duration = parseInt(_countdown.getAttribute("data-duration"))
+    _countdown.innerText = `(${duration}s)`
+
+    const timer = setInterval(() => {
+        duration -= 1
+        _countdown.innerText = `(${duration}s)`
+    }, 1000);
+
+    setInterval(() => {
+        if (duration <= 0) {
+            clearInterval(timer)
+            _countdown.innerText = ''
+        }
+    }, 100);
 }
 
 
@@ -312,8 +337,8 @@ function checkFile(el_id, type) {
     if (_selected_file == undefined) return
     
     // get file_type(string) and file_size(int)
-    let file_type = _selected_file.name.match(/\.([0-9a-z]+)$/)[0]
-    let file_size = _selected_file.size
+    const file_type = _selected_file.name.match(/\.([0-9a-z]+)$/)[0]
+    const file_size = _selected_file.size
 
     // if file_type has no file extension, don't check for size or if allowed_type
     if (file_type == null) showError('Invalid file type.')
@@ -341,7 +366,7 @@ function checkFile(el_id, type) {
     return false
 
     function clearErrors() {
-        _errors = _parent.querySelectorAll('.invalid-feedback')
+        let _errors = _parent.querySelectorAll('.invalid-feedback')
         for (let e of _errors) e.remove()
     }
 
