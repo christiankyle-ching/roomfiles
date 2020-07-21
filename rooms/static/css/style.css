@@ -67,6 +67,10 @@
 /* #endregion */
 
 
+#closeAccount::first-letter {
+    text-transform: uppercase !important;
+}
+
 .window-height {
     height: calc(100vh - 56px) !important;
 }
