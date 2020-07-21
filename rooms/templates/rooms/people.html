@@ -1,4 +1,5 @@
 {% extends 'rooms/BASE.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container">
@@ -10,8 +11,12 @@
             {% for person in people %}
             <li class="list-group-item">
                 
-                <img src="{{ person.user.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
-                
+                {% if person.user.profile.avatar %}
+                    <img src="{{ person.user.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
+                {% else %}
+                    <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
+                {% endif %}
+
                 <div>
                     
                     <h6 class="{% if user.profile == person %}text-primary{% endif %}">
@@ -20,12 +25,9 @@
                         {% if room.created_by == person.user %} (Creator) {% endif %}
                     </h6>
                     
-                    
-                    {% if person.first_name == "" and person.last_name == "" %}
-                        <span class="text-muted">Unnamed</span>
-                    {% else %}
-                        <span>{{ person.full_name }}</span>
-                    {% endif %}
+                    <span {%if user.profile.display_name == 'Unnamed' %}class="text-muted"{% endif %}>
+                        {{ user.profile.display_name }}
+                    </span>
                     
                 </div>
                 

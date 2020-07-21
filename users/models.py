@@ -1,9 +1,10 @@
 from django.db import models
 from django.http import JsonResponse
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.auth.models import AbstractUser
 
-from django.contrib.auth.models import User
-from rooms.models import Room, Notification
+
 
 def get_ann_contenttype():
     return ContentType.objects.get_by_natural_key('rooms', 'announcement')
@@ -11,8 +12,8 @@ def get_ann_contenttype():
 def get_file_contenttype():
     return ContentType.objects.get_by_natural_key('rooms', 'file')
 
-def get_default_avatar():
-    return Avatar.objects.first().id
+class User(AbstractUser):
+    email = models.EmailField(unique=True, null=False, blank=False)
 
 class Avatar(models.Model):
     name = models.CharField(max_length=30)
@@ -24,10 +25,10 @@ class Avatar(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, editable=False)
 
-    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, default=get_default_avatar())
+    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, editable=False)
+    room = models.ForeignKey('rooms.Room', on_delete=models.CASCADE, null=True, editable=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'
@@ -37,8 +38,9 @@ class Profile(models.Model):
         return f'@{self.user.username}'
 
     @property
-    def full_name(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+    def display_name(self):
+        if self.first_name == '' and self.last_name == '': return 'Unnamed'
+        return f'{self.first_name} {self.last_name}'
     
 
     
@@ -100,4 +102,27 @@ class Profile(models.Model):
 
         for notif in user_notifications:
             notif.read()
+
+
+# Application-wide Notification
+class Notification(models.Model):
+    actor = models.ForeignKey(User, related_name='actor', on_delete=models.CASCADE)
+    verb = models.CharField(max_length=50)
+    target = models.ForeignKey(User,  related_name='target', on_delete=models.CASCADE)
+    executed_datetime = models.DateTimeField(auto_now_add=True, editable=False)
     
+    # Generic Foreign Key - so foreign model can be different models (eg. Announcement, File)
+    action_obj_contenttype = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    action_obj_id = models.PositiveIntegerField()
+    action_obj = GenericForeignKey('action_obj_contenttype', 'action_obj_id')
+
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.actor.username} {self.verb}'
+
+    def read(self):
+        self.is_read = True
+        self.save()
+
+        return JsonResponse({ 'is_read' : True })

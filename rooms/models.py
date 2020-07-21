@@ -5,9 +5,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import User
 
 import uuid
 from .validators import limit_file_size, allowed_file_type
@@ -15,6 +13,9 @@ from .validators import limit_file_size, allowed_file_type
 # Init Google Drive Storage
 from gdstorage.storage import GoogleDriveStorage
 gd_storage = GoogleDriveStorage()
+
+from .utils import notify_users
+from django.conf import settings
 
 
 
@@ -34,7 +35,7 @@ class Describable(models.Model):
 
 # Model
 class Room(Describable):
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     slug = models.SlugField(default='', editable=False, max_length=100)
@@ -75,7 +76,7 @@ class User_Postable(models.Model):
         posted_by - ForeignKey(User)
         posted_datetime - DateTimeField(auto_now_add = True)
     """
-    posted_by = models.ForeignKey(User, on_delete=models.CASCADE,) #editable=False)
+    posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
     posted_datetime = models.DateTimeField(auto_now_add=True, editable=False)
 
     class Meta:
@@ -87,7 +88,7 @@ class User_Likable(models.Model):
     Fields:
         liked_by - Many-to-Many Field to Users
     """
-    liked_by = models.ManyToManyField(User, related_name="liked_by") #editable=False)
+    liked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_by") #editable=False)
     
     class Meta:
         abstract = True
@@ -109,12 +110,7 @@ class File(Describable, User_Postable, Room_Object):
         return f'File {self.name}'
 
     def notify_users(self):
-        users_in_room = User.objects.filter(profile__room=self.room)
-
-        for user in users_in_room:
-            if user != self.posted_by:
-                notification = Notification(actor=self.posted_by, verb='uploaded', action_obj=self, target=user)
-                notification.save()
+        notify_users(self, verb='uploaded')
 
     @property
     def notification_name(self):
@@ -152,42 +148,12 @@ class Announcement(Room_Object, User_Postable, User_Likable):
         return response
 
     def notify_users(self):
-        users_in_room = User.objects.filter(profile__room=self.room)
-
-        for user in users_in_room:
-            if user != self.posted_by:
-                notification = Notification(actor=self.posted_by, verb='posted', action_obj=self, target=user)
-                notification.save()
-    
+        notify_users(self, verb='posted')
     
 
     @property
     def notification_name(self):
         return self.content[:30]
-
-
-# Application-wide Notification
-class Notification(models.Model):
-    actor = models.ForeignKey(User, related_name='actor', on_delete=models.CASCADE)
-    verb = models.CharField(max_length=50)
-    target = models.ForeignKey(User,  related_name='target', on_delete=models.CASCADE)
-    executed_datetime = models.DateTimeField(auto_now_add=True, editable=False)
-    
-    # Generic Foreign Key - so foreign model can be different models (eg. Announcement, File)
-    action_obj_contenttype = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    action_obj_id = models.PositiveIntegerField()
-    action_obj = GenericForeignKey('action_obj_contenttype', 'action_obj_id')
-
-    is_read = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f'{self.actor.username} {self.verb}'
-
-    def read(self):
-        self.is_read = True
-        self.save()
-
-        return JsonResponse({ 'is_read' : True })
 
     
 

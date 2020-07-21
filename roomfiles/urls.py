@@ -7,7 +7,7 @@ from rooms import urls as rooms_urls
 
 from django.contrib.auth import views as auth_views
 from users import views as user_views
-from users.views import NotificationListView
+from users.views import NotificationListView, register, profile
 
 urlpatterns = [
     # Rooms Urls
@@ -19,7 +19,9 @@ urlpatterns = [
     path('account/', include([
         path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
         path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+
         path('profile/', user_views.profile, name='profile'),
+        path('settings/', user_views.settings, name='user-settings'),
 
         path('password-reset/', auth_views.PasswordResetView.as_view(
             template_name='users/password_reset_form.html',
@@ -40,6 +42,11 @@ urlpatterns = [
         path('password-reset/complete/',
             auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'),
             name='password_reset_complete'),
+    
+        path('password-change/', auth_views.PasswordChangeView.as_view(template_name='users/password_change_form.html'), name='password_change'),
+    
+        path('password-change/success/', auth_views.PasswordChangeDoneView.as_view(template_name='users/password_change_done.html'), name='password_change_done'),
+    
     ])),
     
 

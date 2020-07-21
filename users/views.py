@@ -6,11 +6,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.contrib.contenttypes.models import ContentType
 
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .forms import UserRegisterForm, ProfileUpdateForm
 from django.views.generic import ListView
 
-from .models import Avatar
-from rooms.models import Notification
+from .models import Avatar, Notification
 from django.http import JsonResponse
 
 
@@ -34,17 +33,13 @@ def register(request):
 
 @login_required
 def profile(request):
-    u_form = UserUpdateForm(instance=request.user)
     p_form = ProfileUpdateForm(instance=request.user.profile)
 
     if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
         avatar_id = request.POST.get('avatar')
         
-        if u_form.is_valid() and p_form.is_valid() and int(avatar_id) > 0:
-            u_form.save()
-            
+        if p_form.is_valid() and int(avatar_id) > 0:
             request.user.profile.avatar = get_object_or_404(Avatar, pk=avatar_id)
             p_form.save()
 
@@ -52,8 +47,12 @@ def profile(request):
 
             return redirect('profile')
 
-    context = { 'u_form': u_form, 'p_form': p_form }
+    context = { 'p_form': p_form }
     return render(request, 'users/profile.html', context)
+
+@login_required
+def settings(request):
+    return render(request, 'users/settings.html')
 
 class NotificationListView(LoginRequiredMixin, ListView):
     model = Notification
@@ -77,6 +76,19 @@ class NotificationListView(LoginRequiredMixin, ListView):
 
         return context
 
+@login_required
+def close_account(request):
+    if request.POST:
+        if 'close-account' in request.POST:
+            return close_account_done(request)
+
+    return render(request, 'users/close_account.html')
+
+def close_account_done(request):
+    request.user.is_active = False
+    request.user.save()
+    return redirect('close_account_done.html')
+    
 
 
 # API Calls

@@ -26,13 +26,13 @@
     display: block;
     margin: 0 auto;
 
-    max-width: 200px;
-    max-height: 200px;
+    width: 200px;
+    height: auto;
 }
 
 .avatar-thumbnail {
-    max-width: 40px;
-    max-height: 40px;
+    width: 40px;
+    height: auto;
 }
 
 .content-with-avatar {

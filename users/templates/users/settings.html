@@ -1,0 +1,25 @@
+{% extends 'rooms/base.html' %}
+
+{% block content %}
+<div class="container">
+
+    <div class="card mt-3">
+        <div class="card-body">
+
+            <h4>Account Settings</h4>
+
+            <a href="{% url 'password_change' %}" class="btn btn-primary btn-block btn-raised">
+                <span class="material-icons float-left">lock</span>                
+                Change Password
+            </a>
+
+            <a href="#" class="btn btn-danger btn-block">
+                <span class="material-icons float-left">delete_forever</span>
+                Close Account
+            </a>
+
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

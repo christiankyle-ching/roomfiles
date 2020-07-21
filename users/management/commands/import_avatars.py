@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
-from users.models import Avatar
 import os, re
 from roomfiles.settings import BASE_DIR, MEDIA_ROOT
+
+from users.models import Avatar
 
 class Command(BaseCommand):
     help = 'Imports all images located in BASE_DIR/assets/avatars as Avatar objects'

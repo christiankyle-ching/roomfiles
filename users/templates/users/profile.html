@@ -1,35 +1,40 @@
 {% extends 'rooms/BASE.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
 
 
 <div class="container">
 
-    <!-- Profile Information -->
+    
     <div class="card mt-3">
         <div class="card-body">
 
+            <!-- HEADER -->
             <div class="card-header">
 
                 <div class="row">
                     <div class="col-12 col-sm-auto">
+                        <div class="px-3">
                         {% if p_form.instance.avatar %}
-                            <div class="px-3">
-                                <img src="{{ p_form.instance.avatar.image.url }}" class="avatar-preview">
-                            </div>
+                            <img src="{{ p_form.instance.avatar.image.url }}" class="avatar-preview">
+                        {% else %}
+                            <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-preview">
                         {% endif %}
+                        </div>
                     </div>
 
                     <div class="col-12 col-sm d-flex align-items-center justify-content-center justify-content-sm-start">
                         <!-- User Information -->
                         <div class="text-center text-sm-left py-3">
-                            {% if user.profile.first_name or user.profile.last_name %}
-                            <h5>{{ user.profile.last_name }}{% if user.profile.first_name %}, {{ user.profile.first_name }}{% endif %}</h5>
-                            {% else %}
-                                <h5 class="text-danger">Unnamed</h5>
-                            {% endif %}
+                            
+                            <h5 {%if user.profile.display_name == 'Unnamed'%}class="text-danger"{% endif %}>
+                                {{ user.profile.display_name }}
+                            </h5>
+
                             <h6>{{ user.profile.display_username }}</h6>
+                            
                             <small>
                                 {% if user.email %} {{ user.email }} {% else %} No email {% endif %}
                             </small>
@@ -43,22 +48,19 @@
                 
             </div>
 
-            
-
-        </div>
-
-        <div class="card-body">
-            <div class="container">
+            <div class="container pt-4">
+                
+                <!-- PROFILE INFO -->
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <legend>Your Profile</legend>
                     <fieldset class="form-group">
-                        {{ u_form | crispy }}
+                        <legend>Your Profile</legend>
+                        
                         {{ p_form | crispy }}
 
                         <!-- Custom Avatar Preview -->
                         <div class="form-group bmd-form-group">
-                            <input type="hidden" name="avatar" id="id_avatar" value="{{p_form.instance.avatar.id}}">
+                            <input type="hidden" name="avatar" id="id_avatar" value="{{ p_form.instance.avatar.id }}">
 
                             <label for="id_avatar" class="bmd-label-static">Avatar</label>
                             
@@ -66,20 +68,25 @@
                             <div class="pt-3">
                                 {% include 'users/avatar-input/avatar_modal_select.html' %}
                             </div>
-                            {% if not p_form.instance.avatar %}No Avatar selected{% endif %}
+                            
 
                         </div>
 
                     </fieldset>
-
-                    <div class="form-group text-right">
-                        <button class="btn btn-primary" type="submit">
-                            Save
-                        </button>
-                    </div>
+                    <button class="btn btn-primary btn-raised btn-block" type="submit">
+                        Save Profile Changes
+                    </button>
                 </form>
+
+                <!-- ACCOUNT SETTINGS -->
+                <a href="{% url 'user-settings' %}" class="btn btn-sm btn-secondary btn-block" type="submit">
+                    Account Settings...
+                </a>
+                
             </div>
+
         </div>
+
     </div>
 
 </div>
