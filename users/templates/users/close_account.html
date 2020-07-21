@@ -16,8 +16,12 @@
 
             <form method="POST" class="pt-5">
                 {% csrf_token %}
-                <button id='closeAccount' name="close-account" type="submit" class="btn btn-block btn-raised btn-danger">I understand, close my account.</button>
+                <button id='closeAccount' name="close-account" type="submit" class="btn btn-block btn-raised btn-danger" disabled>
+                    I understand, close my account
+                    <span class="countdown text-lowercase" data-duration="5"></span>
+                </button>
             </form>
+            
         </div>
     </div>
     
