@@ -5,6 +5,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
+import random, string
+from django.conf import settings
 
 # Generic/Specific forms import
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
@@ -20,8 +22,12 @@ from .utils import user_postable_is_owner, user_postable_set_details, is_room_ow
 from .models import Room, File, Announcement
 from users.models import Profile
 
-import random, string
-from django.conf import settings
+# Rest Framework
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
 
 
 def home(request):
@@ -291,18 +297,21 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
         return context
 
-@login_required
+
+# AJAX Calls
+@api_view(['PUT'])
 def api_toggle_like(request, pk):
     ann = get_object_or_404(Announcement, pk=pk)
     user = request.user
 
-    if user.profile.room != ann.room:
-        raise PermissionDenied('You cannot access this link.')
-    
-    response = ann.toggle_like(user)
+    if user.is_anonymous:
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
-    return JsonResponse(response)
+    if request.method == 'PUT':
+        if user.profile.room != ann.room:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
-    def test_func(self):
-        return has_same_room(self.user, self.ann)
+        data = ann.toggle_like(user)
+        
+        return Response(data, status=status.HTTP_200_OK)
 

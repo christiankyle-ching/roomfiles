@@ -36,7 +36,8 @@ urlpatterns = [
     path('ann/<int:pk>/', include([
         path('edit/', AnnouncementUpdateView.as_view(), name='ann-edit'),
         path('delete/', AnnouncementDeleteView.as_view(), name='ann-delete'),
-        path('like/', views.api_toggle_like, name='ann-like'),
+        
+        path('api-like/', views.api_toggle_like, name='api-ann-like'),
     ])),
 
 ]

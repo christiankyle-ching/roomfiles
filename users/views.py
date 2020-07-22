@@ -93,7 +93,7 @@ def close_account_done(request):
 
 # API Calls
 @login_required
-def api_seen_object(request, model):
+def api_seen_objects(request, model):
     user = request.user
     content_type = ContentType.objects.get_by_natural_key('rooms', model)
 
@@ -104,4 +104,5 @@ def api_seen_object(request, model):
         notif.read()
     
     return JsonResponse({ 'done' : True , 'unseen_object' : 0, 'unseen_total' : user_notifs.count() })
+
 

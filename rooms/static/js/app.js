@@ -1,5 +1,6 @@
 "use strict"
 
+const csrf_token = Cookies.get('csrftoken')
 
 
 // Room Detail Script
@@ -157,13 +158,32 @@ for (let button of _like_buttons) {
     })
 }
 
-async function request_like(element, url) {
+function request_like(element, url) {
     element.classList.add('disabled')
 
-    const response = await fetch(url)
-    const data = await response.json()
+    const put_options = {
+        method: 'PUT',
+        headers: {
+            'X-CSRFToken': csrf_token
+        }
+    }
 
-    update_like_button(element, data.liked, data.new_like_count, data.redirect_href)
+    fetch(url, put_options)
+    .then(res => {
+        if (!res.ok) {            
+            throw new Error('Oops! Something went wrong.')
+        } else {
+            res.json().then(data => {
+                update_like_button(element, data.liked, data.new_like_count, data.redirect_href)
+            })
+        }
+    })
+    .catch(err => {
+        showToastError(err)
+        element.classList.remove('disabled')
+    })
+
+    
 }
 
 function update_like_button(el, liked, count, redirectHref) {
@@ -399,6 +419,11 @@ function checkFile(el_id, type) {
         
         _parent.appendChild(_error)
     }
+}
+
+function showToastError(message) {
+    // init error toast
+    $.snackbar({ content:message, style:'toast', timeout:1000})
 }
 
 

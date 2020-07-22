@@ -53,7 +53,7 @@ urlpatterns = [
     
     # Notifications
     path('notifications/', NotificationListView.as_view(), name='notifications'),
-    path('seen/<str:model>/', user_views.api_seen_object, name='api-notif-seen'),
+    path('seen/<str:model>/', user_views.api_seen_objects, name='api-notif-seen'),
 
     path('register/', user_views.register, name='register'),
 

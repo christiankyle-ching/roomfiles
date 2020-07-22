@@ -23,12 +23,16 @@ class User(AbstractUser):
     objects = UserManager()
     active = ActiveUserManager()
 
+
+
 class Avatar(models.Model):
     name = models.CharField(max_length=30)
     image = models.ImageField(upload_to='avatars')
 
     def __str__(self):
         return f'{self.name} Avatar'
+
+
 
 class ActiveProfileManager(models.Manager):
     def get_queryset(self):
@@ -116,6 +120,7 @@ class Profile(models.Model):
 
         for notif in user_notifications:
             notif.read()
+
 
 
 # Application-wide Notification

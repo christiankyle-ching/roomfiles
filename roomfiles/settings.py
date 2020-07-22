@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'gdstorage',
     'PIL',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
