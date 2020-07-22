@@ -5,14 +5,13 @@
 // Room Detail Script
 const _room_detail = document.querySelector('#roomDetailID')
 if (_room_detail) {
+    const el_roomCode = document.getElementById('roomCode')
+    const el_roomCodeToggle = document.getElementById('roomCodeToggle')
+    const el_roomCodeCopy = document.getElementById('roomCodeCopy')
+
+    const roomCode = el_roomCode.innerText
 
     function init_roomcode() {
-        const el_roomCode = document.getElementById('roomCode')
-        const el_roomCodeToggle = document.getElementById('roomCodeToggle')
-        const el_roomCodeCopy = document.getElementById('roomCodeCopy')
-    
-        const roomCode = el_roomCode.innerText
-        
         el_roomCode.innerText = '*****'
         el_roomCodeToggle.addEventListener('click', () => {
             const _icon = el_roomCodeToggle.querySelector('span')
@@ -60,7 +59,28 @@ if (_room_detail) {
         }
     }
 
+    function init_roomcode_qr() {
+        const qr_element = document.querySelector('#roomQR')
+        // generate qrcode
+        if (qr_element) {
+            new QRCode(qr_element, roomCode)
+
+            // center qr code
+            const qr_img = qr_element.querySelector('img')
+            qr_img.style.margin = "auto"; 
+
+            setTimeout(() => {
+                const qr_src = qr_img.src
+                const downloadButton = document.querySelector('#roomQRDownload')
+                downloadButton.href = qr_src
+            }, 500);
+            
+        }
+        
+    }
+
     init_roomcode()
+    init_roomcode_qr()
     show_hash_tab()
 
 }
@@ -313,7 +333,6 @@ if (_countdown) {
         }
     }, 100);
 }
-
 
 
 // Functions

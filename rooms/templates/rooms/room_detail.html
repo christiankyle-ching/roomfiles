@@ -32,6 +32,7 @@
                 </div>
             </div>
             
+            <!-- Room Code -->
             <div class="row w-100 no-gutters">
 
                 <div class="col">
@@ -39,11 +40,18 @@
                         Code: <code id="roomCode" data-hide="false">{{ room.id }}</code>
                     </h6>
                 </div>
+
+                <!-- Room Code Buttons -->
                 <div class="col-auto">
+                    
+                    <!-- QR Code modal -->
+                    {% include 'rooms/modals/room_qr.html' %}
+                    
                     <button id="roomCodeToggle" class="btn btn-sm btn-dark">
                         <span class="material-icons">visibility</span>
                     </button>
-                    <button id="roomCodeCopy" type="button" class="btn btn-secondary" data-toggle="snackbar" data-style="toast" data-content="Copied the room code">
+
+                    <button id="roomCodeCopy" type="button" class="btn btn-sm btn-dark" data-toggle="snackbar" data-style="toast" data-content="Copied the room code">
                         <span class="material-icons">content_copy</span>
                     </button>
                 </div>
@@ -181,5 +189,7 @@
     <!-- End Card -->
 
 </div>
+
+{% include 'rooms/cdn_dependencies/qrcode.html'%}
 
 {% endblock %}
