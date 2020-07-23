@@ -51,7 +51,7 @@
 .avatar-select-container {
     display: flex !important;
     flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: flex-start;
 }
 
 .avatar-item {
@@ -60,6 +60,7 @@
     border: 2px gray solid;
     border-radius: 5px;
     cursor: pointer;
+    flex-basis: 64px;
 }
 
 .avatar-item-selected {

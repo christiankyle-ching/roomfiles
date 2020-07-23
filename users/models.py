@@ -27,7 +27,8 @@ class User(AbstractUser):
 
 class Avatar(models.Model):
     name = models.CharField(max_length=30)
-    image = models.ImageField(upload_to='avatars')
+    # image = models.ImageField(upload_to='avatars')
+    image_url = models.URLField()
 
     def __str__(self):
         return f'{self.name} Avatar'
