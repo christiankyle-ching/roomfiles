@@ -1,7 +1,12 @@
 "use strict"
 
 const csrf_token = Cookies.get('csrftoken')
-
+const put_options = {
+    method: 'PUT',
+    headers: {
+        'X-CSRFToken': csrf_token
+    }
+}
 
 // Room Detail Script
 const _room_detail = document.querySelector('#roomDetailID')
@@ -101,20 +106,23 @@ if (_room_tabs) {
                 const badge_total_notif = document.querySelector('.badge-notification')
 
                 if (!badge.classList.contains('d-none')) {
-                    call_api(url).then(result => {
-                        if (result.done) {
-                            update_notif_badges(badge, result.unseen_object)
-                            update_notif_badges(badge_total_notif, result.unseen_total);
+                    fetch(url, put_options).then(res => {
+                        if (!res.ok) throw new Error('Oops! Something went wrong.')
+                        return res.json().then(data => {
+                            update_notif_badges(badge, data.unseen_object)
+                            update_notif_badges(badge_total_notif, data.unseen_total);
 
                             const unread_cards = document.querySelectorAll(`${_tab_id} > div .card-unread `)
-                            console.log(_tab_id, unread_cards);
                             
                             setTimeout(() => {
                                 remove_unread(unread_cards)    
                             }, 5000);
-                            
-                        }
+                        })
+                    }).catch(err => {
+                        showToastError(err)
                     })
+                            
+                      
                 }
 
             })
@@ -131,7 +139,7 @@ function update_notif_badges(element, new_count) {
 
 async function call_api(url) {
     if (url != '') {
-        const response = await fetch(url)
+        const response = await fetch(url, put_options)
         const data = await response.json()
         
         return data
@@ -161,12 +169,7 @@ for (let button of _like_buttons) {
 function request_like(element, url) {
     element.classList.add('disabled')
 
-    const put_options = {
-        method: 'PUT',
-        headers: {
-            'X-CSRFToken': csrf_token
-        }
-    }
+    
 
     fetch(url, put_options)
     .then(res => {
@@ -423,7 +426,7 @@ function checkFile(el_id, type) {
 
 function showToastError(message) {
     // init error toast
-    $.snackbar({ content:message, style:'toast', timeout:1000})
+    $.snackbar({ content:message, style:'toast', timeout:2000})
 }
 
 

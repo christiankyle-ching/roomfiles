@@ -12,6 +12,12 @@ from django.views.generic import ListView
 from .models import Avatar, Notification
 from django.http import JsonResponse
 
+# Rest Framework
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import permissions
+
 
 # Views
 def register(request):
@@ -92,17 +98,11 @@ def close_account_done(request):
 
 
 # API Calls
-@login_required
-def api_seen_objects(request, model):
-    user = request.user
-    content_type = ContentType.objects.get_by_natural_key('rooms', model)
 
-    user_notifs = Notification.objects.filter(target=user, is_read=False)
-    content_notifs =  user_notifs.filter(action_obj_contenttype=content_type)
-
-    for notif in content_notifs:
-        notif.read()
-    
-    return JsonResponse({ 'done' : True , 'unseen_object' : 0, 'unseen_total' : user_notifs.count() })
-
-
+# Read Announcement
+@api_view(['PUT'])
+def api_read_objects(request, model):
+    if request.method == 'PUT':
+        response = request.user.profile.notifications_read_object(model)
+        if response:
+            return Response(response, status=status.HTTP_200_OK)

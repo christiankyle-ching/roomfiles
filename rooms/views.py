@@ -26,7 +26,7 @@ from users.models import Profile
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from rest_framework import permissions
 
 
 
@@ -303,9 +303,6 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 def api_toggle_like(request, pk):
     ann = get_object_or_404(Announcement, pk=pk)
     user = request.user
-
-    if user.is_anonymous:
-        return Response(status=status.HTTP_403_FORBIDDEN)
 
     if request.method == 'PUT':
         if user.profile.room != ann.room:

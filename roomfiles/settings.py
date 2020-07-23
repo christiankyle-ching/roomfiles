@@ -173,3 +173,9 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # GDrive Settings
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = None
 GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'rooms'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}

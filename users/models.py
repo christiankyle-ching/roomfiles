@@ -121,6 +121,23 @@ class Profile(models.Model):
         for notif in user_notifications:
             notif.read()
 
+    def notifications_read_object(self, model):
+        user = self.user
+        content_type = ContentType.objects.get_by_natural_key('rooms', model)
+
+        user_notifs = Notification.objects.filter(target=user, is_read=False)
+        content_notifs =  user_notifs.filter(action_obj_contenttype=content_type)
+
+        for notif in content_notifs:
+            notif.read()
+        
+        response = {
+            'done' : True,
+            'unseen_object' : 0,
+            'unseen_total' : user_notifs.count()
+            }
+        
+        return response
 
 
 # Application-wide Notification
