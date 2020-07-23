@@ -39,6 +39,12 @@ def home(request):
     
     return render(request, 'rooms/home.html')
 
+def contact(request):
+    return render(request, 'rooms/contact.html')
+
+def about(request):
+    return render(request, 'rooms/about.html')
+
 def room_landing(request):
     return render(request, 'rooms/room-landing.html')
 
