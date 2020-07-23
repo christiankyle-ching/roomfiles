@@ -137,16 +137,6 @@ function update_notif_badges(element, new_count) {
     }
 }
 
-async function call_api(url) {
-    if (url != '') {
-        const response = await fetch(url, put_options)
-        const data = await response.json()
-        
-        return data
-    }
-    return null
-}
-
 function remove_unread(elementList) {
     for (let el of elementList) {
         el.classList.remove('card-unread')

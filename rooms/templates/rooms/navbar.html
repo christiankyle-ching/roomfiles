@@ -19,7 +19,7 @@
 
                 <button class="btn bmd-btn-icon dropdown-toggle d-flex justify-content-center" type="button" id="ex1" data-toggle="dropdown">
                     {% if user.is_authenticated and user.profile.avatar %}
-                        <img src="{{ user.profile.avatar.image.url }}" alt="{{ user.profile.avatar.name }}" class="avatar-thumbnail p-1">
+                        <img src="{{request.scheme}}://{{request.get_host}}{{ user.profile.avatar.image_url }}" alt="{{ user.profile.avatar.name }}" class="avatar-thumbnail p-1">
                     {% else %}
                         <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail">
                     {% endif %}

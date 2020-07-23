@@ -4,7 +4,7 @@
   <span class="text-muted d-block mb-3">Currently selected:</span>
 
   {% if p_form.instance.avatar %}
-    <img src="{{ p_form.instance.avatar.image.url }}" alt="{{p_form.instance.avatar.image.name}}" class="avatar-selected-preview d-block mb-3">
+    <img src="{{request.scheme}}://{{request.get_host}}{{ p_form.instance.avatar.image_url }}" alt="{{p_form.instance.avatar.image.name}}" class="avatar-selected-preview d-block mb-3">
   {% else %}
     <img src="{% static 'images/user-default.svg' %}" alt="default user avatar" class="avatar-selected-preview d-block mb-3">
   {% endif %}

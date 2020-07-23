@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.conf import settings
 
 
+
 def get_ann_contenttype():
     return ContentType.objects.get_by_natural_key('rooms', 'announcement')
 
@@ -27,12 +28,10 @@ class User(AbstractUser):
 
 class Avatar(models.Model):
     name = models.CharField(max_length=30)
-    # image = models.ImageField(upload_to='avatars')
     image_url = models.URLField()
 
     def __str__(self):
         return f'{self.name} Avatar'
-
 
 
 class ActiveProfileManager(models.Manager):

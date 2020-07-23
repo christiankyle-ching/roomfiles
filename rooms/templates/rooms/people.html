@@ -12,7 +12,7 @@
             <li class="list-group-item">
                 
                 {% if person.user.profile.avatar %}
-                    <img src="{{ person.user.profile.avatar.image.url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
+                    <img src="{{request.scheme}}://{{request.get_host}}{{ person.user.profile.avatar.image_url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
                 {% else %}
                     <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
                 {% endif %}

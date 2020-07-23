@@ -7,7 +7,7 @@
     <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3 {% if not notif.is_read %}card-unread{% endif %}">
         <div class="card-body">
 
-            <img src="{{ notif.actor.profile.avatar.image.url }}" alt="" class="avatar-thumbnail float-left">
+            <img src="{{request.scheme}}://{{request.get_host}}{{ notif.actor.profile.avatar.image_url }}" alt="" class="avatar-thumbnail float-left">
 
             <div class="content-with-avatar">
                 <strong>{{ notif.actor.profile.display_username }}</strong>

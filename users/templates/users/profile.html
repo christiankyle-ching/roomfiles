@@ -18,7 +18,7 @@
                     <div class="col-12 col-sm-auto">
                         <div class="px-3">
                         {% if p_form.instance.avatar %}
-                            <img src="{{ p_form.instance.avatar.image.url }}" class="avatar-preview">
+                            <img src="{{request.scheme}}://{{request.get_host}}{{ p_form.instance.avatar.image_url }}" class="avatar-preview">
                         {% else %}
                             <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-preview">
                         {% endif %}
