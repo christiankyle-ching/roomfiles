@@ -37,3 +37,13 @@ def notify_users(self, verb=''):
         if user != self.posted_by:
             notification = Notification(actor=self.posted_by, verb=verb, action_obj=self, target=user)
             notification.save()
+
+def read_object(user, obj_contenttype, obj_id):
+    notification = Notification.objects.filter(
+        action_obj_contenttype=obj_contenttype,
+        action_obj_id=obj_id,
+        target=user
+        ).first()
+
+    if notification:
+        notification.read()

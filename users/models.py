@@ -1,19 +1,12 @@
 from django.db import models
 from django.http import JsonResponse
-from django.contrib.contenttypes.models import ContentType
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.conf import settings
 
-
-
-def get_ann_contenttype():
-    return ContentType.objects.get_by_natural_key('rooms', 'announcement')
-
-def get_file_contenttype():
-    return ContentType.objects.get_by_natural_key('rooms', 'file')
-
-
+from django.contrib.contenttypes.models import ContentType
+from .contenttypes import get_ann_contenttype, get_file_contenttype
 
 class ActiveUserManager(UserManager):
     def get_queryset(self):

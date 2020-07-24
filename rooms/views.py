@@ -17,11 +17,19 @@ from .forms import RoomJoinForm, ContactForm
 # Form-related imports
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .utils import user_postable_is_owner, user_postable_set_details, is_room_owner, set_room_details, has_same_room
+from .utils import (
+    user_postable_is_owner,
+    user_postable_set_details,
+    is_room_owner,
+    set_room_details,
+    has_same_room,
+    read_object,
+    )
 
 # Model imports
 from .models import Room, File, Announcement
 from users.models import Profile
+from users.contenttypes import get_ann_contenttype, get_file_contenttype
 
 # Rest Framework
 from rest_framework import status
@@ -209,6 +217,13 @@ def join_room(request):
 # File Views
 class FileDetailView(LoginRequiredMixin, DetailView):
     model = File
+
+    def get_object(self):
+        file = super().get_object()
+        user = self.request.user
+        if not user == file.posted_by:
+            read_object(user, get_file_contenttype(), file.id)
+        return file
 
 class FileCreateView(LoginRequiredMixin, CreateView):
     model = File
