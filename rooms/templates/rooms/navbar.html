@@ -27,7 +27,7 @@
 
                 <!-- Notification Count -->
                 {% if user.is_authenticated %}
-                    <span class="badge badge-pill badge-info badge-notification {% if user.profile.notification_count <= 0 %}d-none{% endif %}">{{ user.profile.notification_count }}</span>
+                    <span id="notificationCount" class="badge badge-pill badge-info badge-notification {% if user.profile.notification_count <= 0 %}d-none{% endif %}">{{ user.profile.notification_count }}</span>
                 {% endif %}
 
                 <!-- Dropdown Menu -->
@@ -35,7 +35,7 @@
 
                     {% if user.is_authenticated %}
 
-                        <a href="{% url 'notifications' %}" class="dropdown-item {% if user.profile.notification_count > 0 %}text-primary font-weight-bold{% endif %}">
+                        <a id="notificationListItem" href="{% url 'notifications' %}" class="dropdown-item {% if user.profile.notification_count > 0 %}text-primary font-weight-bold{% endif %}">
                             Notifications
                         </a>
                         

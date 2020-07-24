@@ -106,6 +106,13 @@ def close_account_done(request):
 @api_view(['PUT'])
 def api_read_objects(request, model):
     if request.method == 'PUT':
-        response = request.user.profile.notifications_read_object(model)
+        response = request.user.profile.notifications_read_objects(model)
+        if response:
+            return Response(response, status=status.HTTP_200_OK)
+
+@api_view(['PUT'])
+def api_read_all_notifications(request):
+    if request.method == 'PUT':
+        response = request.user.profile.notifications_read_all()
         if response:
             return Response(response, status=status.HTTP_200_OK)

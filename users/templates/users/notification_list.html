@@ -3,6 +3,11 @@
 {% block content %}
 <div class="container infinite-container pt-3">
 
+    <div class="text-right py-3">
+        <a href="{% url 'api-notif-read-all' %}" class="btn btn-secondary btn-sm btn-raised" id="readAllNotifications">Mark all as read</a>
+    </div>
+    
+
     {% for notif in notifications %}
     <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3 {% if not notif.is_read %}card-unread{% endif %}">
         <div class="card-body">
@@ -33,7 +38,7 @@
 {% if notifications.has_next %}
     <a href="?page={{ notifications.next_page_number }}" class="infinite-more-link"></a>
 {% else %}
-    <div class="text-center infinite-item">
+    <div class="text-center infinite-item pt-2 pb-4">
         No more notifications
     </div>
 {% endif %}

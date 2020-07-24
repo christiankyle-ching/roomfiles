@@ -91,7 +91,6 @@ if (_room_detail) {
 
 }
 
-
 const _room_tabs =  document.querySelector('#roomTabs')
 if (_room_tabs) {
     const tabs = _room_tabs.querySelectorAll('.nav-item > a')
@@ -111,6 +110,7 @@ if (_room_tabs) {
                         return res.json().then(data => {
                             update_notif_badges(badge, data.unseen_object)
                             update_notif_badges(badge_total_notif, data.unseen_total);
+                            remove_notification_item_style()
 
                             const unread_cards = document.querySelectorAll(`${_tab_id} > div .card-unread `)
                             
@@ -142,6 +142,15 @@ function remove_unread(elementList) {
         el.classList.remove('card-unread')
     }
 }
+
+function remove_notification_item_style() {
+    const element = document.querySelector('#notificationListItem')
+    if (element) {
+        element.classList.remove('text-primary')
+        element.classList.remove('font-weight-bold')
+    }
+}
+
 
 
 
@@ -198,16 +207,39 @@ function update_like_button(el, liked, count, redirectHref) {
 }
 
 
+// User Notifications
+const readAllNotifications = document.querySelector('#readAllNotifications')
+if (readAllNotifications) {
+    readAllNotifications.addEventListener('click', (event) => {
+        event.preventDefault()
+
+        const count = document.querySelector('#notificationCount')
+
+        if (count && !count.classList.contains('d-none')) {
+            
+            fetch(readAllNotifications.href, put_options).then(res => {
+                if (!res.ok) throw new Error('Something yeah')
+                return res.json().then(data => {
+                    update_notif_badges(count, data.unseen_total)
+                    remove_unread(document.querySelectorAll('.card-unread'))
+                    remove_notification_item_style()
+                })
+            })
+        }
+        
+    })
+}
 
 
-// File Validation
+
+// File Validation variables
 const max_file_size_mb = 5
 const max_file_size = max_file_size_mb * (1024 * 1024)
 const allowed_file_types = [
     '.doc', '.docx', '.pdf', '.ppt', '.pptx'
 ]
 
-// File Form Script
+// File Form
 const _file_form = document.querySelector('#fileForm')
 if (_file_form) {
     // limit file picker types (can be overridden)
@@ -216,11 +248,94 @@ if (_file_form) {
 
 
 
-// Announcement Form Script
+// Announcement Form
 const _ann_form = document.querySelector('#announcementForm')
 if (_ann_form) {
     const _content = document.querySelector('#id_content')    
     if (_content != null) _content.setAttribute('placeholder', "What's on your mind?")
+}
+
+
+
+
+
+
+// Profile Edit Page
+const _input_avatar = document.querySelector('#id_avatar')
+const _modal_avatar_select = document.querySelector('#avatar-select-modal')
+const _selected_avatar_preview = document.querySelector('.avatar-selected-preview')
+if (_input_avatar && _modal_avatar_select) {
+
+    const _avatar_items = document.querySelectorAll('.avatar-item')
+    const _avatar_select_button = document.querySelector('.btn-avatar-select')
+
+    for (let item of _avatar_items) {
+        item.addEventListener('click', function(event) {
+            event.preventDefault()
+
+            highlight_item(item)
+        })
+    }
+
+    function highlight_item(element) {
+        for (let item of _avatar_items) {
+            item.classList.remove('avatar-item-selected')
+        }
+        element.classList.add('avatar-item-selected')
+    }
+
+    _avatar_select_button.addEventListener('click', function(event) {
+        const _selected_avatar = document.querySelector('.avatar-item-selected')
+        const _selected_avatar_image = _selected_avatar.querySelector('img')
+
+        // Set form input-avatar value to selected-item id
+        _input_avatar.value = _selected_avatar.value
+
+        // Set modal preview image
+        _selected_avatar_preview.setAttribute('src', _selected_avatar_image.src)
+        _selected_avatar_preview.setAttribute('alt', _selected_avatar_image.alt)
+    })
+
+}
+
+
+
+// Close Account Page
+const _close_account = document.querySelector('#closeAccount')
+if (_close_account) {
+    setTimeout(() => {
+        _close_account.disabled = false
+    }, 5000);
+}
+
+const _countdown = document.querySelector('.countdown')
+if (_countdown) {
+    let duration = parseInt(_countdown.getAttribute("data-duration"))
+    _countdown.innerText = `(${duration}s)`
+
+    const timer = setInterval(() => {
+        duration -= 1
+        _countdown.innerText = `(${duration}s)`
+    }, 1000);
+
+    setInterval(() => {
+        if (duration <= 0) {
+            clearInterval(timer)
+            _countdown.innerText = ''
+        }
+    }, 100);
+}
+
+// ----- Global ------
+
+// Clear Search buttons
+const _links_clear_search = document.querySelectorAll('.link-clear-search')
+if (_links_clear_search != null) {
+    for (let l of _links_clear_search) {
+        let _link = new URL(window.location)
+        _link.search = ''
+        l.href = _link.toString()
+    }
 }
 
 // Infinite Container Loading Script
@@ -276,79 +391,8 @@ if (_infinite_items) {
 }
 
 
-const _input_avatar = document.querySelector('#id_avatar')
-const _modal_avatar_select = document.querySelector('#avatar-select-modal')
-const _selected_avatar_preview = document.querySelector('.avatar-selected-preview')
-if (_input_avatar && _modal_avatar_select) {
 
-    const _avatar_items = document.querySelectorAll('.avatar-item')
-    const _avatar_select_button = document.querySelector('.btn-avatar-select')
-
-    for (let item of _avatar_items) {
-        item.addEventListener('click', function(event) {
-            event.preventDefault()
-
-            highlight_item(item)
-        })
-    }
-
-    function highlight_item(element) {
-        for (let item of _avatar_items) {
-            item.classList.remove('avatar-item-selected')
-        }
-        element.classList.add('avatar-item-selected')
-    }
-
-    _avatar_select_button.addEventListener('click', function(event) {
-        const _selected_avatar = document.querySelector('.avatar-item-selected')
-        const _selected_avatar_image = _selected_avatar.querySelector('img')
-
-        // Set form input-avatar value to selected-item id
-        _input_avatar.value = _selected_avatar.value
-
-        // Set modal preview image
-        _selected_avatar_preview.setAttribute('src', _selected_avatar_image.src)
-        _selected_avatar_preview.setAttribute('alt', _selected_avatar_image.alt)
-    })
-
-}
-
-const _links_clear_search = document.querySelectorAll('.link-clear-search')
-if (_links_clear_search != null) {
-    for (let l of _links_clear_search) {
-        let _link = new URL(window.location)
-        _link.search = ''
-        l.href = _link.toString()
-    }
-}
-
-const _close_account = document.querySelector('#closeAccount')
-if (_close_account) {
-    setTimeout(() => {
-        _close_account.disabled = false
-    }, 5000);
-}
-
-const _countdown = document.querySelector('.countdown')
-if (_countdown) {
-    let duration = parseInt(_countdown.getAttribute("data-duration"))
-    _countdown.innerText = `(${duration}s)`
-
-    const timer = setInterval(() => {
-        duration -= 1
-        _countdown.innerText = `(${duration}s)`
-    }, 1000);
-
-    setInterval(() => {
-        if (duration <= 0) {
-            clearInterval(timer)
-            _countdown.innerText = ''
-        }
-    }, 100);
-}
-
-
-// Functions
+// ----- Functions ------
 
 /**
  * 
