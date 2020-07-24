@@ -8,3 +8,7 @@ class RoomJoinForm(forms.Form):
         label="Enter the room code (ask the creator of the room)",
         error_messages={'invalid': 'Please enter a valid room code.'}
         )
+
+class ContactForm(forms.Form):
+    subject = forms.CharField(min_length=10, error_messages={'min_length':'Please explain more.'})
+    message = forms.CharField(min_length=10, error_messages={'min_length':'Please explain more.'}, widget=forms.Textarea)

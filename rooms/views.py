@@ -7,11 +7,12 @@ from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
 import random, string
 from django.conf import settings
+from django.core.mail import send_mail, BadHeaderError, EmailMessage
 
 # Generic/Specific forms import
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
 from django.views.generic.base import RedirectView
-from .forms import RoomJoinForm
+from .forms import RoomJoinForm, ContactForm
 
 # Form-related imports
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -39,8 +40,35 @@ def home(request):
     
     return render(request, 'rooms/home.html')
 
+def contact_success(request):
+    return render(request, 'rooms/contact_success.html')
+
+@login_required
 def contact(request):
-    return render(request, 'rooms/contact.html')
+    form = ContactForm()
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+
+        if form.is_valid():
+            subject = request.POST.get('subject')
+            message = request.POST.get('message')
+
+            try:
+                subject = f'RoomFiles Support: {subject}'
+                message = f'From: {request.user.email}\n{message}'
+                email = EmailMessage(
+                    subject,
+                    message,
+                    from_email=request.user.email,
+                    to=[settings.EMAIL_HOST_USER],
+                    reply_to=[request.user.email]).send()
+                
+
+                return redirect('contact_success')
+            except BadHeaderError:
+                messages.error(request, 'Something went wrong.')
+
+    return render(request, 'rooms/contact.html', { 'form':form })
 
 def about(request):
     return render(request, 'rooms/about.html')
