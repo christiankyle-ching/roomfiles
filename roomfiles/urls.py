@@ -60,10 +60,6 @@ urlpatterns = [
         # Read Announcement / File
         path('read/<str:model>/', user_views.api_read_objects, name='api-notif-read-objects'),
     ])),
-    
-    
-    
-    
 
     path('register/', user_views.register, name='register'),
 

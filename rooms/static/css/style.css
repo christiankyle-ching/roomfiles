@@ -109,3 +109,9 @@
 .card {
     transition: background-color 2s ease-in-out;
 }
+
+/* Error Pages */
+.error-code {
+    font-family: 'Caveat Brush', cursive;
+    font-size: 12em;
+}

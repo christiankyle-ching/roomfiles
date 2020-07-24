@@ -116,3 +116,4 @@ def api_read_all_notifications(request):
         response = request.user.profile.notifications_read_all()
         if response:
             return Response(response, status=status.HTTP_200_OK)
+
