@@ -1,5 +1,8 @@
 "use strict"
 
+
+
+// CSRF Forms
 const csrf_token = Cookies.get('csrftoken')
 const put_options = {
     method: 'PUT',
@@ -8,7 +11,9 @@ const put_options = {
     }
 }
 
-// Room Detail Script
+
+
+// ----- Room Detail Page -----
 const _room_detail = document.querySelector('#roomDetailID')
 if (_room_detail) {
     const el_roomCode = document.getElementById('roomCode')
@@ -91,6 +96,7 @@ if (_room_detail) {
 
 }
 
+// Notifications
 const _room_tabs =  document.querySelector('#roomTabs')
 if (_room_tabs) {
     const tabs = _room_tabs.querySelectorAll('.nav-item > a')
@@ -151,10 +157,7 @@ function remove_notification_item_style() {
     }
 }
 
-
-
-
-// Like Button Fetch
+// Like Button API
 const _like_buttons = document.querySelectorAll('.btn-like')
 for (let button of _like_buttons) {
     button.addEventListener('click', function(event) {
@@ -207,7 +210,79 @@ function update_like_button(el, liked, count, redirectHref) {
 }
 
 
-// User Notifications
+
+// ----- Room Join Page -----
+// QR Scanner
+const roomJoinForm = document.getElementById('roomJoinForm')
+const qrScannerToggle = document.getElementById('qrScannerToggle')
+
+if (roomJoinForm && qrScannerToggle) {
+    const html5QrCode = new Html5Qrcode("qr-scanner");
+
+    qrScannerToggle.addEventListener('click', (event) => {
+        // Get permission and camera, then run scanner
+        const constraints = {
+            video : { facingMode : 'environment' }
+        }
+        navigator.mediaDevices.getUserMedia(constraints).then(device => {
+            console.log('Getting Cameras: ', device);
+            if (device && device.length > 0) {
+                const rearCameraId = device.getVideoTracks()[0].getSettings().deviceId
+                runScanner(rearCameraId);
+            }
+        })
+        .catch(err => {
+            if (err.code === DOMException.NOT_FOUND_ERR) {
+                showToastError('No rear camera found.')
+            } else {
+                console.error(err);
+            }
+        });
+    
+        $('#qrScannerModal').on('hidden.bs.modal', () => {
+            try {
+                html5QrCode.stop()
+            } catch (err) {
+                console.error(err);
+            }
+            
+        })
+        
+        function runScanner(cameraId) {
+            console.log('Running Scanner on Camera ID: ', cameraId);
+            $('#qrScannerModal').modal('show')
+            
+            html5QrCode.start(
+            id, 
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            qrCodeMessage => {
+                // Hide modal, stop scanner
+                $('#qrScannerModal').modal('hide')
+                
+                // Enter code then submit
+                roomJoinForm['id_code'].value = qrCodeMessage
+                roomJoinForm.submit()
+                
+            },
+            errorMessage => {
+                // console.error(errorMessage);
+            })
+            .catch(err => {
+                showToastError(err)
+            });
+        }
+    
+    })
+
+}
+
+
+
+
+// ----- All User Notifications Page -----
 const readAllNotifications = document.querySelector('#readAllNotifications')
 if (readAllNotifications) {
     readAllNotifications.addEventListener('click', (event) => {
@@ -232,6 +307,7 @@ if (readAllNotifications) {
 
 
 
+// ----- Upload File Page -----
 // File Validation variables
 const max_file_size_mb = 5
 const max_file_size = max_file_size_mb * (1024 * 1024)
@@ -248,6 +324,7 @@ if (_file_form) {
 
 
 
+// ----- Post Announcement Page -----
 // Announcement Form
 const _ann_form = document.querySelector('#announcementForm')
 if (_ann_form) {
@@ -258,9 +335,8 @@ if (_ann_form) {
 
 
 
-
-
-// Profile Edit Page
+// ----- Profile Edit page -----
+// Select Avatar Modal
 const _input_avatar = document.querySelector('#id_avatar')
 const _modal_avatar_select = document.querySelector('#avatar-select-modal')
 const _selected_avatar_preview = document.querySelector('.avatar-selected-preview')
@@ -298,8 +374,6 @@ if (_input_avatar && _modal_avatar_select) {
 
 }
 
-
-
 // Close Account Page
 const _close_account = document.querySelector('#closeAccount')
 if (_close_account) {
@@ -326,8 +400,10 @@ if (_countdown) {
     }, 100);
 }
 
-// ----- Global ------
 
+
+
+// ----- Global ------
 // Clear Search buttons
 const _links_clear_search = document.querySelectorAll('.link-clear-search')
 if (_links_clear_search != null) {
@@ -462,7 +538,3 @@ function showToastError(message) {
     // init error toast
     $.snackbar({ content:message, style:'toast', timeout:2000})
 }
-
-
-
-
