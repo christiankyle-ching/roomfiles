@@ -1,0 +1,13 @@
+{% load static %}
+
+<div class="avatar-container avatar-container-small"
+    {% if person.user.is_staff %}
+        data-border="{% static 'images/special-border.png' %}"
+    {% endif %}>
+
+    {% if person.user.profile.avatar %}
+        <img src="{{request.scheme}}://{{request.get_host}}{{ person.user.profile.avatar.image_url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail m-0">
+    {% else %}
+        <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail m-0">
+    {% endif %}
+</div>

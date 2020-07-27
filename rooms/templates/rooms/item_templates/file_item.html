@@ -5,15 +5,18 @@
 <div class="card-body">
     <div class="row">
         <div class="col">
-            <h6> <a href="{% url 'file' file.pk %}">{{ file.name }}</a></h6>
-        
-            <p>
-                By: {{ file.posted_by.profile.display_username }}
-                {% if file.posted_by.last_name %}
-                    ({{file.posted_by.last_name}})
-                {% endif %}
-            </p>
+            {% with person=file.posted_by.profile %}
+            <div class="float-left">
+                {% include 'rooms/item_templates/avatar_thumbnail.html' %}
+            </div>
+            {% endwith%}
+
+            <div class="content-with-avatar pt-1">
+                <h6> <a href="{% url 'file' file.pk %}">{{ file.name }}</a></h6>
+                <p>By: {{ file.posted_by.profile.display_username }}</p>
+            </div>
         </div>
+
         <div class="col-auto text-right">
 
             <!-- File Options : Buttons -->

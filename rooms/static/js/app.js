@@ -225,8 +225,7 @@ if (roomJoinForm && qrScannerToggle) {
             video : { facingMode : 'environment' }
         }
         navigator.mediaDevices.getUserMedia(constraints).then(device => {
-            console.log('Getting Cameras: ', device);
-            if (device && device.length > 0) {
+            if (device) {
                 const rearCameraId = device.getVideoTracks()[0].getSettings().deviceId
                 runScanner(rearCameraId);
             }
@@ -234,8 +233,8 @@ if (roomJoinForm && qrScannerToggle) {
         .catch(err => {
             if (err.code === DOMException.NOT_FOUND_ERR) {
                 showToastError('No rear camera found.')
-            } else {
-                console.error(err);
+            } else if (err.code === DOMException.SECURITY_ERR) {
+                showToastError('Cannot access the camera.')
             }
         });
     
@@ -253,7 +252,7 @@ if (roomJoinForm && qrScannerToggle) {
             $('#qrScannerModal').modal('show')
             
             html5QrCode.start(
-            id, 
+            cameraId, 
             {
                 fps: 10,
                 qrbox: 250
@@ -374,30 +373,34 @@ if (_input_avatar && _modal_avatar_select) {
 
 }
 
-// Close Account Page
-const _close_account = document.querySelector('#closeAccount')
-if (_close_account) {
-    setTimeout(() => {
-        _close_account.disabled = false
-    }, 5000);
-}
+
 
 const _countdown = document.querySelector('.countdown')
-if (_countdown) {
+// Close Account Page
+const _close_account = document.querySelector('#closeAccount')
+
+if (_countdown && _close_account) {
+    // init
     let duration = parseInt(_countdown.getAttribute("data-duration"))
     _countdown.innerText = `(${duration}s)`
 
+    // set timeout clear disable
+    setTimeout(() => {
+        _close_account.disabled = false
+    }, duration*1000);
+
+    // change timer text, 
     const timer = setInterval(() => {
         duration -= 1
         _countdown.innerText = `(${duration}s)`
-    }, 1000);
-
-    setInterval(() => {
+        
         if (duration <= 0) {
             clearInterval(timer)
             _countdown.innerText = ''
         }
-    }, 100);
+        
+    }, 1000);
+
 }
 
 
@@ -464,6 +467,14 @@ if (_infinite_items) {
     loadingModal.on('hidden.bs.modal', function () {
         loaded = false
     })
+}
+
+const avatarContainers = document.querySelectorAll('.avatar-container')
+for (let avatar of avatarContainers) {
+    const borderSrc = avatar.getAttribute('data-border')
+    if (borderSrc) {
+        avatar.style.backgroundImage = `url(${borderSrc})`
+    }                                
 }
 
 

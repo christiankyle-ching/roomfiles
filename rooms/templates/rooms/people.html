@@ -11,11 +11,7 @@
             {% for person in people %}
             <li class="list-group-item">
                 
-                {% if person.user.profile.avatar %}
-                    <img src="{{request.scheme}}://{{request.get_host}}{{ person.user.profile.avatar.image_url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
-                {% else %}
-                    <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
-                {% endif %}
+                {% include 'rooms/item_templates/avatar_thumbnail.html' %}
 
                 <div>
                     

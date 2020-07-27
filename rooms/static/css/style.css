@@ -31,21 +31,40 @@
 
 
 /* #region ----- Avatar Input ----- */
-.avatar-preview {
-    display: block;
-    margin: 0 auto;
+.avatar-container {
+    background-size: contain;
+    background-repeat: no-repeat;
 
     width: 200px;
+    height: 200px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-container-small {
+    height: 55px !important;
+    width: 55px !important;
+}
+
+.avatar-preview {
+    width: 150px;
     height: auto;
+
+    /* border adjustment */
+    padding-top: 20px;
 }
 
 .avatar-thumbnail {
     width: 40px;
     height: auto;
+
+    padding-top: 5px;
 }
 
 .content-with-avatar {
-    padding-left: 60px;
+    padding-left: 65px;
 }
 
 .avatar-select-container {

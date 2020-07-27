@@ -12,10 +12,10 @@
                 <legend>Are you sure you want to leave room "{{ user.profile.room.name }}"?</legend>
                 
                 <div class="form-group text-right">
-                    <button class="btn btn-danger mr-3" type="submit" name="leave">
+                    <a href="{% url 'room' user.profile.room.id user.profile.room.slug %}" class="btn btn-outline-secondary">Cancel</a>
+                    <button class="btn btn-danger btn-raised mr-3" type="submit" name="leave">
                         Leave
                     </button>
-                    <a href="{% url 'room' user.profile.room.id user.profile.room.slug %}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
 

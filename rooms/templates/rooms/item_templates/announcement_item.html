@@ -7,11 +7,13 @@
     
     <div class="card-body">
         <div>
-            {% if ann.posted_by.profile.avatar %}
-                <img src="{{request.scheme}}://{{request.get_host}}{{ ann.posted_by.profile.avatar.image_url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail float-left">
-            {% else %}
-                <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
-            {% endif %}
+            
+            {% with person=ann.posted_by.profile %}
+            <div class="float-left">
+                {% include 'rooms/item_templates/avatar_thumbnail.html' %}
+            </div>
+            {% endwith%}
+
             <div class="content-with-avatar">
                 <!-- Post Menu Options -->
                 {% if ann.posted_by == user %}
