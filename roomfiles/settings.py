@@ -1,4 +1,5 @@
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -8,9 +9,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.environ.get('roomfiles_secret')
 
-DEBUG = True
+DEBUG = (os.environ.get('roomfiles_debug') == "True")
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['roomfiles.herokuapp.com']
 
 
 # Application definition
@@ -168,3 +169,6 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ]
 }
+
+# Heroku Deployment
+django_heroku.settings(locals())
