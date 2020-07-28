@@ -7,7 +7,8 @@ from users.models import Avatar
 class Command(BaseCommand):
     help = 'Imports all images located in settings.BASE_DIR/assets/avatars as Avatar objects'
 
-    AVATARS_DIR = os.path.join(settings.STATIC_ROOT, 'images', 'avatars')
+    ALLOWED_FILETYPES = ('.png', '.webp')
+    AVATARS_DIR = os.path.join(settings.BASE_DIR, 'rooms', 'static', 'images', 'avatars')
 
     def handle(self, *args, **kwargs):
         print('CLEARING DATABASE...')
@@ -25,7 +26,7 @@ class Command(BaseCommand):
             filename = _matches.groups()[0].capitalize()
             file_extension = _matches.groups()[1]
 
-            if '.png' == file_extension.lower():
+            if file_extension.lower() in self.ALLOWED_FILETYPES:
                 print(f'ADDING: {filename} Avatar from "{self.AVATARS_DIR + _file}"')
 
                 avatar = Avatar(name=filename, image_url=settings.STATIC_URL+'images/avatars/'+_file)
