@@ -1,3 +1,4 @@
+
 /* #region ----- BOOTSRAPMD FIXES ----- */
 /* BootsrapMD form invalid-feedback fix */
 .form-group .invalid-feedback {
@@ -5,6 +6,7 @@
     margin: 0;
     margin-top: 1em !important;
 }
+
 
 /* Bug Fix : Not aligning to right */
 .dropdown-menu-right { 
@@ -93,6 +95,7 @@
 }
 /* #endregion */
 
+
 #closeAccount::first-letter {
     text-transform: uppercase !important;
 }
@@ -131,6 +134,52 @@
 
 /* Error Pages */
 .error-code {
-    font-family: 'Caveat Brush', cursive;
+    font-family: 'Caveat Brush', cursive !important;
     font-size: 12em;
 }
+
+/* #region ----- Home Page ----- */
+#welcome-banner .welcome-title {
+    font-weight: 500;
+}
+
+.btn-padded {
+    padding: 0.75em 2em
+}
+
+#highlights .container-fluid:nth-child(even) {
+    background-color: #03a8f41f !important;
+}
+/* #endregion */
+
+/* #region ----- Footer ----- */
+.footer-title {
+    opacity: 0.8;
+    margin: 0;
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+footer ul li {
+    display: inline;
+}
+ 
+footer ul li a {
+    color: white !important;
+    opacity: 0.6;
+}
+
+footer a:hover {
+    text-decoration: none !important;
+}
+
+.footer-section {
+    opacity: 0.6;
+    padding-top: 1em;
+}
+/* #endregion */
+

@@ -153,7 +153,7 @@ class Announcement(Room_Object, User_Postable, User_Likable):
 
     @property
     def notification_name(self):
-        return self.content[:30]
+        return self.content
 
     
 

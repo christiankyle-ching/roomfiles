@@ -21,8 +21,8 @@
                         {% if room.created_by == person.user %} (Creator) {% endif %}
                     </h6>
                     
-                    <span {%if user.profile.display_name == 'Unnamed' %}class="text-muted"{% endif %}>
-                        {{ user.profile.display_name }}
+                    <span {%if person.user.profile.display_name == 'Unnamed' %}class="text-muted"{% endif %}>
+                        {{ person.user.profile.display_name }}
                     </span>
                     
                 </div>

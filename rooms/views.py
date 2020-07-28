@@ -178,8 +178,10 @@ def leave_room(request):
 
     if request.method == 'POST':
         if 'leave' in request.POST:
+            messages.info(request, f'You left the room "{request.user.profile.room.name}".')
             request.user.profile.room = None
             request.user.profile.save()
+            
             return redirect('room-landing')
 
     return render(request, 'rooms/room_leave.html')

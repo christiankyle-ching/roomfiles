@@ -41,22 +41,16 @@
         </div>
         
         
-        <div class="row w-100">
-            <div class="col-auto d-flex">
-                <small class="my-auto">{{ ann.posted_datetime }}</small>
-            </div>
-
-            <div class="col d-flex">
-                <!-- Like Button -->
-                
-                <a href="{% url 'api-ann-like' ann.pk %}" class="btn btn-sm btn-dark btn-like mt-auto ml-auto"
-                    data-href="{% url 'api-ann-like' ann.pk %}" data-likes="{{ ann.liked_by.count }}">
-                    <span class="material-icons {% if ann in liked_announcements %}text-primary{% endif %}">thumb_up</span>
-                    <span class="like-count p-2">{{ ann.liked_by.count }}</span>
-                </a>
-            </div>
-            
+        <div class="d-flex justify-content-between">
+            <small class="my-auto">{{ ann.posted_datetime }}</small>
+    
+            <a href="{% url 'api-ann-like' ann.pk %}" class="btn btn-sm btn-dark btn-like mt-auto"
+                data-href="{% url 'api-ann-like' ann.pk %}" data-likes="{{ ann.liked_by.count }}">
+                <span class="material-icons {% if ann in liked_announcements %}text-primary{% endif %}">thumb_up</span>
+                <span class="like-count px-1">{{ ann.liked_by.count }}</span>
+            </a>
         </div>
+        
 
     </div>
 </div>
