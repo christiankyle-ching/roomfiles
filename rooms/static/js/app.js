@@ -215,69 +215,70 @@ function update_like_button(el, liked, count, redirectHref) {
 // QR Scanner
 const roomJoinForm = document.getElementById('roomJoinForm')
 const qrScannerToggle = document.getElementById('qrScannerToggle')
-
 if (roomJoinForm && qrScannerToggle) {
-    const html5QrCode = new Html5Qrcode("qr-scanner");
+    if (window.location.protocol === 'https:') {        
+        const html5QrCode = new Html5Qrcode("qr-scanner");
 
-    qrScannerToggle.addEventListener('click', (event) => {
-        // Get permission and camera, then run scanner
-        const constraints = {
-            video : { facingMode : 'environment' }
-        }
-        navigator.mediaDevices.getUserMedia(constraints).then(device => {
-            if (device) {
-                const rearCameraId = device.getVideoTracks()[0].getSettings().deviceId
-                runScanner(rearCameraId);
+        qrScannerToggle.addEventListener('click', (event) => {
+            // Get permission and camera, then run scanner
+            const constraints = {
+                video : { facingMode : 'environment' }
             }
-        })
-        .catch(err => {
-            if (err.code === DOMException.NOT_FOUND_ERR) {
-                showToastError('No rear camera found.')
-            } else if (err.code === DOMException.SECURITY_ERR) {
-                showToastError('Cannot access the camera.')
-            }
-        });
-    
-        $('#qrScannerModal').on('hidden.bs.modal', () => {
-            try {
-                html5QrCode.stop()
-            } catch (err) {
-                console.error(err);
-            }
-            
-        })
-        
-        function runScanner(cameraId) {
-            console.log('Running Scanner on Camera ID: ', cameraId);
-            $('#qrScannerModal').modal('show')
-            
-            html5QrCode.start(
-            cameraId, 
-            {
-                fps: 10,
-                qrbox: 250
-            },
-            qrCodeMessage => {
-                // Hide modal, stop scanner
-                $('#qrScannerModal').modal('hide')
-                
-                // Enter code then submit
-                roomJoinForm['id_code'].value = qrCodeMessage
-                roomJoinForm.submit()
-                
-            },
-            errorMessage => {
-                // console.error(errorMessage);
+            navigator.mediaDevices.getUserMedia(constraints).then(device => {
+                if (device) {
+                    const rearCameraId = device.getVideoTracks()[0].getSettings().deviceId
+                    runScanner(rearCameraId);
+                }
             })
             .catch(err => {
-                showToastError(err)
+                if (err.code === DOMException.NOT_FOUND_ERR) {
+                    showToastError('No rear camera found.')
+                } else if (err.code === DOMException.SECURITY_ERR) {
+                    showToastError('Cannot access the camera.')
+                }
             });
-        }
-    
-    })
-
+        
+            $('#qrScannerModal').on('hidden.bs.modal', () => {
+                try {
+                    html5QrCode.stop()
+                } catch (err) {
+                    console.error(err);
+                }
+                
+            })
+            
+            function runScanner(cameraId) {
+                console.log('Running Scanner on Camera ID: ', cameraId);
+                $('#qrScannerModal').modal('show')
+                
+                html5QrCode.start(
+                cameraId, 
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
+                qrCodeMessage => {
+                    // Hide modal, stop scanner
+                    $('#qrScannerModal').modal('hide')
+                    
+                    // Enter code then submit
+                    roomJoinForm['id_code'].value = qrCodeMessage
+                    roomJoinForm.submit()
+                    
+                },
+                errorMessage => {
+                    // console.error(errorMessage);
+                })
+                .catch(err => {
+                    showToastError(err)
+                });
+            }
+        
+        })
+    } else {
+        qrScannerToggle.disabled = true
+    }
 }
-
 
 
 
@@ -353,6 +354,7 @@ if (_input_avatar && _modal_avatar_select) {
     }
 
     function highlight_item(element) {
+        console.log('hg');
         for (let item of _avatar_items) {
             item.classList.remove('avatar-item-selected')
         }

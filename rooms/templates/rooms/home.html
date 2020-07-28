@@ -1,9 +1,96 @@
 {% extends 'rooms/base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="jumbotron">
-    <div class="text-center">
-        <h1>Start sharing files today!</h1>
+<div id="welcome-banner" class="jumbotron jumbotron-fluid bg-white m-0">
+
+    <div class="container text-center">
+        <h3>Share your lessons at</h3>
+        <h1 class="welcome-title">RoomFiles</h1>
+
+        <p class="my-5">Share and store your learning modules, and be up-to-date with your colleagues.</p>
+        
+        <a href="{% url 'register' %}" class="btn btn-info btn-raised text-capitalize btn-padded">Join Your Classmates</a>
+        <p class="small mt-2">Already have an account? <a href="{% url 'register' %}">Login</a></p>
+
     </div>
+
 </div>
+
+<div id="highlights">
+    <!-- Files -->
+    <div class="container-fluid w-100 p-5">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="container">
+                    <div class="card">
+                        <img class="m-auto w-100" src="{% static 'images/home/files.webp' %}"></img>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md d-flex">
+                <div class="text-center text-md-left m-auto">
+                    <h2 class="py-4">Upload your files in one place</h2>
+                    <p class="lead">
+                        Share and store your room/class files, ready to be downloaded.
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Announcements -->
+    <div class="container-fluid w-100 p-5">
+        <div class="row">
+            <div class="col-12 col-md-4 order-md-2">
+                <div class="container">
+                    <div class="card">
+                        <img class="m-auto w-100" src="{% static 'images/home/announcements.webp' %}"></img>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md order-md-1 d-flex">
+                <div class="text-center text-md-left m-auto">
+                    <h2 class="py-4">Be updated with announcements</h2>
+                    <p class="lead">
+                        Inform your colleagues of what's happening, or give them reminders and updates.
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="container-fluid w-100 p-5">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="container">
+                    <div class="card">
+                        <img class="m-auto w-100" src="{% static 'images/home/notifications.webp' %}"></img>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md d-flex">
+                <div class="text-center text-md-left m-auto">
+                    <h2 class="py-4">Never miss out an activity</h2>
+                    <p class="lead">
+                        Receive notifications for every new file or announcement in your room.
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+
+
+{% include 'rooms/footer.html' %}
+
 {% endblock %}

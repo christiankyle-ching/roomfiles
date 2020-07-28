@@ -1,4 +1,5 @@
 {% extends 'rooms/base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container infinite-container pt-3">
@@ -12,7 +13,12 @@
     <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3 {% if not notif.is_read %}card-unread{% endif %}">
         <div class="card-body">
 
-            <img src="{{request.scheme}}://{{request.get_host}}{{ notif.actor.profile.avatar.image_url }}" alt="" class="avatar-thumbnail float-left">
+            {% if notif.actor.profile.avatar %}
+                <img src="{{request.scheme}}://{{request.get_host}}{{ notif.actor.profile.avatar.image_url }}" alt="" class="avatar-thumbnail float-left">
+            {% else %}
+                <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
+            {% endif %}
+
 
             <div class="content-with-avatar">
                 <strong>{{ notif.actor.profile.display_username }}</strong>

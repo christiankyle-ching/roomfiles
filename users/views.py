@@ -45,16 +45,14 @@ def profile(request):
         p_form = ProfileUpdateForm(request.POST, instance=request.user.profile)
         avatar_id = request.POST.get('avatar')
         
-        try:
-            if p_form.is_valid() and int(avatar_id) > 0:
+        if p_form.is_valid():
+            if (avatar_id != ''):
+                avatar_id = int(avatar_id)
                 request.user.profile.avatar = get_object_or_404(Avatar, pk=avatar_id)
-                p_form.save()
 
-                messages.success(request, 'Successfully updated your profile.')
-
-                return redirect('profile')
-        except:
-            messages.error(request, 'Something went wrong. Please try again later.')
+            p_form.save()
+            messages.success(request, 'Successfully updated your profile.')
+            return redirect('profile')
 
     context = { 'p_form': p_form }
     return render(request, 'users/profile.html', context)
