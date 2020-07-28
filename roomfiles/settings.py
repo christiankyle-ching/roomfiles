@@ -171,4 +171,4 @@ REST_FRAMEWORK = {
 }
 
 # Heroku Deployment
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
