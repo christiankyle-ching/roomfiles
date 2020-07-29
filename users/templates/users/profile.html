@@ -1,4 +1,7 @@
 {% extends 'rooms/base.html' %}
+
+{% block html_title %} - {{ user.profile.display_username }}{% endblock %}
+
 {% load crispy_forms_tags %}
 {% load static %}
 

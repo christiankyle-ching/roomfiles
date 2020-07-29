@@ -10,7 +10,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('roomfiles_secret')
 
 DEBUG = (os.environ.get('roomfiles_debug') == "True")
-print(os.environ.get('roomfiles_debug'), DEBUG)
 
 ALLOWED_HOSTS = ['roomfiles.herokuapp.com']
 
