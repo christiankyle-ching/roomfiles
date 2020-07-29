@@ -14,7 +14,7 @@
         <div class="card-body">
 
             {% if notif.actor.profile.avatar %}
-                <img src="{{request.scheme}}://{{request.get_host}}{{ notif.actor.profile.avatar.image_url }}" alt="" class="avatar-thumbnail float-left">
+                <img src="{{request.scheme}}://{{request.get_host}}{{ notif.actor.profile.avatar.image_url }}" alt="{{notif.actor.profile.avatar.name}}" class="avatar-thumbnail float-left">
             {% else %}
                 <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-thumbnail float-left">
             {% endif %}
