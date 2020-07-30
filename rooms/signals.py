@@ -5,7 +5,7 @@ from .models import Room, Announcement, File
 from users.models import Profile
 
 @receiver(post_save, sender=Room)
-def create_profile(sender, instance, created, **kwargs):
+def create_room(sender, instance, created, **kwargs):
     # if room is created
     if created:
         # assign room also to the one who created it, then save profile

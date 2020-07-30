@@ -23,6 +23,8 @@ urlpatterns = [
         path('edit/', RoomUpdateView.as_view(), name='room-edit'),
         path('anns/', AnnouncementListView.as_view(), name='room-anns'),
         path('people/', views.room_people_listview, name='room-people'),
+        path('banned-people/', views.room_banned_people_listview, name='room-banned-people'),
+        
     ])),
     path('room/leave/', views.leave_room, name='room-leave'),
 

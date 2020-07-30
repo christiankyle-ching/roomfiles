@@ -18,11 +18,13 @@ from .forms import RoomJoinForm, ContactForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .utils import (
-    user_postable_is_owner,
     user_postable_set_details,
-    is_room_owner,
-    set_room_details,
-    has_same_room,
+
+    user_allowed_in_room,
+    user_allowed_create_obj,
+    user_allowed_view_object,
+    user_allowed_edit_object,
+
     read_object,
     )
 
@@ -47,9 +49,6 @@ def home(request):
             return redirect('room-landing')
     
     return render(request, 'rooms/home.html')
-
-def contact_success(request):
-    return render(request, 'rooms/contact_success.html')
 
 @login_required
 def contact(request):
@@ -77,6 +76,9 @@ def contact(request):
                 messages.error(request, 'Something went wrong.')
 
     return render(request, 'rooms/contact.html', { 'form':form })
+
+def contact_success(request):
+    return render(request, 'rooms/contact_success.html')
 
 def about(request):
     return render(request, 'rooms/about.html')
@@ -107,11 +109,9 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ('name', 'description',)
 
     def test_func(self):
-        return is_room_owner(self)
+        return self.request.user.profile.room == self.get_object()
     
     def form_valid(self, form):
-        form = set_room_details(self, form)
-
         # display success message
         messages.add_message(self.request, messages.INFO, f'Successfully updated "{form.instance.name}".')
         return super().form_valid(form)
@@ -162,14 +162,49 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 
 @login_required
 def room_people_listview(request, pk, slug):
-    _room = get_object_or_404(Room, pk=pk)
+    room = get_object_or_404(Room, pk=pk)
 
-    if request.user.profile.room != _room:
-        raise PermissionDenied('You cannot access this link.')
+    if request.user.profile.room != room:
+        raise PermissionDenied('You cannot access this room.')
 
-    _people = Profile.objects.filter(room=_room).order_by('user__username')
+    if request.method == 'POST':
+        if request.user == room.created_by:
+            user_id = request.POST.get('user_id')
+            if user_id == '':
+                messages.error(request, 'Something went wrong. Please try again later.')
+            else:
+                response = room.toggle_ban(user_id)
+                messages.success(request, response['message'])
+        else:
+            raise PermissionDenied('You do not have enough permissions to ban users.')
     
-    return render(request, 'people.html', { 'people': _people, 'room' : _room })
+    people = Profile.objects.filter(room=room).order_by('user__username')
+    return render(request, 'people.html', { 'people': people, 'room' : room, 'ban_status': False })
+
+@login_required
+def room_banned_people_listview(request, pk, slug):
+    room = get_object_or_404(Room, pk=pk)
+
+    if request.user != room.created_by:
+        raise PermissionDenied('You cannot access ban list.')
+
+    if request.method == 'POST':
+        if request.user == room.created_by:
+            user_id = request.POST.get('user_id')
+            if user_id == '':
+                messages.error(request, 'Something went wrong. Please try again later.')
+            else:
+                response = room.toggle_ban(user_id)
+                messages.info(request, response['message'])
+        else:
+            raise PermissionDenied('You do not have enough permissions to ban users.')
+    
+    banned_people_qs = room.banned_users.all()
+    banned_people = [user.profile for user in banned_people_qs]
+
+    return render(request, 'people.html', { 'people': banned_people, 'room' : room, 'ban_status': True})
+
+
 
 @login_required
 def leave_room(request):
@@ -201,15 +236,17 @@ def join_room(request):
             # check if room exists
             _code = form.cleaned_data.get('code')
             _room = get_object_or_404(Room, pk=_code)
-            
-            # if exists, save
-            request.user.profile.room = _room
-            request.user.profile.save()
 
-            # display message
-            messages.add_message(request, messages.INFO, f'Successfully joined room "{_room.name}"')
+            if request.user in _room.banned_users.all():
+                messages.error(request, 'You cannot join this room.')
+            else:
+                # if exists, save
+                request.user.profile.room = _room
+                request.user.profile.save()
 
-            return redirect(_room)
+                # display message
+                messages.add_message(request, messages.INFO, f'Successfully joined room "{_room.name}"')
+                return redirect(_room)
 
     return render(request, 'rooms/room_join.html', { 'form' : form })
 
@@ -217,19 +254,28 @@ def join_room(request):
 
 
 # File Views
-class FileDetailView(LoginRequiredMixin, DetailView):
+class FileDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
     model = File
+
+    def test_func(self):
+        return user_allowed_view_object(self.request.user, self.get_object())
 
     def get_object(self):
         file = super().get_object()
+
+        # Read notification if opened
         user = self.request.user
         if not user == file.posted_by:
             read_object(user, get_file_contenttype(), file.id)
+            
         return file
 
-class FileCreateView(LoginRequiredMixin, CreateView):
+class FileCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = File
     fields = ('name', 'description', 'raw_file')
+    
+    def test_func(self):
+        return self.request.user.profile.room
     
     def form_valid(self, form):
         form = user_postable_set_details(self, form)
@@ -243,7 +289,7 @@ class FileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ('name', 'description', 'raw_file')
 
     def test_func(self):
-        return user_postable_is_owner(self)
+        return user_allowed_edit_object(self.request.user, self.get_object())
     
     def form_valid(self, form):
         form = user_postable_set_details(self, form)
@@ -256,7 +302,7 @@ class FileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = File
     
     def test_func(self):
-        return user_postable_is_owner(self)
+        return user_allowed_edit_object(self.request.user, self.get_object())
 
     def delete(self, *args, **kwargs):
         _obj = self.get_object()
@@ -269,9 +315,12 @@ class FileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # Announcement Views
-class AnnouncementCreateView(LoginRequiredMixin, CreateView):
+class AnnouncementCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Announcement
     fields = ('content',)
+
+    def test_func(self):
+        return self.request.user.profile.room
 
     def form_valid(self, form):
         form = user_postable_set_details(self, form)
@@ -285,7 +334,7 @@ class AnnouncementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView
     fields = ('content',)
 
     def test_func(self):
-        return user_postable_is_owner(self)
+        return user_allowed_edit_object(self.request.user, self.get_object())
     
     def form_valid(self, form):
         form = user_postable_set_details(self, form)
@@ -298,7 +347,7 @@ class AnnouncementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView
     model = Announcement
     
     def test_func(self):
-        return user_postable_is_owner(self)
+        return user_allowed_edit_object(self.request.user, self.get_object())
 
     def delete(self, *args, **kwargs):
         messages.add_message(self.request, messages.INFO, 'Successfully deleted announcement.')

@@ -12,6 +12,7 @@
         <div class="card-body">
 
             <div>
+                <!-- Room Name -->
                 <h4 class="float-left">{{ room.name }}</h4>
 
                 <!-- Room Menu Options -->
@@ -61,10 +62,21 @@
                 
             </div>
             
-            <p class="pt-3">
-                <span class="text-muted">Description</span><br>
-                {{ room.description }}
-            </p>
+            <!-- Room Description -->
+            <div id="descriptionContainer" class="collapsible-container collpsed-container">
+                <p class="pt-3">
+                    <span class="text-muted">Description</span><br>
+                    {{ room.description|linebreaks }}
+                </p>
+            </div>
+
+            <!-- Collapse buton -->
+            <button type="button" class="collapsible-toggle btn btn-sm btn-block btn-secondary"
+            data-collapse-target="#descriptionContainer">
+                <span class="material-icons">keyboard_arrow_down</span>
+            </button>
+
+
 
         
             <!-- TABS -->

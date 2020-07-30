@@ -407,6 +407,28 @@ if (_countdown && _close_account) {
 
 
 
+// --- Room People page -----
+// Ban modal
+const banForm = document.getElementById('banForm')
+if (banForm) {
+    $('#banModal').on('show.bs.modal', function (event) {
+
+        const button = $(event.relatedTarget)
+        const userId = button.data('user-id')
+        const username = button.data('username')
+        const banStatus = button.data('ban-status')
+
+        if (banStatus === 'True') {
+            $('#banModal .modal-body p').html(`Are you sure you want to unban <strong>${username}</strong>?`)
+        } else {
+            $('#banModal .modal-body p').html(`Are you sure you want to ban <strong>${username}</strong>?`)
+        }
+        
+        banForm['user_id'].value = userId
+    })
+}
+
+
 
 // ----- Global ------
 // Clear Search buttons
@@ -471,12 +493,44 @@ if (_infinite_items) {
     })
 }
 
+// Border
 const avatarContainers = document.querySelectorAll('.avatar-container')
 for (let avatar of avatarContainers) {
     const borderSrc = avatar.getAttribute('data-border')
     if (borderSrc) {
         avatar.style.backgroundImage = `url(${borderSrc})`
     }                                
+}
+
+// Room Description Collapsible Container
+const collapsibleContainerToggles = document.querySelectorAll('.collapsible-toggle')
+if (collapsibleContainerToggles) {
+    for (let toggle of collapsibleContainerToggles) {
+        toggle.addEventListener('click', function () {
+            const containerId = toggle.getAttribute('data-collapse-target')
+            const isCollapsed = document.querySelector(containerId).classList.toggle('collapsed-container')
+            if (isCollapsed) {
+                toggle.querySelector('span').style.transform = 'rotate(180deg)'
+            } else {
+                toggle.querySelector('span').style.transform = 'rotate(0)'
+            }
+            
+        })
+    }
+}
+
+// Check browser if supports window fetch
+if (!window.fetch) {
+    const messages = document.querySelector('#messages')
+
+    const alert = document.createElement('div')
+    alert.classList.add('alert', 'alert-danger', 'small')
+    alert.innerHTML =
+    `<strong>Please use other browsers such as Chrome or Firefox</strong>. \
+    Your browser isn't fully supported as of the moment. \
+    You may still continue to use the site, but some functions may not work.`
+    
+    messages.appendChild(alert)
 }
 
 

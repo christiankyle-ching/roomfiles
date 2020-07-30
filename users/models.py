@@ -153,7 +153,7 @@ class Notification(models.Model):
     
     # Generic Foreign Key - so foreign model can be different models (eg. Announcement, File)
     action_obj_contenttype = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    action_obj_id = models.PositiveIntegerField()
+    action_obj_id = models.CharField(max_length=64)
     action_obj = GenericForeignKey('action_obj_contenttype', 'action_obj_id')
 
     is_read = models.BooleanField(default=False)

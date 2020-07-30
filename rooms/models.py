@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 
 import uuid
@@ -14,7 +15,7 @@ from .validators import limit_file_size, allowed_file_type
 from gdstorage.storage import GoogleDriveStorage
 gd_storage = GoogleDriveStorage()
 
-from .utils import notify_users
+from .utils import notify_users, notify_user
 from django.conf import settings
 
 
@@ -40,6 +41,35 @@ class Room(Describable):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     slug = models.SlugField(default='', editable=False, max_length=100)
 
+    banned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="banned_users", editable=False)
+
+    def toggle_ban(self, user_id):
+        user = get_object_or_404(get_user_model(), pk=user_id)
+        
+        response = { 'banned': False, 'message': '' }
+
+        if self.created_by == user:
+            response['message'] = 'Oops! Something went wrong.'
+            return response
+
+        if user in self.banned_users.all():
+            self.banned_users.remove(user)
+            response['banned'] = False
+            response['message'] = f'Successfully remove {user.username} from being banned.'
+        else:
+            self.banned_users.add(user)
+            response['banned'] = True
+            response['message'] = f'Successfully banned {user.username} in your room.'
+
+            if user.profile.room == self:
+                user.profile.room = None
+                user.save()
+                notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
+
+        self.save()
+        return response
+
+
     def get_absolute_url(self, tab=""):
         _url_hash = f'#{tab}' if tab != "" else ""
         return reverse('room', kwargs={ 'pk' : self.pk, 'slug' : self.slug }) + _url_hash
@@ -54,6 +84,9 @@ class Room(Describable):
     def __str__(self):
         return f'Room {self.name}'
 
+    @property
+    def notification_text(self):
+        return self.name
 
 
 # Abstract
@@ -63,7 +96,7 @@ class Room_Object(models.Model):
     Fields:
         room - ForeignKey(Room)
     """
-    room = models.ForeignKey(Room, on_delete=models.CASCADE,) #editable=False)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, editable=False)
 
     class Meta:
         abstract = True
@@ -88,7 +121,7 @@ class User_Likable(models.Model):
     Fields:
         liked_by - Many-to-Many Field to Users
     """
-    liked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_by") #editable=False)
+    liked_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="liked_by", editable=False)
     
     class Meta:
         abstract = True
@@ -113,7 +146,7 @@ class File(Describable, User_Postable, Room_Object):
         notify_users(self, verb='uploaded')
 
     @property
-    def notification_name(self):
+    def notification_text(self):
         return self.name
 
 
@@ -152,8 +185,8 @@ class Announcement(Room_Object, User_Postable, User_Likable):
     
 
     @property
-    def notification_name(self):
+    def notification_text(self):
         return self.content
 
-    
+
 

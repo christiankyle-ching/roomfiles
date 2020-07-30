@@ -1,9 +1,10 @@
+from django.core.exceptions import PermissionDenied
+
 from users.models import User, Notification
 
 # Model utils
-def user_postable_is_owner(self):
-    _file = self.get_object()
-    return self.request.user == _file.posted_by
+def user_postable_is_owner(user, postable_obj):
+    return user == postable_obj.posted_by
 
 def user_postable_set_details(self, form):
     # inject posted_by as request.user
@@ -14,21 +15,7 @@ def user_postable_set_details(self, form):
 
     return form
 
-def is_room_owner(self):
-    _room = self.get_object()
-    return self.request.user == _room.created_by
 
-def set_room_details(self, form):
-    # inject creator of room as request.user
-    form.instance.created_by = self.request.user
-    
-    # inject room of file
-    form.instance.room = self.request.user.profile.room
-
-    return form
-
-def has_same_room(user_obj, likable_obj):
-    return user_obj.profile.room == likable_obj.room
 
 def notify_users(self, verb=''):    
     users_in_room = User.active.filter(profile__room=self.room)
@@ -47,3 +34,38 @@ def read_object(user, obj_contenttype, obj_id):
 
     if notification:
         notification.read()
+
+def notify_user(actor, action_obj, target, verb=''):
+    notification = Notification(actor=actor, verb=verb, action_obj=action_obj, target=target)
+    notification.save()
+    
+    
+
+def user_allowed_in_room(user, room):
+    # Check for constraints
+    if (
+        user in room.banned_users.all() or 
+        user.profile.room != room
+        ):
+        return False
+
+    return True
+
+def user_allowed_create_obj(user):
+    return user.profile.room
+
+def user_allowed_view_object(user, obj):
+    # Check for constraints
+    if user.profile.room != obj.room:
+        return False
+
+    return True
+
+def user_allowed_edit_object(user, obj):
+    # Check for constraints
+    if user.profile.room != obj.room or not user_postable_is_owner(user, obj):
+        return False
+
+    return True
+
+

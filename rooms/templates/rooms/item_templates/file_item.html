@@ -21,23 +21,8 @@
 
             <small class="float-left my-auto px-sm-3">{{ file.posted_datetime|timesince }}</small>
 
-            <!-- File Options : Buttons -->
-            <div class="d-none d-sm-block my-auto">
-                {% if file.posted_by == user %}
-                <a href="{% url 'file-delete' file.pk %}" class="btn btn-danger">
-                    <span class="material-icons">delete_forever</span>
-                </a>
-                <a href="{% url 'file-edit' file.pk %}" class="btn btn-dark">
-                    <span class="material-icons">edit</span>
-                </a>
-                {% endif %}
-                <a href="{% url 'file' file.pk %}" class="btn btn-primary">
-                    <span class="material-icons">cloud_download</span>
-                </a>
-            </div>
-
             <!-- File Options : Menu -->
-            <div class="d-sm-none my-auto">
+            <div class="d-block my-auto">
                 <div class="dropdown">
                     <button class="btn btn-dark btn-sm" type="button" id="fileOptionsMenuButton" data-toggle="dropdown">
                         <span class="material-icons">more_vert</span>

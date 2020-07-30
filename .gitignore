@@ -12,3 +12,4 @@ staticfiles
 
 # Development stuff
 assets
+.vscode

@@ -9,7 +9,6 @@
     <div class="text-right py-3">
         <a href="{% url 'api-notif-read-all' %}" class="btn btn-secondary btn-sm btn-raised" id="readAllNotifications">Mark all as read</a>
     </div>
-    
 
     {% for notif in notifications %}
     <a href="{{ notif.action_obj.get_absolute_url }}" class="card infinite-item mb-3 {% if not notif.is_read %}card-unread{% endif %}">
@@ -33,7 +32,7 @@
 
                     {{ notif.action_obj_contenttype.name }}
 
-                    "{{ notif.action_obj.notification_name }}"
+                    "{{ notif.action_obj.notification_text }}"
                 </div>
 
                 <span class="small d-block text-muted pt-2">
