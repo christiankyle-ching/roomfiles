@@ -39,33 +39,34 @@ def notify_user(actor, action_obj, target, verb=''):
     notification = Notification(actor=actor, verb=verb, action_obj=action_obj, target=target)
     notification.save()
     
-    
+
+def user_is_room_owner(user, room):
+    return user == room.created_by
 
 def user_allowed_in_room(user, room):
-    # Check for constraints
+    # User should have same room and is not banned to view
     if (
-        user in room.banned_users.all() or 
-        user.profile.room != room
+        user.profile.room == room and
+        user not in room.banned_users.all()
         ):
-        return False
+        return True
 
-    return True
+    return False
 
 def user_allowed_create_obj(user):
     return user.profile.room
 
 def user_allowed_view_object(user, obj):
     # Check for constraints
-    if user.profile.room != obj.room:
-        return False
+    if user_allowed_in_room(user, obj.room):
+        return True
 
-    return True
+    return False
 
 def user_allowed_edit_object(user, obj):
-    # Check for constraints
-    if user.profile.room != obj.room or not user_postable_is_owner(user, obj):
-        return False
+    if user_postable_is_owner(user, obj):
+        return True
 
-    return True
+    return False
 
 

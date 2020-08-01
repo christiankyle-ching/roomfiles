@@ -116,7 +116,9 @@ if (_room_tabs) {
                         return res.json().then(data => {
                             update_notif_badges(badge, data.unseen_object)
                             update_notif_badges(badge_total_notif, data.unseen_total);
-                            remove_notification_item_style()
+
+                            // Remove Notification word style if no remaining notifications
+                            if (data.unseen_total <= 0) remove_notification_item_style()
 
                             const unread_cards = document.querySelectorAll(`${_tab_id} > div .card-unread `)
                             
@@ -293,12 +295,14 @@ if (readAllNotifications) {
         if (count && !count.classList.contains('d-none')) {
             
             fetch(readAllNotifications.href, put_options).then(res => {
-                if (!res.ok) throw new Error('Something yeah')
+                if (!res.ok) throw new Error('Something went wrong')
                 return res.json().then(data => {
                     update_notif_badges(count, data.unseen_total)
-                    remove_unread(document.querySelectorAll('.card-unread'))
+                    remove_unread(document.querySelectorAll('.card-unread'))                    
                     remove_notification_item_style()
                 })
+            }).catch(err => {
+                showToastError(err)
             })
         }
         

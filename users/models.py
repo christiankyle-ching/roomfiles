@@ -106,17 +106,10 @@ class Profile(models.Model):
 
 
 
-    # Methods
-    def notifications_read_all(self):
+    # Read all notification of specific contenttype (announcement or file
+    def notifications_read_objects_of_type(self, model_type):
         user = self.user
-        user_notifications = Notification.objects.filter(target=user)
-
-        for notif in user_notifications:
-            notif.read()
-
-    def notifications_read_objects(self, model):
-        user = self.user
-        content_type = ContentType.objects.get_by_natural_key('rooms', model)
+        content_type = ContentType.objects.get_by_natural_key('rooms', model_type)
 
         user_notifs = Notification.objects.filter(target=user, is_read=False)
         content_notifs =  user_notifs.filter(action_obj_contenttype=content_type)
@@ -132,6 +125,7 @@ class Profile(models.Model):
         
         return response
 
+    # Read all notification
     def notifications_read_all(self):
         user = self.user
         notifications = Notification.objects.filter(target=user, is_read=False)

@@ -4,22 +4,27 @@
 {% block content %}
 <div class="container pt-4">
 
-    {% if not ban_status and room.created_by == user %}
-    <div class="text-right">
-        <a href="{% url 'room-banned-people' room.pk room.slug %}"
-        class="btn btn-secondary btn-raised btn-sm">
-            View Banned Users...
-        </a>
-    </div>
-    {% else %}
-    <div class="text-left">
-        <a href="{% url 'room-people' room.pk room.slug %}"
-        class="btn btn-secondary btn-sm">
+    <div class="d-block">
+        
+        <a class="btn btn-secondary btn-sm" 
+        {% if ban_status %}href="{% url 'room-people' room.pk room.slug %}"{% else %}
+        href="{% url 'room' room.pk room.slug %}"
+        {% endif %}
+        >
             <span class="material-icons">arrow_back</span>
         </a>
-    </div>
-    {% endif %}
 
+        {% if room.created_by == user and not ban_status %}
+            <a href="{% url 'room-banned-people' room.pk room.slug %}"
+            class="btn btn-secondary btn-raised btn-sm float-right">
+                View Banned Users...
+            </a>
+        {% endif %}
+
+    </div>
+
+
+    
     {% if people %}
     
         <p class="text-muted pt-3 m-0 text-center">{{ people | length }} {% if ban_status %}<span class="text-danger"> banned </span>{% endif %}people in <strong>{{ room.name }}</strong></p>

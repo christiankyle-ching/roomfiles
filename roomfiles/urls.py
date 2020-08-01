@@ -58,7 +58,7 @@ urlpatterns = [
         # Read all Notifications
         path('read/all/', user_views.api_read_all_notifications, name='api-notif-read-all'),
         # Read Announcement / File
-        path('read/<str:model>/', user_views.api_read_objects, name='api-notif-read-objects'),
+        path('read/<str:model_type>/', user_views.api_read_objects, name='api-notif-read-objects'),
     ])),
 
     path('register/', user_views.register, name='register'),

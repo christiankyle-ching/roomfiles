@@ -20,6 +20,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .utils import (
     user_postable_set_details,
 
+    user_is_room_owner,
     user_allowed_in_room,
     user_allowed_create_obj,
     user_allowed_view_object,
@@ -84,9 +85,10 @@ def about(request):
     return render(request, 'rooms/about.html')
 
 def room_landing(request):
+    if request.user.profile.room:
+        return redirect(request.user.profile.room)
+    
     return render(request, 'rooms/room-landing.html')
-
-
 
 # Room Views
 class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -109,7 +111,7 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ('name', 'description',)
 
     def test_func(self):
-        return self.request.user.profile.room == self.get_object()
+        return user_is_room_owner(self.request.user, self.get_object())
     
     def form_valid(self, form):
         # display success message
@@ -156,7 +158,7 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         return context
 
     def test_func(self):
-        return self.request.user.profile.room == self.get_object()
+        return user_allowed_in_room(self.request.user, self.get_object())
 
 
 
@@ -164,7 +166,7 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
 def room_people_listview(request, pk, slug):
     room = get_object_or_404(Room, pk=pk)
 
-    if request.user.profile.room != room:
+    if not user_allowed_in_room(request.user, room):
         raise PermissionDenied('You cannot access this room.')
 
     if request.method == 'POST':
@@ -185,7 +187,7 @@ def room_people_listview(request, pk, slug):
 def room_banned_people_listview(request, pk, slug):
     room = get_object_or_404(Room, pk=pk)
 
-    if request.user != room.created_by:
+    if not user_is_room_owner(request.user, room):
         raise PermissionDenied('You cannot access ban list.')
 
     if request.method == 'POST':
@@ -237,7 +239,7 @@ def join_room(request):
             _code = form.cleaned_data.get('code')
             _room = get_object_or_404(Room, pk=_code)
 
-            if request.user in _room.banned_users.all():
+            if user_allowed_in_room(request.user, _room):
                 messages.error(request, 'You cannot join this room.')
             else:
                 # if exists, save
@@ -360,8 +362,8 @@ class AnnouncementListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = 'rooms/announcement_list.html'
 
     def test_func(self):
-        _room = get_object_or_404(Room, pk=self.kwargs['pk'])
-        return self.request.user.profile.room == _room
+        room = get_object_or_404(Room, pk=self.kwargs['pk'])
+        return user_allowed_in_room(self.request.user, room)
 
     def get_queryset(self):
         return Announcement.objects.filter(room=self.request.user.profile.room).order_by('-posted_datetime')
@@ -405,10 +407,11 @@ def api_toggle_like(request, pk):
     user = request.user
 
     if request.method == 'PUT':
-        if user.profile.room != ann.room:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        if user_allowed_in_room(request.user, ann.room):
+            data = ann.toggle_like(user)
+            return Response(data, status=status.HTTP_200_OK)
 
-        data = ann.toggle_like(user)
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
         
-        return Response(data, status=status.HTTP_200_OK)
 

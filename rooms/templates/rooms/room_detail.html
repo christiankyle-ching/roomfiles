@@ -83,7 +83,7 @@
             <!-- TABS -->
             <ul class="nav nav-tabs nav-fill border-primary" id="roomTabs" role="tablist">
                 <li class="nav-item">
-                    <a href="#files" class="nav-link active" id="files-tab" data-toggle="tab" data-seen-href="{% url 'api-notif-read-objects' model='file' %}">
+                    <a href="#files" class="nav-link active" id="files-tab" data-toggle="tab" data-seen-href="{% url 'api-notif-read-objects' 'file' %}">
                         <span>Files</span>                        
                         <span class="badge badge-pill badge-info {% if user.profile.notification_count_file <= 0 %}d-none{% endif %}">
                             {{ user.profile.notification_count_file }}
@@ -91,7 +91,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab" data-seen-href="{% url 'api-notif-read-objects' model='announcement' %}">
+                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab" data-seen-href="{% url 'api-notif-read-objects' 'announcement' %}">
                         <span>Announcements</span>
                         <span class="badge badge-pill badge-info {% if user.profile.notification_count_ann <= 0 %}d-none{% endif %}">
                             {{ user.profile.notification_count_ann }}
