@@ -6,7 +6,7 @@
   {% if p_form.instance.avatar %}
     <img src="{{request.scheme}}://{{request.get_host}}{{ p_form.instance.avatar.image_url }}" alt="{{p_form.instance.avatar.image.name}}" class="avatar-selected-preview d-block mb-3">
   {% else %}
-    <img src="{% static 'images/user-default.svg' %}" alt="default user avatar" class="avatar-selected-preview d-block mb-3">
+    <img src="{% static 'images/user-default.svg' %}" alt="Default Profile Icon" class="avatar-selected-preview d-block mb-3">
   {% endif %}
 
   <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#avatar-select-modal">

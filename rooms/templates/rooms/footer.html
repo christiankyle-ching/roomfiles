@@ -1,10 +1,18 @@
+{% load static %}
+
 <footer class="bg-dark text-white">
 
     <div class="container p-4">
 
         <div class="row">
             <div class="col-12 col-md-auto d-flex align-items-end">
-                <h3 class="footer-title"><a href="{% url 'home' %}" class="text-white">RoomFiles<sup>&trade;</sup></a></h3>
+                
+                <img src="{% static 'images/logo-mono.svg' %}" alt="RoomFiles Logo" class="logo-inline">
+                <h4 class="footer-title">
+                    <a href="{% url 'home' %}" class="text-white">
+                        RoomFiles<sup>&trade;</sup>
+                    </a>
+                </h4>
             </div>
 
             <div class="col d-flex align-items-end">

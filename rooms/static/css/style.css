@@ -7,6 +7,9 @@
     margin-top: 1em !important;
 }
 
+.material-icons {
+    transition: transform 100ms linear;
+}
 
 /* Bug Fix : Not aligning to right */
 .dropdown-menu-right { 
@@ -96,6 +99,8 @@
 /* #endregion */
 
 
+
+/* #region ----- Global ----- */
 #closeAccount::first-letter {
     text-transform: uppercase !important;
 }
@@ -132,6 +137,17 @@
     transition: background-color 2s ease-in-out;
 }
 
+.logo-inline {
+    display: inline !important;
+    opacity: 0.5;
+
+    max-height: 1em;
+    margin: 0.3em;
+}
+
+
+/* #endregion */
+
 /* Error Pages */
 .error-code {
     font-family: 'Caveat Brush', cursive !important;
@@ -150,6 +166,62 @@
 #highlights .container-fluid:nth-child(even) {
     background-color: #03a8f41f !important;
 }
+
+.logo {
+    max-width: 7em;
+}
+
+/* #region Responsive images */
+#imgFiles, #imgAnnouncements, #imgNotifications {
+    padding-top: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#imgFiles {
+    background-image: url('/static/images/home/files-256x256.webp');
+}
+
+#imgAnnouncements {
+    background-image: url('/static/images/home/announcements-256x256.webp');
+}
+
+#imgNotifications {
+    background-image: url('/static/images/home/notifications-256x256.webp');
+}
+
+@media screen and (min-width:384px) {
+    #imgFiles {
+        background-image: url('/static/images/home/files-512x512.webp');
+    }
+    
+    #imgAnnouncements {
+        background-image: url('/static/images/home/announcements-512x512.webp');
+    }
+    
+    #imgNotifications {
+        background-image: url('/static/images/home/notifications-512x512.webp');
+    }
+}
+
+@media screen and (min-width:1200px) {
+    #imgFiles {
+        background-image: url('/static/images/home/files-1024x1024.webp');
+    }
+    
+    #imgAnnouncements {
+        background-image: url('/static/images/home/announcements-1024x1024.webp');
+    }
+    
+    #imgNotifications {
+        background-image: url('/static/images/home/notifications-1024x1024.webp');
+    }
+}
+/* #endregion */
+
+
+
+
 /* #endregion */
 
 /* #region ----- Footer ----- */
@@ -183,9 +255,7 @@ footer a:hover {
 }
 /* #endregion */
 
-.material-icons {
-    transition: transform 100ms linear;
-}
+/* #region Collapsible Toggle */
 .collapsible-container {
     height: calc(2em + 3rem + 0.875rem);
     overflow: hidden;
@@ -212,4 +282,5 @@ footer a:hover {
 .collapsed-container::after{
     content: unset !important;
 }
+/* #endregion */
 

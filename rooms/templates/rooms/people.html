@@ -22,7 +22,7 @@
 
     {% if people %}
     
-        <p class="text-muted m-0 text-center">{{ people | length }} {% if ban_status %}<span class="text-danger"> banned </span>{% endif %}people in <strong>{{ room.name }}</strong></p>
+        <p class="text-muted pt-3 m-0 text-center">{{ people | length }} {% if ban_status %}<span class="text-danger"> banned </span>{% endif %}people in <strong>{{ room.name }}</strong></p>
 
         <ul class="list-group">
             <form method="POST" id="banForm">

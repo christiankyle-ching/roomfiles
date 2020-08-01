@@ -28,7 +28,7 @@
                         {% if p_form.instance.avatar %}
                             <img src="{{request.scheme}}://{{request.get_host}}{{ p_form.instance.avatar.image_url }}" class="avatar-preview">
                         {% else %}
-                            <img src="{% static 'images/user-default.svg' %}" alt="default-profile-icon" class="avatar-preview">
+                            <img src="{% static 'images/user-default.svg' %}" alt="Default Profile Icon" class="avatar-preview">
                         {% endif %}
                         </div>
 

@@ -57,12 +57,13 @@ def contact(request):
         form = ContactForm(request.POST)
 
         if form.is_valid():
-            subject = request.POST.get('subject')
-            message = request.POST.get('message')
+            subject = form.cleaned_data['subject']
+            category = form.get_category_display(form.cleaned_data['category'])
+            message = form.cleaned_data['message']
 
             try:
-                subject = f'RoomFiles Support: {subject}'
-                message = f'From: {request.user.email}\n{message}'
+                subject = f'RoomFiles Support | {category}: {subject}'
+                message = f'{category}\nFrom: {request.user.email}\n\n{message}'
                 email = EmailMessage(
                     subject,
                     message,
@@ -70,7 +71,6 @@ def contact(request):
                     to=[settings.EMAIL_HOST_USER],
                     reply_to=[request.user.email]).send()
                 
-
                 return redirect('contact_success')
             except BadHeaderError:
                 messages.error(request, 'Something went wrong.')
