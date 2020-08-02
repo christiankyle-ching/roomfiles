@@ -11,6 +11,11 @@
     <title>RoomFiles{% block html_title %}{% endblock %}</title>
     <meta name="description" content="{% block meta_desc %}{% endblock %}">
 
+    <meta property="og:title" content="RoomFiles" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://roomfiles.herokuapp.com" />
+    <meta property="og:image" content="{% static 'images/link-preview-image.png' %}" />
+
     {% include 'rooms/cdn_dependencies/bootstrapmd_css.html'%}
     {% include 'rooms/cdn_dependencies/font_css.html'%}
     
