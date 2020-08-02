@@ -514,9 +514,9 @@ if (collapsibleContainerToggles) {
             const containerId = toggle.getAttribute('data-collapse-target')
             const isCollapsed = document.querySelector(containerId).classList.toggle('collapsed-container')
             if (isCollapsed) {
-                toggle.querySelector('span').style.transform = 'rotate(180deg)'
-            } else {
                 toggle.querySelector('span').style.transform = 'rotate(0)'
+            } else {
+                toggle.querySelector('span').style.transform = 'rotate(180deg)'
             }
             
         })
