@@ -22,6 +22,7 @@ from .utils import (
 
     user_is_room_owner,
     user_allowed_in_room,
+    user_allowed_enter_room,
     user_allowed_create_obj,
     user_allowed_view_object,
     user_allowed_edit_object,
@@ -239,7 +240,7 @@ def join_room(request):
             _code = form.cleaned_data.get('code')
             _room = get_object_or_404(Room, pk=_code)
 
-            if not user_allowed_in_room(request.user, _room):
+            if not user_allowed_enter_room(request.user, _room):
                 messages.error(request, 'You cannot join this room.')
             else:
                 # if exists, save

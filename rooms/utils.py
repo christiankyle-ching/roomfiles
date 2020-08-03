@@ -43,12 +43,12 @@ def notify_user(actor, action_obj, target, verb=''):
 def user_is_room_owner(user, room):
     return user == room.created_by
 
+def user_allowed_enter_room(user, room):
+    return user not in room.banned_users.all()
+
 def user_allowed_in_room(user, room):
     # User should have same room and is not banned to view
-    if (
-        user.profile.room == room and
-        user not in room.banned_users.all()
-        ):
+    if user.profile.room == room:
         return True
 
     return False
