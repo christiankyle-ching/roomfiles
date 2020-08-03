@@ -239,7 +239,7 @@ def join_room(request):
             _code = form.cleaned_data.get('code')
             _room = get_object_or_404(Room, pk=_code)
 
-            if user_allowed_in_room(request.user, _room):
+            if not user_allowed_in_room(request.user, _room):
                 messages.error(request, 'You cannot join this room.')
             else:
                 # if exists, save
