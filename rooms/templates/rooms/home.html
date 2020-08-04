@@ -32,9 +32,15 @@
         <div class="row">
             <div class="col-12 col-md-4">
                 <div class="container">
-                    <div class="card">
-                        <div id="imgFiles"></div>
-                    </div>
+                    <img class="card w-100 br-50"
+                        srcset="
+                        {% static 'images/home/files-256x256.png' %} 256w,
+                        {% static 'images/home/files-512x512.png' %} 512w,
+                        {% static 'images/home/files-1024x1024.png' %} 1024w,
+                        "
+                        sizes="(min-width: 768px) 30vw, 80vw"
+                        src="{% static 'images/home/files-1024x1024.png' %}"
+                    >
                 </div>
             </div>
             
@@ -55,9 +61,15 @@
         <div class="row">
             <div class="col-12 col-md-4 order-md-2">
                 <div class="container">
-                    <div class="card">
-                        <div id="imgAnnouncements"></div>
-                    </div>
+                    <img class="card w-100 br-50"
+                        srcset="
+                        {% static 'images/home/announcements-256x256.png' %} 256w,
+                        {% static 'images/home/announcements-512x512.png' %} 512w,
+                        {% static 'images/home/announcements-1024x1024.png' %} 1024w,
+                        "
+                        sizes="(min-width: 768px) 30vw, 80vw"
+                        src="{% static 'images/home/announcements-1024x1024.png' %}"
+                    >
                 </div>
             </div>
             
@@ -78,9 +90,15 @@
         <div class="row">
             <div class="col-12 col-md-4">
                 <div class="container">
-                    <div class="card">
-                        <div id="imgNotifications"></div>
-                    </div>
+                        <img class="card w-100 br-50"
+                            srcset="
+                            {% static 'images/home/notifications-256x256.png' %} 256w,
+                            {% static 'images/home/notifications-512x512.png' %} 512w,
+                            {% static 'images/home/notifications-1024x1024.png' %} 1024w,
+                            "
+                            sizes="(min-width: 768px) 30vw, 80vw"
+                            src="{% static 'images/home/notifications-1024x1024.png' %}"
+                        >
                 </div>
             </div>
             

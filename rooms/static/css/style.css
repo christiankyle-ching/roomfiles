@@ -7,6 +7,10 @@
     margin-top: 1em !important;
 }
 
+.br-50 {
+    border-radius: 2em !important;
+}
+
 .material-icons {
     transition: transform 100ms linear;
 }
@@ -170,55 +174,6 @@
 .logo {
     max-width: 7em;
 }
-
-/* #region Responsive images */
-#imgFiles, #imgAnnouncements, #imgNotifications {
-    padding-top: 100%;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-#imgFiles {
-    background-image: url('/static/images/home/files-256x256.webp');
-}
-
-#imgAnnouncements {
-    background-image: url('/static/images/home/announcements-256x256.webp');
-}
-
-#imgNotifications {
-    background-image: url('/static/images/home/notifications-256x256.webp');
-}
-
-@media screen and (min-width:384px) {
-    #imgFiles {
-        background-image: url('/static/images/home/files-512x512.webp');
-    }
-    
-    #imgAnnouncements {
-        background-image: url('/static/images/home/announcements-512x512.webp');
-    }
-    
-    #imgNotifications {
-        background-image: url('/static/images/home/notifications-512x512.webp');
-    }
-}
-
-@media screen and (min-width:1200px) {
-    #imgFiles {
-        background-image: url('/static/images/home/files-1024x1024.webp');
-    }
-    
-    #imgAnnouncements {
-        background-image: url('/static/images/home/announcements-1024x1024.webp');
-    }
-    
-    #imgNotifications {
-        background-image: url('/static/images/home/notifications-1024x1024.webp');
-    }
-}
-/* #endregion */
-
 
 
 

@@ -34,7 +34,7 @@ class ActiveProfileManager(models.Manager):
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
 
-    avatar = models.ForeignKey(Avatar, on_delete=models.CASCADE, null=True)
+    avatar = models.ForeignKey(Avatar, on_delete=models.SET_NULL, null=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     room = models.ForeignKey('rooms.Room', on_delete=models.CASCADE, null=True, editable=False)
