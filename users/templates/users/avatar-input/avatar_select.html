@@ -4,7 +4,7 @@
     value="{{ a.id }}">
 
         <!-- Avatar image -->
-        <img src="{{request.scheme}}://{{request.get_host}}{{a.image_url}}" alt="{{a.name}}" class="avatar-thumbnail">
+        <img src="{{request.scheme}}://{{request.get_host}}{{a.image_url}}" alt="{{a.name}}" class="avatar-thumbnail" loading="lazy">
     </button>
 {% endfor %}
 </div>
