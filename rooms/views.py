@@ -142,15 +142,16 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         
         # Paginate
         files_paginator = Paginator(files_qs, settings.FILE_PER_PAGE)
-        files_page_number = self.request.GET.get('file_page', 1)
+        files_page_number = self.request.GET.get('file_page', '1')
         files_page_obj = files_paginator.get_page(files_page_number)
         context['files'] = files_page_obj
 
         # Get query for announcements
         announcements_qs = Announcement.objects.filter(room=self.get_object()).order_by('-posted_datetime')
         announcements_qs_latest = announcements_qs[:settings.ANNOUNCEMENTS_PER_PAGE] # limit query to latest 10
-        context['announcements'] = announcements_qs_latest
-        context['total_announcements_count'] = announcements_qs.count()
+        if files_page_number == '1':
+            context['announcements'] = announcements_qs_latest
+            context['total_announcements_count'] = announcements_qs.count()
 
         # Get User-liked announcements
         liked_anns_qs = announcements_qs.filter(liked_by__in=[self.request.user])
