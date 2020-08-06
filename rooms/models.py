@@ -175,7 +175,6 @@ class Announcement(Room_Object, User_Postable, User_Likable):
         response = {
             'liked': liked,
             'new_like_count': self.liked_by.count(),
-            'redirect_href': self.get_absolute_url()
         }
 
         return response

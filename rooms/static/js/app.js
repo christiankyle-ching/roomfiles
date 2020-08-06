@@ -185,7 +185,7 @@ function request_like(element, url) {
             throw new Error('Oops! Something went wrong.')
         } else {
             res.json().then(data => {
-                update_like_button(element, data.liked, data.new_like_count, data.redirect_href)
+                update_like_button(element, data.liked, data.new_like_count)
             })
         }
     })
@@ -197,9 +197,7 @@ function request_like(element, url) {
     
 }
 
-function update_like_button(el, liked, count, redirectHref) {
-    window.location.href = redirectHref
-    
+function update_like_button(el, liked, count) {
     if (el != undefined) {
         el.querySelector('.like-count').innerText = count
         el.setAttribute('data-likes', count)
