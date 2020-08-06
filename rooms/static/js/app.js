@@ -160,15 +160,19 @@ function remove_notification_item_style() {
 }
 
 // Like Button API
-const _like_buttons = document.querySelectorAll('.btn-like')
-for (let button of _like_buttons) {
-    button.addEventListener('click', function(event) {
-        event.preventDefault()
+initLikeButtons()
+function initLikeButtons() {
+    const _like_buttons = document.querySelectorAll('.btn-like')
+    for (let button of _like_buttons) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault()
 
-        const _like_url = button.getAttribute('data-href')
-        request_like(button, _like_url)
-    })
+            const _like_url = button.getAttribute('data-href')
+            request_like(button, _like_url)
+        })
+    }
 }
+
 
 function request_like(element, url) {
     element.classList.add('disabled')
@@ -498,13 +502,17 @@ if (_infinite_items) {
 }
 
 // Border
-const avatarContainers = document.querySelectorAll('.avatar-container')
-for (let avatar of avatarContainers) {
-    const borderSrc = avatar.getAttribute('data-border')
-    if (borderSrc) {
-        avatar.style.backgroundImage = `url(${borderSrc})`
-    }                                
+initBorder()
+function initBorder() {
+    const avatarContainers = document.querySelectorAll('.avatar-container')
+    for (let avatar of avatarContainers) {
+        const borderSrc = avatar.getAttribute('data-border')
+        if (borderSrc) {
+            avatar.style.backgroundImage = `url(${borderSrc})`
+        }                                
+    }
 }
+
 
 // Room Description Collapsible Container
 const collapsibleContainerToggles = document.querySelectorAll('.collapsible-toggle')

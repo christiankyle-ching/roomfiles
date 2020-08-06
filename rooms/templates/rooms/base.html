@@ -94,6 +94,10 @@
     <script>
         var infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0],
+            onAfterPageLoad: () => {
+                initBorder()
+                initLikeButtons()
+            }
         });
 
         // $(document).ready(function() { $('body').bootstrapMaterialDesign(); });
