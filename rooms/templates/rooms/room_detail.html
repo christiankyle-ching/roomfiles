@@ -6,37 +6,53 @@
 {% load static %}
 
 {% block content %}
-<div class="container" id="roomDetailID">
+<!-- Main Content -->
+
+<div class="container pb-4" id="roomDetail">
+    <div>
+        <a href="{% url 'user-rooms' %}" class="btn btn-secondary btn-sm">
+            <span class="material-icons">arrow_back</span>
+        </a>
+    </div>
 
     <div class="card my-3">
 
-        <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center card-header room-card-header no-border"
+        {% if room.background %}
+        data-light-background="{{request.scheme}}://{{request.get_host}}{{room.background.image_url}}"
+        {% endif %}
+        >
+            <!-- Room Name -->
+            <h4 class="w-75 text-truncate" title="{{room.name}}">{{ room.name }}</h4>
 
-            <div>
-                <!-- Room Name -->
-                <h4 class="float-left">{{ room.name }}</h4>
+            <!-- Room Menu Options -->
+            <div class="dropdown">
+                <button class="btn btn-dark" type="button" id="optionsMenuButton" data-toggle="dropdown">
+                    <span class="material-icons">more_vert</span>
+                </button>
 
-                <!-- Room Menu Options -->
-                <div class="dropdown float-right">
-                    <button class="btn btn-dark" type="button" id="optionsMenuButton" data-toggle="dropdown">
-                      <span class="material-icons">more_vert</span>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsMenuButton">
+
+                    {% if room.created_by == user %}
+                    <a href="{% url 'room-edit' room.pk room.slug %}" class="dropdown-item">Edit Details...</a>
+                    <!-- Change Background Modal -->
+                    <button type="button" data-toggle="modal" data-target="#roomBackgroundModal" class="dropdown-item"
+                    data-room-id="{{ room.id }}" {% if room.background %}data-room-bg="{{ room.background.id }}"{% endif %}>
+                        Change Background...
                     </button>
-          
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsMenuButton">
-                        
-                        <a href="{% url 'file-upload' %}" class="dropdown-item">Upload a File</a>
-                        <a href="{% url 'ann-create' %}" class="dropdown-item">Post an Announcement</a>
+                    {% endif %}
 
-                        {% if room.created_by == user %}
-                        <a href="{% url 'room-edit' room.pk room.slug %}" class="dropdown-item">Edit</a>
-                        {% endif %}
+                    <button type="button" data-toggle="modal" data-target="#peopleModal" class="dropdown-item">View
+                        People...</button>
 
-                        <a href="{% url 'room-people' room.pk room.slug %}" class="dropdown-item">View People...</a>
-                        <a href="{% url 'room-leave' %}" class="dropdown-item text-danger">Leave Room</a>
-                    </div>
+                    <a href="{% url 'room-leave' room.pk room.slug %}" class="dropdown-item text-danger">Leave
+                        Room</a>
                 </div>
             </div>
-            
+        </div>
+
+        <div class="card-body">
+
             <!-- Room Code -->
             <div class="row w-100 no-gutters">
 
@@ -48,56 +64,57 @@
 
                 <!-- Room Code Buttons -->
                 <div class="col-auto">
-                    
+
                     <!-- QR Code modal -->
                     {% include 'rooms/modals/room_qr.html' %}
-                    
+
                     <button id="roomCodeToggle" class="btn btn-sm btn-dark">
                         <span class="material-icons">visibility</span>
                     </button>
 
-                    <button id="roomCodeCopy" type="button" class="btn btn-sm btn-dark" data-toggle="snackbar" data-style="toast" data-content="Copied the room code">
+                    <button id="roomCodeCopy" type="button" class="btn btn-sm btn-dark" data-toggle="snackbar"
+                        data-style="toast" data-content="Copied the room code">
                         <span class="material-icons">content_copy</span>
                     </button>
                 </div>
-                
+
             </div>
-            
+
+
             <!-- Room Description -->
-            <div id="descriptionContainer" class="collapsible-container">
-                <p class="pt-3">
-                    <span class="text-muted">Description</span><br>
-                    {{ room.description|linebreaks }}
-                </p>
+            <p class="text-muted">Description</p>
+            <div id="roomDescription" class="collapse">
+                {{ room.description|linebreaks }}
             </div>
-
-            <!-- Collapse buton -->
-            <button type="button" class="collapsible-toggle btn btn-sm btn-block btn-secondary"
-            data-collapse-target="#descriptionContainer">
+            <a href="#roomDescription" class="btn btn-sm btn-block btn-secondary" data-toggle="collapse">
                 <span class="material-icons">keyboard_arrow_down</span>
-            </button>
+                <span class="material-icons">keyboard_arrow_up</span>
+            </a>
 
 
 
-        
             <!-- TABS -->
             <ul class="nav nav-tabs nav-fill border-primary" id="roomTabs" role="tablist">
                 <li class="nav-item">
-                    <a href="#files" class="nav-link active" id="files-tab" data-toggle="tab" data-seen-href="{% url 'api-notif-read-objects' 'file' %}">
-                        <span>Files</span>                        
-                        <span class="badge badge-pill badge-info {% if user.profile.notification_count_file <= 0 %}d-none{% endif %}">
-                            {{ user.profile.notification_count_file }}
+                    <a href="#files" class="nav-link active" id="files-tab" data-toggle="tab"
+                        data-seen-href="{% url 'api-notif-read-objects' room.pk room.slug 'file' %}">
+                        <span>Files</span>
+                        <span
+                            class="badge badge-pill badge-info {% if not unread_files %}d-none{% endif %}">
+                            {{ unread_files|length }}
                         </span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab" data-seen-href="{% url 'api-notif-read-objects' 'announcement' %}">
+                    <a href="#ann" class="nav-link" id="ann-tab" data-toggle="tab"
+                        data-seen-href="{% url 'api-notif-read-objects' room.pk room.slug 'announcement' %}">
                         <span>Announcements</span>
-                        <span class="badge badge-pill badge-info {% if user.profile.notification_count_ann <= 0 %}d-none{% endif %}">
-                            {{ user.profile.notification_count_ann }}
+                        <span
+                            class="badge badge-pill badge-info {% if not unread_anns %}d-none{% endif %}">
+                            {{ unread_anns|length }}
                         </span>
                     </a>
-                    
+
                 </li>
             </ul>
 
@@ -105,94 +122,86 @@
 
                 <!-- Files Tab -->
                 <div class="tab-pane fade show active" id="files" role="tabpanel">
-                    <div class="container pt-3">
+
+                    <div class="pt-3">
 
                         <!-- Search Bar -->
-                        <form class="form-group" method="GET">
+                        <form class="form-group p-0" method="GET">
                             <div class="input-group">
-                                <input type="search" placeholder="Search for files..." class="form-control" name="search" value="{{ search }}">
+                                <input type="search" placeholder="Search for files..." class="form-control"
+                                    name="search" value="{{ search }}">
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-dark btn-sm">
                                         <i class="material-icons">search</i>
                                     </button>
-                                    {% if search != "" %}
-                                        <a href="#" class="btn btn-dark link-clear-search btn-sm">
-                                            <i class="material-icons">cancel</i>
-                                        </a>
-                                    {% endif %}
+                                    
+                                    <a href="javascript:location.search=''" class="btn btn-dark btn-sm btn-search-cancel">
+                                        <i class="material-icons">cancel</i>
+                                    </a>
                                 </div>
-                            </div>                                
+                            </div>
                         </form>
 
                         {% if files %}
 
-                            <p class="text-muted">{{ total_files_count }} files</p>
+                        <div class="infinite-container">
+                            {% for file in files %}
+                            {% include 'rooms/item_templates/file_item.html'%}
+                            {% endfor %}
+                        </div>
 
-                            <div class="infinite-container">
-                                {% for file in files %}
-                                {% include 'rooms/item_templates/file_item.html'%}
-                                {% endfor %}
-                            </div>
-
-                            <!-- Loading Modal -->
-                            <div id="loadingModal" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-body text-center">
-                                            Loading...
-                                        </div>
+                        <!-- Loading Modal -->
+                        <div id="loadingModal" class="modal" tabindex="-1" role="dialog" data-backdrop="static">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body text-center">
+                                        Loading...
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {% if files.has_next %}
-                                <a href="?file_page={{ files.next_page_number }}" class="infinite-more-link"></a>
-                            {% endif %}
+                        {% if files.has_next %}
+                        <a href="?file_page={{ files.next_page_number }}" class="infinite-more-link"></a>
+                        {% endif %}
 
 
                         {% else %}
-                            <div class="text-center">
-                                No files found.
-                            </div>
+                        <div class="text-center py-3">
+                            No files found.
+                        </div>
                         {% endif %}
                     </div>
                 </div>
 
                 <!-- Announcements Tab -->
                 <div class="tab-pane fade" id="ann" role="tabpanel">
-                    <div class="container pt-3">
+                    
+                    <div class="pt-3">
 
-                        <form class="form-group" method="GET">
-                            <a href="{% url 'room-anns' room.pk room.slug %}" class="input-group text-decoration-none">
-                                <input type="search" placeholder="Search for announcement..." class="form-control">
-                                <div class="input-group-append">
-                                    <button class="btn btn-dark btn-sm">
-                                        <i class="material-icons">search</i>
-                                    </button>
+                        <!-- Search Announcement -->
+                        <div class="text-right">
+                            <a href="{% url 'room-anns' room.pk room.slug %}" class="btn btn-secondary btn-sm btn-raised">
+                                <div class="d-flex align-items-center">
+                                    Search
+                                    <span class="material-icons ml-2">search</span>
                                 </div>
                             </a>
-                        </form>
-                        
-                        {% if announcements %}
+                        </div>
 
-                            
-
-                            {% for ann in announcements %}
-                            {% include 'rooms/item_templates/announcement_item.html' %}
-                            {% endfor %}
-
-                            
-
-                            {% if total_announcements_count > 10 %}
-                                <a href="{% url 'room-anns' room.pk room.slug %}" class="btn btn-block text-lowercase text-capitalize mt-3">View more</a>
-                            {% endif %}
-                            
-
-                        {% else %}
-                        <div class="text-center">
+                        {% for ann in announcements %}
+                        {% include 'rooms/item_templates/announcement_item.html' %}
+                        {% empty %}
+                        <div class="text-center py-3">
                             No announcements made.
                         </div>
+                        {% endfor %}
+
+                        {% if total_announcements_count > 10 %}
+                        <a href="{% url 'room-anns' room.pk room.slug %}"
+                            class="btn btn-block text-lowercase text-capitalize mt-3">View more</a>
                         {% endif %}
+                        
                     </div>
                 </div>
 
@@ -205,6 +214,28 @@
     <!-- End Card -->
 
 </div>
+
+<!-- FAB: Create / Join Room -->
+<div class="btn-group btn-fab pull-xs-right">
+    <button class="btn bmd-btn-fab dropdown-toggle btn-primary" type="button" id="ex4" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="material-icons">add</i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right mb-3" aria-labelledby="ex4">
+        <a href="{% url 'file-upload' room.pk room.slug %}" class="dropdown-item">
+            <span class="material-icons mr-2">note_add</span>
+            <span>New File</span>
+        </a>
+        <a href="{% url 'ann-create' room.pk room.slug %}" class="dropdown-item">
+            <span class="material-icons mr-2">announcement</span>
+            <span>Announce</small>
+        </a>
+    </div>
+</div>
+
+
+{% include 'rooms/modals/people_list.html'%}
+{% include 'rooms/modals/room_background_modal.html'%}
 
 {% include 'rooms/cdn_dependencies/qrcode.html'%}
 

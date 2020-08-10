@@ -5,8 +5,10 @@ from django.utils import timezone
 from django.http import JsonResponse
 
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 
 import uuid
 from .validators import limit_file_size, allowed_file_type
@@ -15,10 +17,21 @@ from .validators import limit_file_size, allowed_file_type
 from gdstorage.storage import GoogleDriveStorage
 gd_storage = GoogleDriveStorage()
 
-from .utils import notify_users, notify_user
+from .utils import notify_users, notify_user, user_allowed_view_object, get_notification_model
 from django.conf import settings
 
 
+
+
+class RoomBackground(models.Model):
+    class Meta:
+        ordering = ['name']
+    
+    name = models.CharField(max_length=30)
+    image_url = models.URLField()
+
+    def __str__(self):
+        return f'{self.name} Background Image'
 
 # Abstract
 class Describable(models.Model):
@@ -31,49 +44,30 @@ class Describable(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, max_length=1000)
 
+
     class Meta:
         abstract = True
 
 # Model
 class Room(Describable):
+    class Meta:
+        ordering = ['name']
+    
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     slug = models.SlugField(default='', editable=False, max_length=100)
 
     banned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="banned_users", editable=False)
+    background = models.ForeignKey(RoomBackground, on_delete=models.SET_NULL, null=True)
 
-    def toggle_ban(self, user_id):
-        user = get_object_or_404(get_user_model(), pk=user_id)
-        
-        response = { 'banned': False, 'message': '' }
-
-        if self.created_by == user:
-            response['message'] = 'Oops! Something went wrong.'
-            return response
-
-        if user in self.banned_users.all():
-            self.banned_users.remove(user)
-            response['banned'] = False
-            response['message'] = f'Successfully remove {user.username} from being banned.'
-        else:
-            self.banned_users.add(user)
-            response['banned'] = True
-            response['message'] = f'Successfully banned {user.username} in your room.'
-
-            if user.profile.room == self:
-                user.profile.room = None
-                user.save()
-                notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
-
-        self.save()
-        return response
-
+    def __str__(self):
+        return f'Room {self.name}'
 
     def get_absolute_url(self, tab=""):
         _url_hash = f'#{tab}' if tab != "" else ""
-        return reverse('room', kwargs={ 'pk' : self.pk, 'slug' : self.slug }) + _url_hash
-        
+        return reverse('room', kwargs={ 'room_pk' : self.pk, 'room_slug' : self.slug }) + _url_hash
+    
     def save(self, *args, **kwargs):
         # generate slug from name
         name = self.name
@@ -81,12 +75,80 @@ class Room(Describable):
 
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f'Room {self.name}'
+    
+    # Toggle a user ban status
+    def toggle_ban(self, user):
+        if user:
+            response = { 'banned': False, 'message': '' }
+
+            if self.created_by == user:
+                response['message'] = 'You cannot ban yourself.'
+                return response
+
+            if user in self.banned_users.all():
+                self.banned_users.remove(user)
+                response['banned'] = False
+                response['message'] = f'Successfully remove {user.username} from being banned.'
+            else:
+                self.banned_users.add(user)
+                response['banned'] = True
+                response['message'] = f'Successfully banned {user.username} in your room.'
+
+                user.profile.user_rooms.remove(self)
+                user.profile.save()
+                notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
+
+            self.save()
+            return response
+        else:
+            return { 'message': 'Invalid User ID' }
+
+    # Change background
+    def change_background(self, roombg_id):
+        roombackground = get_object_or_404(RoomBackground, pk=roombg_id)
+        self.background = roombackground
+        self.save()
+
+    
+    def get_people(self):
+        return self.user_rooms.all()
+
+    def get_banned_people(self):
+        return [user.profile for user in self.banned_users.all()]
+
+    def get_files(self, search=None):
+        files_qs = File.objects.filter(room=self).defer('raw_file')
+        if search:
+            files_qs = files_qs.filter(
+                Q(posted_by__username__icontains=search) |
+                Q(name__icontains=search) |
+                Q(description__icontains=search)
+            )
+        return files_qs
+
+    def get_announcements(self, search=None, sort=None):        
+        anns_qs = Announcement.objects.filter(room=self)
+        if search:
+            anns_qs = anns_qs.filter(
+                Q(posted_by__username__icontains=search) |
+                Q(content__icontains=search)
+            )
+
+        if sort:
+            if sort == 'date-desc':
+                anns_qs = anns_qs.order_by('-posted_datetime')
+            else:
+                anns_qs = anns_qs.order_by('posted_datetime')
+        
+        return anns_qs
 
     @property
     def notification_text(self):
         return self.name
+
+    @property
+    def users_count(self):
+        return self.user_rooms.count()
 
 
 # Abstract
@@ -101,7 +163,6 @@ class Room_Object(models.Model):
     class Meta:
         abstract = True
 
-# Abstract
 class User_Postable(models.Model):
     """
     Abstract model for models postable by a user.
@@ -130,14 +191,18 @@ class User_Likable(models.Model):
 
 # Models
 class File(Describable, User_Postable, Room_Object):
+    class Meta:
+        ordering = ['-posted_datetime']
+
     raw_file = models.FileField(
         upload_to='files', storage=gd_storage,
         validators=[limit_file_size, allowed_file_type],
         verbose_name='File',
         )
+    notifications = GenericRelation(get_notification_model(), related_query_name='file')
 
     def get_absolute_url(self):
-        return reverse('file', kwargs={ 'pk' : self.pk })
+        return reverse('file', kwargs={ 'room_pk': self.room.pk, 'room_slug': self.room.slug, 'file_pk': self.pk })
 
     def __str__(self):
         return f'File {self.name}'
@@ -147,11 +212,15 @@ class File(Describable, User_Postable, Room_Object):
 
     @property
     def notification_text(self):
-        return self.name
+        return f'in {self.room.name} ({self.name[:15]}...)'
 
 
 class Announcement(Room_Object, User_Postable, User_Likable):    
+    class Meta:
+        ordering = ['-posted_datetime']
+
     content = models.TextField(blank=False, max_length=1000)
+    notifications = GenericRelation(get_notification_model(), related_query_name='announcement')
 
     def __str__(self):
         return f'{self.posted_by}: "{self.content[:30]}..."'
@@ -160,7 +229,8 @@ class Announcement(Room_Object, User_Postable, User_Likable):
         return self.room.get_absolute_url(tab='ann')
 
     def toggle_like(self, user):
-        if not self.room == user.profile.room:
+        # if not self.room == user.profile.room:
+        if not user_allowed_view_object(user, self):
             raise PermissionDenied()
 
         if user in self.liked_by.all():
@@ -185,7 +255,7 @@ class Announcement(Room_Object, User_Postable, User_Likable):
 
     @property
     def notification_text(self):
-        return self.content
+        return f'in {self.room.name} ("{self.content[:15]}...")'
 
 
 

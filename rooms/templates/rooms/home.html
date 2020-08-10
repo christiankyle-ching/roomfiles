@@ -27,28 +27,57 @@
 </div>
 
 <div id="highlights">
-    <!-- Files -->
+    <!-- Rooms -->
     <div class="container-fluid w-100 p-5">
-        <div class="row">
-            <div class="col-12 col-md-4">
+        <div class="row wp-fade-up">
+            <div class="col-12 col-md-6 order-md-2">
                 <div class="container">
-                    <img class="card w-100 br-50"
+                    <img class="card w-100 br-2"
                         srcset="
-                        {% static 'images/home/files-256x256.png' %} 256w,
-                        {% static 'images/home/files-512x512.png' %} 512w,
-                        {% static 'images/home/files-1024x1024.png' %} 1024w,
+                        {% static 'images/home/rooms-320.jpg' %} 320w,
+                        {% static 'images/home/rooms-731.jpg' %} 731w,
+                        {% static 'images/home/rooms-990.jpg' %} 990w,
                         "
                         sizes="(min-width: 768px) 30vw, 80vw"
-                        src="{% static 'images/home/files-1024x1024.png' %}"
+                        src="{% static 'images/home/rooms-990.jpg' %}"
+                    >
+                </div>
+            </div>
+            
+            <div class="col-12 col-md order-md-1 d-flex">
+                <div class="text-center text-md-left m-auto">
+                    <h2 class="py-4 m-0">Join in multiple rooms at once</h2>
+                    <p class="lead">
+                        Just like your class, you can have multiple rooms for different subjects/courses
+                    </p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Files -->
+    <div class="container-fluid w-100 p-5">
+        <div class="row wp-fade-up">
+            <div class="col-12 col-md-4">
+                <div class="container">
+                    <img class="card w-100 br-2"
+                        srcset="
+                        {% static 'images/home/files-320.jpg' %} 320w,
+                        {% static 'images/home/files-731.jpg' %} 731w,
+                        {% static 'images/home/files-990.jpg' %} 990w,
+                        "
+                        sizes="(min-width: 768px) 30vw, 80vw"
+                        src="{% static 'images/home/files-990.jpg' %}"
                     >
                 </div>
             </div>
             
             <div class="col-12 col-md d-flex">
                 <div class="text-center text-md-left m-auto">
-                    <h2 class="py-4">Upload your files in one place</h2>
+                    <h2 class="py-4 m-0">Upload your files in one place</h2>
                     <p class="lead">
-                        Share and store your room/class files, ready to be downloaded.
+                        Share and store your room/class files, ready to be downloaded
                     </p>
                 </div>
             </div>
@@ -58,26 +87,26 @@
 
     <!-- Announcements -->
     <div class="container-fluid w-100 p-5">
-        <div class="row">
+        <div class="row wp-fade-up">
             <div class="col-12 col-md-4 order-md-2">
                 <div class="container">
-                    <img class="card w-100 br-50"
+                    <img class="card w-100 br-2"
                         srcset="
-                        {% static 'images/home/announcements-256x256.png' %} 256w,
-                        {% static 'images/home/announcements-512x512.png' %} 512w,
-                        {% static 'images/home/announcements-1024x1024.png' %} 1024w,
+                        {% static 'images/home/announcements-320.jpg' %} 320w,
+                        {% static 'images/home/announcements-731.jpg' %} 731w,
+                        {% static 'images/home/announcements-990.jpg' %} 990w,
                         "
                         sizes="(min-width: 768px) 30vw, 80vw"
-                        src="{% static 'images/home/announcements-1024x1024.png' %}"
+                        src="{% static 'images/home/announcements-990.jpg' %}"
                     >
                 </div>
             </div>
             
             <div class="col-12 col-md order-md-1 d-flex">
                 <div class="text-center text-md-left m-auto">
-                    <h2 class="py-4">Be updated with announcements</h2>
+                    <h2 class="py-4 m-0">Be updated with announcements</h2>
                     <p class="lead">
-                        Inform your colleagues of what's happening, or give them reminders and updates.
+                        Inform your colleagues of what's happening, or give them reminders and updates
                     </p>
                 </div>
             </div>
@@ -87,26 +116,26 @@
 
     <!-- Notifications -->
     <div class="container-fluid w-100 p-5">
-        <div class="row">
+        <div class="row wp-fade-up">
             <div class="col-12 col-md-4">
                 <div class="container">
-                        <img class="card w-100 br-50"
-                            srcset="
-                            {% static 'images/home/notifications-256x256.png' %} 256w,
-                            {% static 'images/home/notifications-512x512.png' %} 512w,
-                            {% static 'images/home/notifications-1024x1024.png' %} 1024w,
-                            "
-                            sizes="(min-width: 768px) 30vw, 80vw"
-                            src="{% static 'images/home/notifications-1024x1024.png' %}"
-                        >
+                    <img class="card w-100 br-2"
+                        srcset="
+                        {% static 'images/home/notifications-320.jpg' %} 320w,
+                        {% static 'images/home/notifications-731.jpg' %} 731w,
+                        {% static 'images/home/notifications-990.jpg' %} 990w,
+                        "
+                        sizes="(min-width: 768px) 30vw, 80vw"
+                        src="{% static 'images/home/notifications-990.jpg' %}"
+                    >
                 </div>
             </div>
             
             <div class="col-12 col-md d-flex">
                 <div class="text-center text-md-left m-auto">
-                    <h2 class="py-4">Never miss out an activity</h2>
+                    <h2 class="py-4 m-0">Never miss out an activity</h2>
                     <p class="lead">
-                        Receive notifications for every new file or announcement in your room.
+                        Receive notifications for every new file or announcement in your room
                     </p>
                 </div>
             </div>

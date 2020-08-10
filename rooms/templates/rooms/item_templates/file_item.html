@@ -1,6 +1,6 @@
 
 <div class="card mt-3 infinite-item
-{% if file.pk in user.profile.get_unread_files_id %}card-unread{% endif %}">
+{% if file.pk in unread_files %}card-unread{% endif %}">
 
 <div class="card-body">
     <div class="row">
@@ -12,7 +12,7 @@
             {% endwith%}
 
             <div class="content-with-avatar pt-1">
-                <h6> <a href="{% url 'file' file.pk %}">{{ file.name }}</a></h6>
+                <h6> <a href="{% url 'file' file.room.pk file.room.slug file.pk %}">{{ file.name }}</a></h6>
                 <p>By: {{ file.posted_by.profile.display_username }}</p>
             </div>
         </div>
@@ -29,10 +29,10 @@
                     </button>
 
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="fileOptionsMenuButton">
-                        <a href="{% url 'file' file.pk %}" class="dropdown-item text-primary">Download</a>
+                        <a href="{% url 'file' file.room.pk file.room.slug file.pk %}" class="dropdown-item text-primary">Download</a>
                         {% if file.posted_by == user %}
-                        <a href="{% url 'file-edit' file.pk %}" class="dropdown-item">Edit</a>
-                        <a href="{% url 'file-delete' file.pk %}" class="dropdown-item text-danger">Delete</a>
+                        <a href="{% url 'file-edit' file.room.pk file.room.slug file.pk %}" class="dropdown-item">Edit</a>
+                        <a href="{% url 'file-delete' file.room.pk file.room.slug file.pk %}" class="dropdown-item text-danger">Delete</a>
                         {% endif %}
                     </div>
                 </div>

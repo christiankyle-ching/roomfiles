@@ -1,0 +1,45 @@
+<li class="list-group-item">
+                        
+    <div class="w-100">
+        
+        <div class="float-left m-0">
+            {% include 'rooms/item_templates/avatar_thumbnail.html' %}
+        </div>
+
+        <div class="py-1 d-flex justify-content-between">
+
+            <div class="text-truncated">
+                
+                <h6 class="{% if user.profile == person %}text-primary{% endif %}">
+                    {{ person.user.profile.display_username }}
+                    
+                    {% if room.created_by == person.user %} (Creator) {% endif %}
+                </h6>
+                
+                <span {%if person.user.profile.display_name == 'Unnamed' %}class="text-muted"{% endif %}>
+                    {{ person.user.profile.display_name }}
+                </span>
+
+            </div>
+
+            <!-- Ban Button -->
+            {% if not person.user == user and user == room.created_by %}
+            <button type="button" data-toggle="modal" data-target="#banModal"
+            class="btn btn-sm float-right d-flex {%if person in banned_people %} btn-primary {%else%} btn-danger {%endif%}" 
+            data-user-id="{{person.user.id}}" data-username="{{person.user.username}}"
+            data-ban-status="{% if person in banned_people %}True{% else %}False{% endif %}">
+            
+                {% if person in banned_people %}
+                    <span class="material-icons m-0">add_circle</span>
+                {% else %}
+                    <span class="material-icons m-0">remove_circle</span>
+                {% endif %}
+            </button>
+
+            {% endif %}
+
+        </div>
+    
+    </div>
+
+</li>

@@ -7,7 +7,7 @@ from users.models import Avatar
 class Command(BaseCommand):
     help = 'Imports all images located in settings.BASE_DIR/assets/avatars as Avatar objects'
 
-    ALLOWED_FILETYPES = ('.png', '.webp')
+    ALLOWED_FILETYPES = ('.png', '.webp', '.jpeg', '.jpg')
     AVATARS_DIR = os.path.join(settings.BASE_DIR, 'rooms', 'static', 'images', 'avatars')
 
     def handle(self, *args, **kwargs):

@@ -1,5 +1,42 @@
 "use strict"
 
+// Home Page
+const waypointFadeElements = document.querySelectorAll('[class*="wp-fade-"]')
+if (waypointFadeElements.length > 0) {
+    if (setInterval && Element.prototype.getBoundingClientRect) {
+        setInterval(() => {
+            for (let el of waypointFadeElements) {
+                if (isElementInViewport(el.parentElement, 100, 200)) {
+                    el.classList.add('wp-show')
+                } else {
+                    el.classList.remove('wp-show')
+                }
+            }
+        }, 250);
+
+    } else {
+        // Callback if does not support inview script
+        for (let el of waypointFadeElements) {
+            el.classList.add('wp-show')
+        }
+    }
+    
+}
+
+// Check if element in viewport, added support for offset
+function isElementInViewport(el, offsetX, offsetY) {
+    offsetX = offsetX || 0
+    offsetY = offsetY || 0
+
+    var rect = el.getBoundingClientRect();
+
+    return (
+        (rect.top + offsetY) >= 0 &&
+        (rect.left + offsetX) >= 0 &&
+        (rect.bottom - offsetY) <= (window.innerHeight || document.documentElement.clientHeight) &&
+        (rect.right - offsetX) <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
 
 
 // CSRF Forms
@@ -14,7 +51,7 @@ const put_options = {
 
 
 // ----- Room Detail Page -----
-const _room_detail = document.querySelector('#roomDetailID')
+const _room_detail = document.querySelector('#roomDetail')
 if (_room_detail) {
     const el_roomCode = document.getElementById('roomCode')
     const el_roomCodeToggle = document.getElementById('roomCodeToggle')
@@ -124,7 +161,7 @@ if (_room_tabs) {
                             
                             setTimeout(() => {
                                 remove_unread(unread_cards)    
-                            }, 5000);
+                            }, 2000);
                         })
                     }).catch(err => {
                         showToastError(err)
@@ -167,7 +204,7 @@ function initLikeButtons() {
         button.addEventListener('click', function(event) {
             event.preventDefault()
 
-            const _like_url = button.getAttribute('data-href')
+            const _like_url = button.href
             request_like(button, _like_url)
         })
     }
@@ -176,8 +213,6 @@ function initLikeButtons() {
 
 function request_like(element, url) {
     element.classList.add('disabled')
-
-    
 
     fetch(url, put_options)
     .then(res => {
@@ -286,6 +321,57 @@ if (roomJoinForm && qrScannerToggle) {
 
 
 
+// ----- User Room Page -----
+
+// Room Backgrounds
+const roombgForm = document.querySelector('#roombgForm');
+if (roombgForm) {
+    const options = document.querySelectorAll('.roombg-option')
+
+    function select_item(item) {
+        for (let option of options) {
+            option.classList.remove('roombg-option-selected')
+        }
+        item.classList.add('roombg-option-selected')
+        roombgForm['room_bg_id'].value = item.getAttribute('data-bg-id')
+
+        console.log(roombgForm['room_id'].value, roombgForm['room_bg_id'].value);
+    }
+
+    // Click event
+    for (let option of options) {
+        option.addEventListener('click', () => select_item(option) )
+    }
+
+    $('#roomBackgroundModal').on('show.bs.modal', function (event) {
+        const button = $(event.relatedTarget)
+        roombgForm['room_id'].value = button.data('room-id')
+
+        const roombgId = button.data('room-bg');
+        if (roombgId) {
+            const item = document.querySelector(`[data-bg-id="${roombgId}"]`)
+            select_item(item)
+        }
+    })
+}
+
+const _hasGradientBackgrounds = document.querySelectorAll('[data-dark-background]')
+for (let element of _hasGradientBackgrounds) {
+    const overlay = 'linear-gradient(rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.3))'
+    element.style.backgroundImage = `${overlay}, url(${element.getAttribute('data-dark-background')})`
+    element.style.backgroundBlendMode = 'normal'
+}
+
+const _hasBackgrounds = document.querySelectorAll('[data-light-background]')
+for (let element of _hasBackgrounds) {
+    const overlay = 'linear-gradient(180deg, rgba(255,255,255,0.8) 50%, rgba(255,255,255,1) 100%)'
+    element.style.backgroundImage = `${overlay}, url(${element.getAttribute('data-light-background')})`
+    element.style.backgroundPosition = 'center top, 0 50%'
+    element.style.backgroundBlendMode = 'normal'
+    
+}
+
+
 // ----- All User Notifications Page -----
 const readAllNotifications = document.querySelector('#readAllNotifications')
 if (readAllNotifications) {
@@ -360,7 +446,6 @@ if (_input_avatar && _modal_avatar_select) {
     }
 
     function highlight_item(element) {
-        console.log('hg');
         for (let item of _avatar_items) {
             item.classList.remove('avatar-item-selected')
         }
@@ -423,14 +508,18 @@ if (banForm) {
         const userId = button.data('user-id')
         const username = button.data('username')
         const banStatus = button.data('ban-status')
-
+        
         if (banStatus === 'True') {
+            $('#banModal .modal-title').text(`Unban user in your room?`)
             $('#banModal .modal-body p').html(`Are you sure you want to unban <strong>${username}</strong>?`)
+            banForm['ban_user'].innerText = 'Yes, Remove Ban'
         } else {
+            $('#banModal .modal-title').text(`Ban user in your room?`)
             $('#banModal .modal-body p').html(`Are you sure you want to ban <strong>${username}</strong>?`)
+            banForm['ban_user'].innerText = 'Yes, Ban User'
         }
         
-        banForm['user_id'].value = userId
+        banForm['ban_user'].value = userId
     })
 }
 
@@ -438,12 +527,14 @@ if (banForm) {
 
 // ----- Global ------
 // Clear Search buttons
-const _links_clear_search = document.querySelectorAll('.link-clear-search')
+const _links_clear_search = document.querySelectorAll('.btn-search-cancel')
 if (_links_clear_search != null) {
     for (let l of _links_clear_search) {
-        let _link = new URL(window.location)
-        _link.search = ''
-        l.href = _link.toString()
+        const params = new URL(location.href).searchParams
+        if (
+            !params.get('search') &&
+            !params.get('sort')
+        ) { l.style.display = 'none' }
     }
 }
 
@@ -510,7 +601,6 @@ function initBorder() {
         }                                
     }
 }
-
 
 // Room Description Collapsible Container
 const collapsibleContainerToggles = document.querySelectorAll('.collapsible-toggle')

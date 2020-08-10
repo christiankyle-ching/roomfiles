@@ -42,7 +42,7 @@
                         {% if user.profile.room %}
                         <a href="{% url 'room' user.profile.room.id user.profile.room.slug %}" class="dropdown-item">My Room</a>
                         {% else %}
-                        <a href="{% url 'room-landing' %}" class="dropdown-item">My Room</a>
+                        <a href="{% url 'user-rooms' %}" class="dropdown-item">My Rooms</a>
                         
                         {% endif %}
 

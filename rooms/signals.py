@@ -9,7 +9,7 @@ def create_room(sender, instance, created, **kwargs):
     # if room is created
     if created:
         # assign room also to the one who created it, then save profile
-        instance.created_by.profile.room = instance
+        instance.created_by.profile.user_rooms.add(instance)
         instance.created_by.profile.save()
         
 @receiver(post_save, sender=Announcement)

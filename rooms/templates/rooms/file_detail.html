@@ -13,7 +13,7 @@
 
       <!-- Header Buttons -->
       <div>
-        <a href="{% url 'room' user.profile.room.pk user.profile.room.slug %}" class="btn btn-dark">
+        <a href="{% url 'room' file.room.pk file.room.slug %}" class="btn btn-dark">
           <span class="material-icons">arrow_back</span>
         </a>
 
@@ -24,8 +24,8 @@
           </button>
 
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsMenuButton">
-            <a class="dropdown-item" href="{% url 'file-edit' file.pk %}">Edit</a>
-            <a class="dropdown-item text-danger" href="{% url 'file-delete' file.pk %}">Delete</a>
+            <a class="dropdown-item" href="{% url 'file-edit' file.room.pk file.room.slug file.pk %}">Edit</a>
+            <a class="dropdown-item text-danger" href="{% url 'file-delete' file.room.pk file.room.slug file.pk %}">Delete</a>
           </div>
         </div>
         {% endif %}
@@ -33,7 +33,10 @@
       </div>
 
       <div class="card-header">
-        <span class="h4">{{ file.name }}</span>
+        <h4 class="h4">{{ file.name }}</h4>
+        <small>
+          Uploaded by: <strong>{{ file.posted_by.profile.display_username }}</strong>
+        </small>
       </div>
 
       <div class="container pt-3">
@@ -41,12 +44,14 @@
         <p>{{ file.description|linebreaks }}</p>
         <small class="text-muted">{{ file.posted_datetime }}</small>
 
-        <a class="btn btn-block btn-primary m-3" href="{{ file.raw_file.url }}">
-            <span class="float-right">
-                <span class="material-icons">cloud_download</span>
-            </span>
-            <span>Download</span>
-        </a>
+        <div class="my-4">
+          <a class="btn btn-block btn-primary btn-raised" href="{{ file.raw_file.url }}">
+              <span class="float-right">
+                  <span class="material-icons">cloud_download</span>
+              </span>
+              <span>Download</span>
+          </a>
+        </div>
 
       </div>
 

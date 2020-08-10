@@ -4,7 +4,7 @@
 {% load static %}
 
 {% block content %}
-<div class="container infinite-container pt-3">
+<div class="container infinite-container">
 
     <div class="text-right py-3">
         <a href="{% url 'api-notif-read-all' %}" class="btn btn-secondary btn-sm btn-raised" id="readAllNotifications">Mark all as read</a>
@@ -22,17 +22,18 @@
 
 
             <div class="content-with-avatar">
-                <div class="text-truncate">
+                <div class="text-truncated">
                     <strong>{{ notif.actor.profile.display_username }}</strong>
                     
                     {{ notif.verb }}
 
                     <!-- a or an -->
-                    {% if notif.action_obj_contenttype.name|slice:':1' in 'aeiou' %} an {% else %} a {% endif %}
+                    {% if notif.content_type.name|slice:':1' in 'aeiou' %} an {% else %} a {% endif %}
 
-                    {{ notif.action_obj_contenttype.name }}
+                    {{ notif.content_type.name }}
 
-                    "{{ notif.action_obj.notification_text }}"
+                    {{ notif.action_obj.notification_text }}
+
                 </div>
 
                 <span class="small d-block text-muted pt-2">

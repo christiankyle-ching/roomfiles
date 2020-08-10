@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.apps import apps
 
 from django.core.paginator import Paginator
 from django.contrib.contenttypes.models import ContentType
@@ -67,7 +68,7 @@ class NotificationListView(LoginRequiredMixin, ListView):
     context_object_name = 'notifications'
     
     def get_queryset(self):
-        qs = Notification.objects.filter(target=self.request.user).order_by('-executed_datetime')
+        qs = Notification.objects.filter(target=self.request.user)
         return qs
 
     def get_context_data(self, **kwargs):
@@ -92,22 +93,23 @@ def close_account_confirm(request):
     return render(request, 'users/close_account.html')
 
 def close_account_done(request):
-    request.user.is_active = False
-    request.user.save()
+    request.user.close_account()
     return render(request, 'users/close_account_done.html')
     
 
 
-# API Calls
+# AJAX Calls
 
-# Read Announcement
+# Read File or Announcement Notification
 @api_view(['PUT'])
-def api_read_objects(request, model_type):
+def api_read_objects(request, room_pk, room_slug, model_type):
     if request.method == 'PUT':
-        response = request.user.profile.notifications_read_objects_of_type(model_type)
+        room = get_object_or_404(apps.get_model('rooms', 'Room'), pk=room_pk)
+        response = request.user.profile.notifications_read_objects_of_type(room, model_type)
         if response:
             return Response(response, status=status.HTTP_200_OK)
 
+# Read all notifications
 @api_view(['PUT'])
 def api_read_all_notifications(request):
     if request.method == 'PUT':

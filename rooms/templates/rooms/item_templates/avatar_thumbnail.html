@@ -6,7 +6,7 @@
     {% endif %}>
 
     {% if person.user.profile.avatar %}
-        <img src="{{request.scheme}}://{{request.get_host}}{{ person.user.profile.avatar.image_url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail m-0">
+        <img src="{{request.scheme}}://{{request.get_host}}{{ person.user.profile.avatar.image_url }}" alt="{{ person.user.profile.avatar }}" class="avatar-thumbnail m-0" loading="lazy">
     {% else %}
         <img src="{% static 'images/user-default.svg' %}" alt="Default Profile Icon" class="avatar-thumbnail m-0">
     {% endif %}

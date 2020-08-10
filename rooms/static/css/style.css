@@ -1,5 +1,5 @@
 
-/* #region ----- BOOTSRAPMD FIXES ----- */
+/* #region ----- BOOTSRAPMD FIXES AND ADDONS ----- */
 /* BootsrapMD form invalid-feedback fix */
 .form-group .invalid-feedback {
     display: block !important;
@@ -7,12 +7,49 @@
     margin-top: 1em !important;
 }
 
-.br-50 {
+/* Custom Settings */
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.card.card-rounded {
+    border-radius: 1em;
+}
+
+.card.card-rounded > .card-header {
+    border-top-left-radius: 1em;
+    border-top-right-radius: 1em;
+}
+
+.br-2 {
     border-radius: 2em !important;
+}
+
+.min-w-0 {
+    min-width: 0 !important;
 }
 
 .material-icons {
     transition: transform 100ms linear;
+}
+
+.min-height-p {
+    min-height: 1em;
+}
+
+/* Fix - Button visible on dropdown */
+.btn {
+    z-index: 0 !important;
+}
+
+.btn-fab {
+    position: fixed;
+    bottom: 5%;
+    right: 10%;
+}
+
+.h-100 {
+    height: 100%;
 }
 
 /* Bug Fix : Not aligning to right */
@@ -27,6 +64,11 @@
 
 .navbar-brand {
     margin-right: 0 !important;
+}
+
+/* Fix - button on dropdown cursor */
+button.dropdown-item {
+    cursor: pointer !important;
 }
 
 /* SnackbarJS container padding */
@@ -102,61 +144,24 @@
 }
 /* #endregion */
 
-
-
-/* #region ----- Global ----- */
-#closeAccount::first-letter {
-    text-transform: uppercase !important;
+/* #region ----- Room Background Input ----- */
+.roombg-option {
+    border: 3px gray solid;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 200ms ease-in-out;
 }
 
-.window-height {
-    height: calc(100vh - 56px) !important;
+.roombg-option-selected {
+    border-color: darkcyan !important;
+    opacity: 1 !important;
 }
-
-#noscript-modal {
-    background: white;
-    display: block !important;
-}
-
-.btn-like {
-    display: flex !important;
-    align-items: center;
-}
-
-.badge-notification {
-    position: absolute;
-    top: 0;
-    right: -1em;
-}
-
-.badge-tab {
-    margin-bottom: -1em;
-}
-
-.card-unread {
-    background-color: rgba(0, 139, 139, 0.15);
-}
-
-.card {
-    transition: background-color 2s ease-in-out;
-}
-
-.logo-inline {
-    display: inline !important;
-    opacity: 0.5;
-
-    max-height: 1em;
-    margin: 0.3em;
-}
-
 
 /* #endregion */
 
-/* Error Pages */
-.error-code {
-    font-family: 'Caveat Brush', cursive !important;
-    font-size: 12em;
-}
+
+
 
 /* #region ----- Home Page ----- */
 #welcome-banner .welcome-title {
@@ -175,7 +180,19 @@
     max-width: 7em;
 }
 
+[class*="wp-fade-"] {
+    transition: all 600ms ease-in-out;
+}
 
+.wp-fade-up {
+    transform: translateY(10%);
+    opacity: 0;
+}
+
+.wp-show {
+    transform: translate(0);
+    opacity: 1 !important;
+}
 
 /* #endregion */
 
@@ -210,32 +227,75 @@ footer a:hover {
 }
 /* #endregion */
 
-/* #region Collapsible Toggle */
-.collapsible-container {
-    height: calc(2em + 3rem + 0.875rem);
-    overflow: hidden;
-    position: relative;
+/* #region ----- User Rooms Page ----- */
+.btn-enter-room {
+    position: absolute;
+    bottom: -1.25em;
+    right: 1em;
+    margin: 0 !important;
 }
 
-.collapsible-container::after{
+.room-card-header {
+    background-position: top center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+/* #endregion ----- User Rooms Page ----- */
+
+/* #region ----- Room Details Page ----- */
+.no-border {
+    border: 0 !important;
+}
+/* #endregion ----- Room Details Page ----- */
+
+
+
+
+/* #region ----- Global ----- */
+#closeAccount::first-letter {
+    text-transform: uppercase !important;
+}
+
+.window-height {
+    height: calc(100vh - 56px) !important;
+}
+
+.btn-like {
+    display: flex !important;
+    align-items: center;
+}
+
+.badge-notification {
     position: absolute;
     top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    content: '';
-    background: linear-gradient(to top,
-        rgba(255, 255, 255, 1) 20%,
-        rgba(255, 255, 255, 0) 40%
-    );
+    right: -1em;
 }
 
-.collapsed-container {
-    height: auto !important;
+.badge-tab {
+    margin-bottom: -1em;
 }
 
-.collapsed-container::after{
-    content: unset !important;
+.card-unread {
+    background-color: rgba(0, 139, 139, 0.15);
 }
+
+.card {
+    transition: background-color 1s ease-in-out;
+}
+
+.logo-inline {
+    display: inline !important;
+    opacity: 0.5;
+
+    max-height: 1em;
+    margin: 0.3em;
+}
+
+
 /* #endregion */
 
+/* Error Pages */
+.error-code {
+    font-family: 'Caveat Brush', cursive !important;
+    font-size: 12em;
+}

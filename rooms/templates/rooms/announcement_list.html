@@ -12,11 +12,10 @@
                 <button type="submit" class="btn btn-dark btn-sm">
                     <i class="material-icons">search</i>
                 </button>
-                {% if search != "" %}
-                    <a href="#" class="btn btn-dark link-clear-search btn-sm">
-                        <i class="material-icons">cancel</i>
-                    </a>
-                {% endif %}
+                
+                <a href="javascript:location.search=''" class="btn btn-dark btn-sm btn-search-cancel">
+                    <i class="material-icons">cancel</i>
+                </a>
             </div>
         </div>
 
@@ -24,10 +23,10 @@
             <label for="input-sort">Sort By:</label>
             <select name="sort" id="input-sort" class="form-control" onchange="this.form.submit()">
                 <option value="date-desc" {% if sort_with == "date-desc" %}selected{% endif %}>
-                    Date Desc.
+                    Newest first
                 </option>
                 <option value="date-asc" {% if sort_with == "date-asc" %}selected{% endif %}>
-                    Date Asc.
+                    Oldest first
                 </option>
             </select>
         </div>

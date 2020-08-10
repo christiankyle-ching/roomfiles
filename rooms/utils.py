@@ -1,24 +1,31 @@
 from django.core.exceptions import PermissionDenied
+from django.apps import apps
 
 from users.models import User, Notification
+from .contenttypes import get_ann_contenttype, get_file_contenttype
+
+
+
+def get_notification_model():
+    # return apps.get_model('users', 'Notification')
+    return Notification
 
 # Model utils
 def user_postable_is_owner(user, postable_obj):
     return user == postable_obj.posted_by
 
-def user_postable_set_details(self, form):
-    # inject posted_by as request.user
-    form.instance.posted_by = self.request.user
-    
-    # inject room of postable
-    form.instance.room = self.request.user.profile.room
+def user_postable_set_details(form, user, room):
+    form.instance.posted_by = user
+    form.instance.room = room
 
     return form
 
 
 
 def notify_users(self, verb=''):    
-    users_in_room = User.active.filter(profile__room=self.room)
+    # users_in_room = User.active.filter(profile__room=self.room)
+    users_in_room = self.room.user_rooms.all()
+    users_in_room = [ profile.user for profile in users_in_room ]
 
     for user in users_in_room:
         if user != self.posted_by:
@@ -27,8 +34,8 @@ def notify_users(self, verb=''):
 
 def read_object(user, obj_contenttype, obj_id):
     notification = Notification.objects.filter(
-        action_obj_contenttype=obj_contenttype,
-        action_obj_id=obj_id,
+        content_type=obj_contenttype,
+        object_id=obj_id,
         target=user
         ).first()
 
@@ -40,6 +47,7 @@ def notify_user(actor, action_obj, target, verb=''):
     notification.save()
     
 
+
 def user_is_room_owner(user, room):
     return user == room.created_by
 
@@ -47,14 +55,11 @@ def user_allowed_enter_room(user, room):
     return user not in room.banned_users.all()
 
 def user_allowed_in_room(user, room):
-    # User should have same room and is not banned to view
-    if user.profile.room == room:
+    # User should have room included in user_rooms
+    if room in user.profile.user_rooms.all():
         return True
 
     return False
-
-def user_allowed_create_obj(user):
-    return user.profile.room
 
 def user_allowed_view_object(user, obj):
     # Check for constraints

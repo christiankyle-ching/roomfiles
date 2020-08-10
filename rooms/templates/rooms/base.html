@@ -3,7 +3,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% if not DEBUG %}
+    <!-- Google Analytics -->
     {% include 'rooms/google_analytics.html' %}
+    {% endif %}
+    
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,24 +29,6 @@
 </head>
 <body>
 
-    <noscript>
-        <div class="modal" id="noscript-modal">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Javascript is disabled</h5>
-                    </div>
-                    <div class="modal-body">
-                        Please enable Javascript to access the site.
-                        Click <a href="https://www.whatismybrowser.com/guides/how-to-enable-javascript/auto" target="_blank">here</a>
-                        on how to enable it in your browser.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </noscript>
-
-
     {% include 'rooms/cdn_dependencies/jquery.html'%}
     {% include 'rooms/cdn_dependencies/popper.html'%}
 
@@ -57,7 +43,7 @@
         {% if messages %}
             {% for message in messages %}
 
-                {% if not message.tags == 'error'%}
+                {% if not message.tags == 'error' %}
                     <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
                         {{ message }}
                         <button type="button" class="close" data-dismiss="alert">
@@ -75,6 +61,13 @@
 
             {% endfor %}
         {% endif %}
+
+        <noscript>
+            <div class="alert alert-danger fade show">
+                Please <strong>enable Javascript</strong> in your browser, or the site won't work properly.
+                <a href="https://www.whatismybrowser.com/guides/how-to-enable-javascript/auto" target="_blank">How to enable it?</a>
+            </div>
+        </noscript>
         
     </div>
     
@@ -95,6 +88,7 @@
         var infinite = new Waypoint.Infinite({
             element: $('.infinite-container')[0],
             onAfterPageLoad: () => {
+                // init AJAX buttons every additional infinite-container items
                 initBorder()
                 initLikeButtons()
             }
