@@ -96,7 +96,12 @@ class Room(Describable):
 
                 user.profile.user_rooms.remove(self)
                 user.profile.save()
-                notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
+
+                # FIX: Cannot add notification with room action_obj.
+                # REASON: Primary Key of Room (UUID) is not compatible with Notification's action_obj_id (int)
+                # SOLUTION: Add Auto-Increment PK for Room
+
+                # notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
 
             self.save()
             return response
@@ -159,6 +164,12 @@ class Room_Object(models.Model):
         room - ForeignKey(Room)
     """
     room = models.ForeignKey(Room, on_delete=models.CASCADE, editable=False)
+    notifications = GenericRelation(
+        get_notification_model(),
+        related_query_name='rooms_object',
+        object_id_field='object_id',
+        content_type_field='content_type'
+        )
 
     class Meta:
         abstract = True
@@ -199,7 +210,6 @@ class File(Describable, User_Postable, Room_Object):
         validators=[limit_file_size, allowed_file_type],
         verbose_name='File',
         )
-    notifications = GenericRelation(get_notification_model(), related_query_name='file')
 
     def get_absolute_url(self):
         return reverse('file', kwargs={ 'room_pk': self.room.pk, 'room_slug': self.room.slug, 'file_pk': self.pk })
@@ -220,7 +230,6 @@ class Announcement(Room_Object, User_Postable, User_Likable):
         ordering = ['-posted_datetime']
 
     content = models.TextField(blank=False, max_length=1000)
-    notifications = GenericRelation(get_notification_model(), related_query_name='announcement')
 
     def __str__(self):
         return f'{self.posted_by}: "{self.content[:30]}..."'

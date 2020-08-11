@@ -22,14 +22,13 @@ def user_postable_set_details(form, user, room):
 
 
 
-def notify_users(self, verb=''):    
-    # users_in_room = User.active.filter(profile__room=self.room)
-    users_in_room = self.room.user_rooms.all()
+def notify_users(room_obj, verb=''):    
+    users_in_room = room_obj.room.user_rooms.all()
     users_in_room = [ profile.user for profile in users_in_room ]
 
     for user in users_in_room:
-        if user != self.posted_by:
-            notification = Notification(actor=self.posted_by, verb=verb, action_obj=self, target=user)
+        if user != room_obj.posted_by:
+            notification = Notification(actor=room_obj.posted_by, verb=verb, action_obj=room_obj, target=user)
             notification.save()
 
 def read_object(user, obj_contenttype, obj_id):

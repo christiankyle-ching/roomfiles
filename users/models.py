@@ -47,6 +47,7 @@ class ActiveProfileManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(user__is_active=True)
 
+from django.contrib.postgres.fields import ArrayField
 class Profile(models.Model):
 
     class Meta:
@@ -92,7 +93,7 @@ class Profile(models.Model):
 
     def get_notifications_in_room(self, room):
         unread_notifs = Notification.objects.filter(
-            Q(file__room=room) | Q(announcement__room=room),
+            Q(rooms_object__room=room),
             is_read=False, target=self.user,
             content_type__in=[get_ann_contenttype(), get_file_contenttype()],
             )
@@ -162,7 +163,7 @@ class Notification(models.Model):
     
     # Generic Foreign Key - so foreign model can be different models (eg. Announcement, File)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.CharField(max_length=64)
+    object_id = models.PositiveIntegerField()
     action_obj = GenericForeignKey('content_type', 'object_id')
 
     is_read = models.BooleanField(default=False)
@@ -178,3 +179,4 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-executed_datetime']
+

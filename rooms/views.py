@@ -151,11 +151,11 @@ class RoomDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['banned_people'] = room.get_banned_people()
 
         # Get unread files and announcements
-        unread_files = user.profile.get_unread_files(room).values('file__id')
-        unread_anns = user.profile.get_unread_anns(room).values('announcement__id')
+        unread_files = user.profile.get_unread_files(room).values('object_id')
+        unread_anns = user.profile.get_unread_anns(room).values('object_id')
         # Then map to get id only
-        unread_files = [item['file__id'] for item in unread_files]
-        unread_anns = [item['announcement__id'] for item in unread_anns]
+        unread_files = [item['object_id'] for item in unread_files]
+        unread_anns = [item['object_id'] for item in unread_anns]
 
         context['unread_files'] = unread_files
         context['unread_anns'] = unread_anns
