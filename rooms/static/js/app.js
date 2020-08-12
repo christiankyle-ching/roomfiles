@@ -8,8 +8,6 @@ if (waypointFadeElements.length > 0) {
             for (let el of waypointFadeElements) {
                 if (isElementInViewport(el.parentElement, 100, 200)) {
                     el.classList.add('wp-show')
-                } else {
-                    el.classList.remove('wp-show')
                 }
             }
         }, 250);
