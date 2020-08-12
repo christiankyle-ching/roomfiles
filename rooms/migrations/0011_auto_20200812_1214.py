@@ -8,6 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('rooms', '0010_auto_20200812_1206'),
+        ('users', '0013_remove_profile_user_rooms'),
     ]
 
     operations = [
