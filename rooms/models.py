@@ -49,16 +49,19 @@ class Describable(models.Model):
         abstract = True
 
 # Model
+from django.contrib.postgres.fields import ArrayField
 class Room(Describable):
     class Meta:
         ordering = ['name']
     
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, editable=False)
 
-    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    uuid = models.UUIDField(editable=False, default=uuid.uuid4)
     slug = models.SlugField(default='', editable=False, max_length=100)
 
     banned_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="banned_users", editable=False)
+    # banned_users_bak = ArrayField(models.PositiveIntegerField(), blank=True, default=list)
     background = models.ForeignKey(RoomBackground, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
@@ -101,7 +104,7 @@ class Room(Describable):
                 # REASON: Primary Key of Room (UUID) is not compatible with Notification's action_obj_id (int)
                 # SOLUTION: Add Auto-Increment PK for Room
 
-                # notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
+                notify_user(target=user, actor=self.created_by, action_obj=self, verb='banned you in')
 
             self.save()
             return response
@@ -163,13 +166,15 @@ class Room_Object(models.Model):
     Fields:
         room - ForeignKey(Room)
     """
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, editable=False)
-    notifications = GenericRelation(
-        get_notification_model(),
-        related_query_name='rooms_object',
-        object_id_field='object_id',
-        content_type_field='content_type'
-        )
+    # room = models.ForeignKey(Room, on_delete=models.CASCADE, editable=False)
+    # room = models.UUIDField()
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, editable=False, null=True)
+    # notifications = GenericRelation(
+    #     get_notification_model(),
+    #     related_query_name='rooms_object',
+    #     object_id_field='object_id',
+    #     content_type_field='content_type'
+    #     )
 
     class Meta:
         abstract = True
@@ -201,7 +206,7 @@ class User_Likable(models.Model):
 
 
 # Models
-class File(Describable, User_Postable, Room_Object):
+class File(Room_Object, User_Postable, Describable):
     class Meta:
         ordering = ['-posted_datetime']
 
@@ -209,6 +214,12 @@ class File(Describable, User_Postable, Room_Object):
         upload_to='files', storage=gd_storage,
         validators=[limit_file_size, allowed_file_type],
         verbose_name='File',
+        )
+    notifications = GenericRelation(
+        get_notification_model(),
+        related_query_name='rooms_file',
+        object_id_field='object_id',
+        content_type_field='content_type'
         )
 
     def get_absolute_url(self):
@@ -230,6 +241,12 @@ class Announcement(Room_Object, User_Postable, User_Likable):
         ordering = ['-posted_datetime']
 
     content = models.TextField(blank=False, max_length=1000)
+    notifications = GenericRelation(
+        get_notification_model(),
+        related_query_name='rooms_announcement',
+        object_id_field='object_id',
+        content_type_field='content_type'
+        )
 
     def __str__(self):
         return f'{self.posted_by}: "{self.content[:30]}..."'

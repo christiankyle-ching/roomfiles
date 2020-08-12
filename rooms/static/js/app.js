@@ -127,11 +127,33 @@ if (_room_detail) {
         
     }
 
+    function initRoomDescription() {
+        const room_detail_description = _room_detail.querySelector('#roomDescription')
+        const room_detail_header = _room_detail.querySelector('#roomDescriptionHeader')
+        const room_detail_toggle = _room_detail.querySelector('#roomDescriptionToggle')
+
+        let description = ''
+        for (let paragraphs of room_detail_description.querySelectorAll('p')) {
+            console.log(room_detail_description.childNodes);
+            description += paragraphs.innerText
+        }
+
+        console.log(description);
+
+        if (description.trim() === '') {
+            room_detail_header.innerText = 'No description available'
+            room_detail_toggle.style.display = 'none'
+        }
+    }
+
     init_roomcode()
     init_roomcode_qr()
     show_hash_tab()
+    initRoomDescription()
 
 }
+
+
 
 // Notifications
 const _room_tabs =  document.querySelector('#roomTabs')

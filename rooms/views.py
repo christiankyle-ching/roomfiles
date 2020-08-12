@@ -222,7 +222,7 @@ class RoomListView(LoginRequiredMixin, ListView):
         user_rooms = context['user_rooms']
         user = self.request.user
 
-        # Get notification counts for each room
+        # Get notification counts for each room        
         notif_counts = {}
         for room in user_rooms:
             notif_counts[room.pk] = user.profile.get_notification_count_in_room(room)
@@ -273,7 +273,7 @@ def join_room(request):
         if form.is_valid():
             # check if room exists
             _code = form.cleaned_data.get('code')
-            _room = get_object_or_404(Room, pk=_code)
+            _room = get_object_or_404(Room, uuid=_code)
 
             
             if not user_allowed_enter_room(request.user, _room):

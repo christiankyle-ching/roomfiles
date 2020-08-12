@@ -57,9 +57,9 @@
             <div class="row w-100 no-gutters">
 
                 <div class="col">
-                    <h6>
-                        Code: <code id="roomCode" data-hide="false">{{ room.id }}</code>
-                    </h6>
+                    <strong>
+                        Code: <code id="roomCode" data-hide="false">{{ room.uuid }}</code>
+                    </strong>
                 </div>
 
                 <!-- Room Code Buttons -->
@@ -82,11 +82,11 @@
 
 
             <!-- Room Description -->
-            <p class="text-muted">Description</p>
+            <p id="roomDescriptionHeader" class="text-muted">Description</p>
             <div id="roomDescription" class="collapse">
                 {{ room.description|linebreaks }}
             </div>
-            <a href="#roomDescription" class="btn btn-sm btn-block btn-secondary" data-toggle="collapse">
+            <a id="roomDescriptionToggle" href="#roomDescription" class="btn btn-sm btn-block btn-secondary" data-toggle="collapse">
                 <span class="material-icons">keyboard_arrow_down</span>
                 <span class="material-icons">keyboard_arrow_up</span>
             </a>

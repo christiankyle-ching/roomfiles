@@ -12,12 +12,12 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body py-1">
             <input type="hidden" name="room_bg_id">
             <input type="hidden" name="room_id">
             
           {% for bg in room_backgrounds %}
-            <div class="roombg-option w-100 mb-3" data-bg-id="{{ bg.id }}">
+            <div class="roombg-option w-100 my-2" data-bg-id="{{ bg.id }}">
                 <img src="{{request.scheme}}://{{request.get_host}}{{bg.image_url}}"
                 alt="{{bg.name}}" class="w-100" loading="lazy">
             </div>

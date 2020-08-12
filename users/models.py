@@ -59,6 +59,9 @@ class Profile(models.Model):
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
     user_rooms = models.ManyToManyField('rooms.Room', related_name="user_rooms", blank=True)
+    # user_rooms_bak = ArrayField(models.UUIDField(), blank=True, default=list)
+
+
 
     objects = ActiveProfileManager()
 
@@ -93,7 +96,7 @@ class Profile(models.Model):
 
     def get_notifications_in_room(self, room):
         unread_notifs = Notification.objects.filter(
-            Q(rooms_object__room=room),
+            Q(rooms_file__room=room) | Q(rooms_announcement__room=room),
             is_read=False, target=self.user,
             content_type__in=[get_ann_contenttype(), get_file_contenttype()],
             )

@@ -21,7 +21,7 @@ urlpatterns = [
     path('room/join/', views.join_room, name='room-join'),
 
     # Specific Room
-    path('room/<uuid:room_pk>-<str:room_slug>/', include([
+    path('room/<int:room_pk>-<str:room_slug>/', include([
 
         path('', RoomDetailView.as_view(), name='room'),
         path('edit/', RoomUpdateView.as_view(), name='room-edit'),
