@@ -241,7 +241,7 @@ class RoomListView(LoginRequiredMixin, ListView):
                     room.change_background(roombg_id)
                     messages.success(request, f"Changed {room.name}'s background'")
                 except ValueError as e:
-                    messages.error(request, 'Something went wrong.')
+                    messages.error(request, 'Invalid option.')
             
         else:
             messages.error(request, 'You cannot do that.')

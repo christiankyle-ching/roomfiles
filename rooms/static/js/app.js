@@ -348,7 +348,7 @@ const roombgForm = document.querySelector('#roombgForm');
 if (roombgForm) {
     const options = document.querySelectorAll('.roombg-option')
 
-    function select_item(item) {
+    function select_item_roombg(item) {
         for (let option of options) {
             option.classList.remove('roombg-option-selected')
         }
@@ -358,9 +358,16 @@ if (roombgForm) {
         console.log(roombgForm['room_id'].value, roombgForm['room_bg_id'].value);
     }
 
+    function unselect_all_roombg() {
+        for (let option of options) {
+            option.classList.remove('roombg-option-selected')
+        }
+        roombgForm['room_bg_id'].value = ''
+    }
+
     // Click event
     for (let option of options) {
-        option.addEventListener('click', () => select_item(option) )
+        option.addEventListener('click', () => select_item_roombg(option) )
     }
 
     $('#roomBackgroundModal').on('show.bs.modal', function (event) {
@@ -370,8 +377,12 @@ if (roombgForm) {
         const roombgId = button.data('room-bg');
         if (roombgId) {
             const item = document.querySelector(`[data-bg-id="${roombgId}"]`)
-            select_item(item)
+            select_item_roombg(item)
         }
+    })
+
+    $('#roomBackgroundModal').on('hide.bs.modal', function (event) {
+        unselect_all_roombg()
     })
 }
 
