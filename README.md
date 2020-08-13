@@ -41,7 +41,7 @@ To setup a local development server of this app:
 	python manage.py import_avatars
 	python manage.py import_roombg
 	```
-At this point, you can run the local development server, **but uploading files won't work** because it uses `django-googledrive-storage` as the media storage for file uploads. This gives 
+At this point, you can run the local development server, **but uploading files won't work** because it uses `django-googledrive-storage` as the media storage for file uploads.
 To set this up, follow the documentation at [django-googledrive-storage](https://django-googledrive-storage.readthedocs.io/en/latest/). For the general steps, you need to:
  1. Set up a project and application in a Google Developer Console.
  2. Enable the Google Drive API from the Console.
@@ -51,19 +51,28 @@ To set this up, follow the documentation at [django-googledrive-storage](https:/
 #### Final Steps
  1. Change other variables in the settings file:
 	 - Change DEBUG to True:
-	 - Generate a new SECRET_KEY by:
+		```python
+		DEBUG = True
+		```
+    - Generate a new SECRET_KEY by:
 		 - Opening a shell:
-`python manage.py shell`
+			```
+			python manage.py shell
+			```
 		 - Then running these commands:
 			```python
 			>>> from django.core.management.utils import get_random_secret_key
 			>>> print(get_random_secret_key())
 			copy_this_secret_key
-	```
+			```
+	 - Set the newly generated secret key to your settings:
+		```python
+    	SECRET_KEY = 'paste_secret_here'
+    	```
  2. *Optional*: To get the reset password feature to work, you need to add a [Google App Password](https://myaccount.google.com/apppasswords) with your google account (preferably **not using your personal account**). Then change these settings variables:
 ```python
-    EMAIL_HOST_USER = 'your_email_here@gmail.com'
-    EMAIL_HOST_PASSWORD = 'your_app_password_here'
+EMAIL_HOST_USER = 'your_email_here@gmail.com'
+EMAIL_HOST_PASSWORD = 'your_app_password_here'
 ```
 
 After all those steps, you are ready to run the local dev. server! Just make sure to activate your venv then run:
