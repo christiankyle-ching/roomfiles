@@ -1,0 +1,7 @@
+# --- github-linguist ignore list ---
+
+# linguist-vendored
+rooms/static/js/html5-qrcode.min.js linguist-vendored
+
+# Not linguist-detectable
+*/templates/** -linguist-detectable
