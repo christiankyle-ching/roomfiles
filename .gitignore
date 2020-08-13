@@ -11,5 +11,5 @@ db.sqlite3-journal
 staticfiles
 
 # Development stuff
-assets
-.vscode
+assets/
+.vscode/
