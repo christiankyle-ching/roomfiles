@@ -25,6 +25,11 @@
     border-radius: 2em !important;
 }
 
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+
 .min-w-0 {
     min-width: 0 !important;
 }
@@ -181,7 +186,7 @@ button.dropdown-item {
 }
 
 [class*="wp-fade-"] {
-    transition: all 600ms ease-in-out;
+    transition: all 500ms ease-in-out;
 }
 
 .wp-fade-up {

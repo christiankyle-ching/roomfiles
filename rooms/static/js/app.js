@@ -4,12 +4,25 @@
 const waypointFadeElements = document.querySelectorAll('[class*="wp-fade-"]')
 if (waypointFadeElements.length > 0) {
     if (setInterval && Element.prototype.getBoundingClientRect) {
-        setInterval(() => {
+        const options = {
+            offset: {
+                topPercent: 30
+            },
+            hitMode: {
+                y: 'either'
+            }
+        }
+
+        const showAnimation = setInterval(() => {
+            let allElementsShown = true;
             for (let el of waypointFadeElements) {
-                if (isElementInViewport(el.parentElement, 100, 200)) {
-                    el.classList.add('wp-show')
+                if (!el.classList.contains('wp-show')) {
+                    if (isElementInViewport(el.parentElement, options)) el.classList.add('wp-show')
+                    allElementsShown = false
                 }
             }
+
+            if (allElementsShown) clearInterval(showAnimation)
         }, 250);
 
     } else {
@@ -22,18 +35,94 @@ if (waypointFadeElements.length > 0) {
 }
 
 // Check if element in viewport, added support for offset
-function isElementInViewport(el, offsetX, offsetY) {
-    offsetX = offsetX || 0
-    offsetY = offsetY || 0
+function isElementInViewport(el, options /*, offsetX, offsetY*/) {
+    options = options || {}
+    
+    let rect = el.getBoundingClientRect();
 
-    var rect = el.getBoundingClientRect();
+    const width = parseInt(getComputedStyle(el).getPropertyValue('width').replace('px', ''))
+    const height = parseInt(getComputedStyle(el).getPropertyValue('height').replace('px', ''))
+    const windowWidth = window.innerWidth || document.documentElement.clientWidth
+    const windowHeight =  window.innerHeight || document.documentElement.clientHeight
 
-    return (
-        (rect.top + offsetY) >= 0 &&
-        (rect.left + offsetX) >= 0 &&
-        (rect.bottom - offsetY) <= (window.innerHeight || document.documentElement.clientHeight) &&
-        (rect.right - offsetX) <= (window.innerWidth || document.documentElement.clientWidth)
-    );
+    let top = rect.top
+    let left = rect.left
+    let bottom = rect.bottom
+    let right = rect.right
+
+    let isXInside = (left >= 0 && right <= windowWidth)
+    let isYInside = ((0 <= top <= windowHeight) && (0 <= bottom <= windowHeight))
+
+    if (options.offset) {
+        // Offset in Pixels
+        if (options.offset.left) {
+            left = rect.left + options.offset.left
+            // console.log('Offset left px: ', options.offset.left);
+        }
+
+        if (options.offset.right) {
+            right = rect.right - options.offset.right
+            // console.log('Offset right px: ', options.offset.right);
+        }
+
+        if (options.offset.bottom) {
+            
+            bottom = rect.bottom - options.offset.bottom
+            // console.log('Offset bottom px: ', options.offset.bottom);
+        }
+
+        if (options.offset.top) {    
+            top = rect.top + options.offset.top
+            // console.log('Offset top px: ', options.offset.top);
+        }
+
+        // Offset in Percent
+        if (options.offset.leftPercent) {
+            const leftPercent = width * (options.offset.leftPercent / 100)
+            left = rect.left + leftPercent
+            // console.log('Offset left %: ', leftPercent);
+        }
+
+        if (options.offset.rightPercent) {
+            const rightPercent = width * (options.offset.rightPercent / 100)
+            right = rect.right - rightPercent
+            // console.log('Offset right %: ', rightPercent);
+        }
+
+        if (options.offset.topPercent) {
+            const topPercent = height * (options.offset.topPercent / 100)
+            top = rect.top + topPercent
+            // console.log('Offset top %: ', topPercent);
+        }
+
+        if (options.offset.bottomPercent) {
+            const bottomPercent = height * (options.offset.bottomPercent / 100)
+            bottom = rect.bottom - bottomPercent
+            // console.log('Offset bottom %: ', bottomPercent);
+        }
+    }
+    
+    if (options.hitMode) {
+        const hitModeX = options.hitMode.x
+        const hitModeY = options.hitMode.y
+
+        if (hitModeX) {
+            if (hitModeX === 'either') {
+                isXInside = (left >= 0 || right <= windowWidth)
+            }
+        }
+
+        if (hitModeY) {
+            if (hitModeY === 'either') {
+                isYInside = ((0 <= top && top <= windowHeight) || (0 <= bottom && bottom <= windowHeight))
+            }
+        }
+
+        
+    }
+
+    const result = isXInside && isYInside
+    return result
 }
 
 
@@ -132,11 +221,11 @@ if (_room_detail) {
 
         let description = ''
         for (let paragraphs of room_detail_description.querySelectorAll('p')) {
-            console.log(room_detail_description.childNodes);
+            // console.log(room_detail_description.childNodes);
             description += paragraphs.innerText
         }
 
-        console.log(description);
+        // console.log(description);
 
         if (description.trim() === '') {
             room_detail_header.innerText = 'No description available'
@@ -307,7 +396,7 @@ if (roomJoinForm && qrScannerToggle) {
             })
             
             function runScanner(cameraId) {
-                console.log('Running Scanner on Camera ID: ', cameraId);
+                // console.log('Running Scanner on Camera ID: ', cameraId);
                 $('#qrScannerModal').modal('show')
                 
                 html5QrCode.start(
@@ -355,7 +444,7 @@ if (roombgForm) {
         item.classList.add('roombg-option-selected')
         roombgForm['room_bg_id'].value = item.getAttribute('data-bg-id')
 
-        console.log(roombgForm['room_id'].value, roombgForm['room_bg_id'].value);
+        // console.log(roombgForm['room_id'].value, roombgForm['room_bg_id'].value);
     }
 
     function unselect_all_roombg() {

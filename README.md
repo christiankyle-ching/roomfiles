@@ -16,7 +16,9 @@ RoomFiles is a web-application made with the [Django](https://www.djangoproject.
  7. [waypoints](https://github.com/imakewebthings/waypoints) (For infinite scrolling)
  8. [django_heroku](https://github.com/heroku/django-heroku) (For seamless Heroku deployment)
 
-### Local Development Setup
+## Local Development Setup
+
+### Project Setup
 To setup a local development server of this app:
  1. Clone this repository.
  2. Set up a Python virtual environment (I used [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/))
@@ -41,14 +43,8 @@ To setup a local development server of this app:
 	python manage.py import_avatars
 	python manage.py import_roombg
 	```
-At this point, you can run the local development server, **but uploading files won't work** because it uses `django-googledrive-storage` as the media storage for file uploads.
-To set this up, follow the documentation at [django-googledrive-storage](https://django-googledrive-storage.readthedocs.io/en/latest/). For the general steps, you need to:
- 1. Set up a project and application in a Google Developer Console.
- 2. Enable the Google Drive API from the Console.
- 3. Obtain the JSON private key file. Copy the contents of the file to an environment variable with the name `GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE_CONTENTS`.
-	 -  Alternatively, you can just copy the path where the JSON file is stored, then assign it to the settings variable `roomfiles.settings.GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE`.
 
-#### Final Steps
+### Settings Setup
  1. Change other variables in the settings file:
 	 - Change DEBUG to True:
 		```python
@@ -75,11 +71,18 @@ EMAIL_HOST_USER = 'your_email_here@gmail.com'
 EMAIL_HOST_PASSWORD = 'your_app_password_here'
 ```
 
+At this point, you can run the local development server, **but uploading files won't work** because it uses `django-googledrive-storage` as the media storage for file uploads.
+To set this up, follow the documentation at [django-googledrive-storage](https://django-googledrive-storage.readthedocs.io/en/latest/). For the general steps, you need to:
+ 1. Set up a project and application in a Google Developer Console.
+ 2. Enable the Google Drive API from the Console.
+ 3. Obtain the JSON private key file. Copy the contents of the file to an environment variable with the name `GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE_CONTENTS`.
+	 -  Alternatively, you can just copy the path where the JSON file is stored, then assign it to the settings variable `roomfiles.settings.GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE`.
+
 After all those steps, you are ready to run the local dev. server! Just make sure to activate your venv then run:
 ```
 python manage.py runserver
 ```
 
-### Licenses
-Avatars are made by [Freepik](https://www.freepik.com/) from [www.flaticon.com](https://www.flaticon.com/). See *LICENSES* folder. <br>
+## Licenses
+Avatars are made by [Freepik](https://www.freepik.com/) from [www.flaticon.com](https://www.flaticon.com/). See *LICENSES* folder.<br>
 Rooms' background artworks made by  [Freepik](https://www.freepik.com/)
